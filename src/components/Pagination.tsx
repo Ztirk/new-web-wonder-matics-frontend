@@ -41,7 +41,7 @@ export default function Pagination({
         </div>
 
         <nav>
-          <ul className="flex gap-3">{createPagi()}</ul>
+          <ul className="grid grid-cols-10 gap-3">{createPagi()}</ul>
         </nav>
 
         <div onClick={increPage} className="cursor-pointer">

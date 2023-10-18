@@ -2,9 +2,10 @@ interface Props {
   children: React.ReactNode;
   type: "tbody" | "thead";
   id: string;
+  dataId: number;
 }
 
-export default function Tr({ children, type, id }: Props) {
+export default function Tr({ children, type, id, dataId }: Props) {
   return (
     <tr
       className={
@@ -15,7 +16,7 @@ export default function Tr({ children, type, id }: Props) {
           : ""
       }
       id={id}
-
+      data-id={dataId}
     >
       {children}
     </tr>

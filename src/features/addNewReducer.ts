@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AddNewData } from "../interface/customerType";
+import { AddNewData } from "../interface/dataType";
 import type { RootState } from "../app/store";
 
 const initialState = {
@@ -17,6 +17,9 @@ const initialState = {
   personNew: [],
   personExist: [],
   personDelete: [],
+  vehicleNew: [],
+  vehicleExist: [],
+  vehicleDelete: [],
 };
 
 const defaultState = {
@@ -34,6 +37,9 @@ const defaultState = {
   personNew: [],
   personExist: [],
   personDelete: [],
+  vehicleNew: [],
+  vehicleExist: [],
+  vehicleDelete: [],
 };
 
 const addNewSlice = createSlice({

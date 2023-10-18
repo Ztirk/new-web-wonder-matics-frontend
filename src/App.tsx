@@ -20,8 +20,6 @@ function App() {
       <>
         <Route path="/login" element={<Login />}></Route>
         <Route path="/" element={<Frame />}>
-          <Route path="/test" element={<Test />}></Route>
-
           {/* ลูกค้า */}
           <Route path="/customer" element={<Main />}></Route>
           <Route
@@ -84,6 +82,21 @@ function App() {
           <Route path="/fleet/add-new-fleet" element={<Main_AddNew />}></Route>
           <Route path="/fleet/:fleet_id" element={<Main_View />}></Route>
           <Route path="/fleet/:fleet_id/edit" element={<Main_Edit />}></Route>
+
+          {/* รถ */}
+          <Route path="/vehicle" element={<Main />}></Route>
+          <Route
+            path="/vehicle/add-new-vehicle"
+            element={<Main_AddNew />}
+          ></Route>
+          <Route path="/vehicle/:vehicle_id" element={<Main_View />}></Route>
+          <Route
+            path="/vehicle/:vehicle_id/edit"
+            element={<Main_Edit />}
+          ></Route>
+
+          {/* Test */}
+          <Route path="/test" element={<Test />}></Route>
         </Route>
       </>
     )

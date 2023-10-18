@@ -4,13 +4,16 @@ import Input from "../components/Input";
 import Form from "../components/Form";
 import Selector from "../components/Selector";
 import { MasterCode } from "../interface/mastercodeType";
-import { getMasterCode } from "../api/customerApi";
+import { getMasterCode } from "../api/getMasterCode";
 import ButtonRightFrame from "../components/ฺButtonRightFrame";
 import Button from "../components/Button";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setContact } from "../features/editedReducer";
 import { setContactNew } from "../features/addNewReducer";
+import { setDisplayContact } from "../features/displayReducer";
+import InputFrame from "../components/InputFrame";
+import { Contact, putPostContact } from "../interface/reduxType";
 
 export default function Main_AddNew_Contact() {
   const initContactType: MasterCode = {
@@ -25,6 +28,7 @@ export default function Main_AddNew_Contact() {
     getMasterCode(setContactType, "contact", null);
   }, []);
 
+  //
   const handleAddNewContact = () => {
     const selectElem = document.getElementById(
       "ประเภทการติดต่อ"
@@ -32,23 +36,34 @@ export default function Main_AddNew_Contact() {
     const contact_code_id = Number(
       selectElem.options[selectElem.selectedIndex].id
     );
+    const contactType =
+      selectElem.options[selectElem.selectedIndex].textContent;
     const value = (
       document.getElementById("รายละเอียดการติดต่อ") as HTMLInputElement
     ).value;
 
-    const contact = { contact_code_id, value };
+    const putPostContact: putPostContact = {
+      contact_code_id: contact_code_id,
+      value: value,
+    };
 
-    contact["contact_code_id"] = contact_code_id;
-    contact["value"] = value;
+    const displayContact: Contact = {
+      contact_id: "-",
+      contact_type: contactType,
+      value: value,
+      owner_name: "-",
+    };
+    console.log(contactType);
 
-    dispatch(setContact(contact));
-    dispatch(setContactNew(contact));
+    dispatch(setDisplayContact(displayContact));
+    dispatch(setContact(putPostContact));
+    dispatch(setContactNew(putPostContact));
   };
 
   return (
     <>
       <Divider title="ข้อมูลการติดต่อ" />
-      <Form>
+      <InputFrame>
         <Selector
           selectorData={contactType}
           label={"ประเภทการติดต่อ"}
@@ -62,7 +77,7 @@ export default function Main_AddNew_Contact() {
           type={"regular"}
           id="รายละเอียดการติดต่อ"
         />
-      </Form>
+      </InputFrame>
       <ButtonRightFrame>
         <Link to=".." relative="path">
           <Button name="บันทึก" onClick={handleAddNewContact} />

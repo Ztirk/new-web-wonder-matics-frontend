@@ -12,15 +12,11 @@ import {
   IndividualData,
   CustomerMasterCodeType,
   EditedData,
-} from "../interface/customerType";
-import {
-  fetchIndividualDataData,
-  fetchCustomerTypes,
-  fetchData,
-  fetchIndividualData,
-  putEditedData,
-} from "../api/customerApi";
-import { Link, Outlet, useLocation } from "react-router-dom";
+} from "../interface/dataType";
+import { fetchCustomerTypes, fetchData } from "../api/getData";
+import { getPopUpData } from "../api/getPopUpData";
+import { putEditedData } from "../api/putCustomer";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import Tbody from "../components/Tbody";
 import Thead from "../components/Thead";
 import AddExistPopup from "../components/addExistPopup";
@@ -40,24 +36,45 @@ import {
   setPersonDelete,
   setPersonExist,
 } from "../features/editedReducer";
+import Loading from "../components/Loading";
+import { Address, Person } from "../interface/reduxType";
+import {
+  displayState,
+  setDisplayAddress,
+  setDisplayPerson,
+} from "../features/displayReducer";
+import { fetchIndividualData } from "../api/getIndividualData";
 
 export default function Main_Edit() {
   const [dataIndividual, setDataIndividal] = useState<IndividualData>();
   const [selectorData, setSelectorData] = useState<CustomerMasterCodeType>();
-  const [popUpData, setPopUpData] = useState<IndividualData>();
-  const [domPerson, setDomPerson] = useState<IndividualData>();
-
-  const editedData = useSelector(editedState);
-  const dispatch = useDispatch();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const defaultToggleAddExist = {
     backdrop: false,
     type: "",
   };
+
   const [toggleAddExist, setToggleAddExist] = useState<PopUpComponent>(
     defaultToggleAddExist
   );
 
+  useEffect(() => {
+    fetchIndividualData(id, setDataIndividal, module, setLoading);
+    fetchCustomerTypes(setSelectorData);
+  }, []);
+
+  useEffect(() => {
+    if (!toggleAddExist.backdrop) {
+      navigate("");
+    }
+  }, [toggleAddExist.backdrop]);
+
+  // React-Router
+  const [popUpLoading, setPopUpLoading] = useState<boolean>(false);
+  const [popUpData, setPopUpData] = useState<IndividualData>();
+
+  const navigate = useNavigate();
   const location = useLocation();
   const segment = location.pathname
     .split("/")
@@ -67,9 +84,15 @@ export default function Main_Edit() {
   const module = segment[0];
 
   useEffect(() => {
-    fetchIndividualData(id, setDataIndividal, module);
-    fetchCustomerTypes(setSelectorData);
-  }, []);
+    if (location.search) {
+      getPopUpData(setPopUpData, setPopUpLoading);
+    }
+  }, [location]);
+
+  // Redux
+  const editedData = useSelector(editedState);
+  const displayData = useSelector(displayState);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     console.log(editedData);
@@ -79,20 +102,8 @@ export default function Main_Edit() {
   }, [editedData]);
 
   useEffect(() => {
-    if (location.search) {
-      fetchIndividualDataData(setPopUpData);
-    }
-
-    if (editedData.personExist.length) {
-      handleVerifyDomPerson();
-    } else if (editedData.addressExist.length) {
-    }
-  }, [location]);
-
-  const handleVerifyDomPerson = async () => {
-    await fetchIndividualDataData();
-    editedData.personExist.forEach((id, i) => {});
-  };
+    console.log(displayData);
+  }, [displayData]);
 
   const handleConfirmEditedData: () => void = () => {
     const customer_name = document.querySelectorAll("input")[0].value;
@@ -118,44 +129,28 @@ export default function Main_Edit() {
     }
   };
 
+  // เมื่อกดบันทึก PopUp เพิ่มที่มีของข้อมูลบุคคล จะทำการ save ข้อมูลที่เลือก บน global state ของตัวที่จะ อัพเดทลงหลังบ้าน และเก็บข้อมูลเพื่อแสดงผลบน Virtual Dom
   const handleConfirmSelectedPersonData = () => {
     const add_exist_person_id: string[] = [];
+    const personData: Person[] = [];
     const selectedPersonElem = document.querySelectorAll("#selected-person-id");
-    const tablePersonElem = document.getElementById("person-tbody");
 
     selectedPersonElem.forEach((elem, i) => {
       if (selectedPersonElem[i].childNodes[0].childNodes[0].checked == true) {
-        const createTrElem = document.createElement("tr");
-        createTrElem.className = "h-[66.213px]";
-        selectedPersonElem[i].childNodes.forEach((elem, j) => {
-          if (j > 0) {
-            const cloneNode =
-              selectedPersonElem[i].childNodes[j].cloneNode(true);
-            createTrElem.appendChild(cloneNode);
-            if (j == 1) {
-              add_exist_person_id.push(
-                selectedPersonElem[i].childNodes[j].textContent
-              );
-            }
-          }
-        });
-
-        const deleteButt = document.createElement("td");
-        deleteButt.className = "border border-slate-300 px-3";
-        const nav = document.createElement("nav");
-        const ul = document.createElement("ul");
-        const li = document.createElement("li");
-        li.addEventListener("click", handleCreatedDeletePerson);
-        li.className = "cursor-pointer";
-        li.textContent = "ลบ";
-        li.id = selectedPersonElem[i].childNodes[1].textContent;
-        ul.append(li);
-        nav.append(ul);
-        deleteButt.append(nav);
-        createTrElem.append(deleteButt);
-        tablePersonElem?.append(createTrElem);
+        const childNodes = elem.childNodes;
+        const person: Person = {
+          person_id: elem.getAttribute("data-id"),
+          fullname: childNodes[3].textContent,
+          mobile: childNodes[4].textContent,
+          email: childNodes[5].textContent,
+          description: childNodes[6].textContent,
+          role: childNodes[7].textContent,
+        };
+        personData.push(person);
+        add_exist_person_id.push(elem.getAttribute("data-id"));
       }
     });
+    dispatch(setDisplayPerson(personData));
     dispatch(setPersonExist(add_exist_person_id));
 
     handleToggleAddExistCancel();
@@ -163,42 +158,22 @@ export default function Main_Edit() {
 
   const handleConfirmSelectedAddressData = () => {
     const add_exist_address_id: string[] = [];
+    const addressData: Address[] = [];
     const selectedAddressElem = document.querySelectorAll(
       "#selected-address-id"
     );
-    const tableAddressElem = document.getElementById("address-tbody");
     selectedAddressElem.forEach((elem, i) => {
       if (selectedAddressElem[i].childNodes[0].childNodes[0].checked == true) {
-        const createTrElem = document.createElement("tr");
-        createTrElem.className = "h-[66.213px]";
-        selectedAddressElem[i].childNodes.forEach((elem, j) => {
-          if (j > 0) {
-            const cloneNode =
-              selectedAddressElem[i].childNodes[j].cloneNode(true);
-            createTrElem.appendChild(cloneNode);
-            if (j == 1) {
-              add_exist_address_id.push(
-                selectedAddressElem[i].childNodes[j].textContent
-              );
-            }
-          }
-        });
-
-        const deleteButt = document.createElement("td");
-        deleteButt.className = "border border-slate-300 px-3";
-        const nav = document.createElement("nav");
-        const ul = document.createElement("ul");
-        const li = document.createElement("li");
-        li.addEventListener("click", handleDeleteAddress);
-        li.className = "cursor-pointer";
-        li.textContent = "ลบ";
-        ul.append(li);
-        nav.append(ul);
-        deleteButt.append(nav);
-        createTrElem.append(deleteButt);
-        tableAddressElem?.append(createTrElem);
+        const address: Address = {};
+        const childNodes = elem.childNodes;
+        address["address_id"] = elem.getAttribute("data-id");
+        address["location"] = childNodes[3].textContent;
+        address["address_type"] = childNodes[4].textContent;
+        addressData.push(address);
+        add_exist_address_id.push(elem.getAttribute("data-id"));
       }
     });
+    dispatch(setDisplayAddress(addressData));
     dispatch(setAddressExist(add_exist_address_id));
 
     handleToggleAddExistCancel();
@@ -255,198 +230,306 @@ export default function Main_Edit() {
 
   return (
     <Fragment>
-      <AddExistPopup
-        popUpData={popUpData}
-        onCancel={handleToggleAddExistCancel}
-        toggleAddExist={toggleAddExist}
-        onConfirm={
-          toggleAddExist.type == "person"
-            ? handleConfirmSelectedPersonData
-            : toggleAddExist.type == "address"
-            ? handleConfirmSelectedAddressData
-            : ""
-        }
-      />
-      <Divider title="ข้อมูลลูกค้า" />
-      <InputFrame>
-        <Input
-          label="ชื่อลูกค้า"
-          placeholder="ชื่อลูกค้า"
-          type="regular"
-          defaultValue={dataIndividual?.response.customer.customer_name}
-        />
-        <Selector
-          label="ลักษณะลูกค้า"
-          defaultValue={dataIndividual?.response.customer.customer_type}
-          defaultId={dataIndividual?.response.customer.customer_type_code_id}
-          selectorData={selectorData}
-          number={1}
-        />
-        <Selector
-          label="ประเภทลูกค้า"
-          defaultValue={dataIndividual?.response.customer.sales_type}
-          defaultId={dataIndividual?.response.customer.sales_type_code_id}
-          selectorData={selectorData}
-          number={0}
-        />
-      </InputFrame>
-      {/* เพิ่มข้อมูลคน */}
-      <Divider title="ข้อมูลคน" />
-      <ButtonLeftFrame>
-        <Button name="เพิ่มใหม่" disabled={true} />
-        <Button
-          name="เพิ่มที่มี"
-          type="person"
-          onClick={handleSetBackdropPerson}
-        />
-      </ButtonLeftFrame>
-      <Table>
+      {!loading ? (
         <Fragment>
-          <Thead>
-            {dataIndividual &&
-            dataIndividual.response.person &&
-            dataIndividual.response.person.length ? (
-              <Tr type="thead">
-                <Fragment>
-                  {Object.keys(dataIndividual.response.person[0]).map(
-                    (columnName) => (
-                      <Th key={columnName}>{columnName}</Th>
-                    )
-                  )}
-                  <Th>ตัวเลือก</Th>
-                </Fragment>
-              </Tr>
-            ) : (
-              <></>
-            )}
-          </Thead>
-          <Tbody id="person-tbody">
-            {dataIndividual &&
-            dataIndividual.response.person &&
-            dataIndividual.response.person.length ? (
-              dataIndividual.response.person.map((data) => (
-                <Tr type="tbody" key={data.person_id}>
-                  <Td>{data.person_id}</Td>
-                  <Td>{data.fullname}</Td>
-                  <Td>{data.email}</Td>
-                  <Td>{data.mobile}</Td>
-                  <Td>{data.description}</Td>
-                  <Td>{data.role}</Td>
-                  <Option
-                    type="edit"
-                    id={data.person_id}
-                    onDelete={handleDeletePerson}
-                  ></Option>
-                </Tr>
-              ))
-            ) : (
-              <></>
-            )}
-          </Tbody>
-        </Fragment>
-      </Table>
-      {/* เพิ่มข้อมูลผู้ติดต่อ */}
-      <Divider title="ข้อมูลผู้ติดต่อ" />
-      <ButtonLeftFrame>
-        <Link to={`/customer/${id}/edit/add-new-contact`}>
-          <Button name="เพิ่มใหม่" />
-        </Link>
-        <Button name="เพิ่มที่มี" disabled={true} />
-      </ButtonLeftFrame>
-      <Table>
-        <Fragment>
-          <Thead>
-            {dataIndividual &&
-            dataIndividual.response.contact &&
-            dataIndividual.response.contact.length ? (
-              <Tr type="thead">
-                <Fragment>
-                  {Object.keys(dataIndividual.response.contact[0]).map(
-                    (columnName) => (
-                      <Th key={columnName}>{columnName}</Th>
-                    )
-                  )}
-                  <Th>ตัวเลือก</Th>
-                </Fragment>
-              </Tr>
-            ) : (
-              <></>
-            )}
-          </Thead>
-          <Tbody id="contact-tbody">
-            {dataIndividual &&
-            dataIndividual.response.contact &&
-            dataIndividual.response.contact.length ? (
-              dataIndividual.response.contact.map((data) => (
-                <Tr type="tbody" key={data.contact_id}>
-                  <Td>{data.contact_id}</Td>
-                  <Td>{data.contact_type}</Td>
-                  <Td>{data.value}</Td>
-                  <Option
-                    type="edit"
-                    id={data.contact_id}
-                    onDelete={handleDeleteContact}
-                  ></Option>
-                </Tr>
-              ))
-            ) : (
-              <></>
-            )}
-          </Tbody>
-        </Fragment>
-      </Table>
-      <Table></Table>
-      {/* เพิ่มข้อมูลที่อยู่ */}
-      <Divider title="ข้อมูลที่อยู่" />
-      <ButtonLeftFrame>
-        <Button name="เพิ่มใหม่" disabled={true} />
-        <Button
-          name="เพิ่มที่มี"
-          type="address"
-          onClick={handleSetBackdropAddress}
-        />
-      </ButtonLeftFrame>
-      <Table>
-        {dataIndividual &&
-        dataIndividual.response.address &&
-        dataIndividual.response.address.length ? (
-          <Fragment>
-            <Thead>
-              <Tr type="thead">
-                {Object.keys(dataIndividual.response.address[0]).map(
-                  (columnName) => (
-                    <Th key={columnName}>{columnName}</Th>
-                  )
+          <AddExistPopup
+            popUpData={popUpData}
+            onCancel={handleToggleAddExistCancel}
+            toggleAddExist={toggleAddExist}
+            onConfirm={
+              toggleAddExist.type == "person"
+                ? handleConfirmSelectedPersonData
+                : toggleAddExist.type == "address"
+                ? handleConfirmSelectedAddressData
+                : ""
+            }
+            popUpLoading={popUpLoading}
+          />
+          <Divider title="ข้อมูลลูกค้า" />
+          <InputFrame>
+            <Input
+              label="ชื่อลูกค้า"
+              placeholder="ชื่อลูกค้า"
+              type="regular"
+              defaultValue={dataIndividual?.response.customer.customer_name}
+            />
+            <Selector
+              label="ลักษณะลูกค้า"
+              defaultValue={dataIndividual?.response.customer.customer_type}
+              defaultId={
+                dataIndividual?.response.customer.customer_type_code_id
+              }
+              selectorData={selectorData}
+              number={1}
+            />
+            <Selector
+              label="ประเภทลูกค้า"
+              defaultValue={dataIndividual?.response.customer.sales_type}
+              defaultId={dataIndividual?.response.customer.sales_type_code_id}
+              selectorData={selectorData}
+              number={0}
+            />
+          </InputFrame>
+          {/* เพิ่มข้อมูลคน */}
+          <Divider title="ข้อมูลคน" />
+          <ButtonLeftFrame>
+            <Button name="เพิ่มใหม่" disabled={true} />
+            <Button
+              name="เพิ่มที่มี"
+              type="person"
+              onClick={handleSetBackdropPerson}
+            />
+          </ButtonLeftFrame>
+          <Table>
+            <Fragment>
+              {/* ชื่อ Column ของตารางคน */}
+              <Thead>
+                {dataIndividual &&
+                dataIndividual.response.person &&
+                dataIndividual.response.person.length ? (
+                  <Tr type="thead">
+                    <Fragment>
+                      {Object.keys(dataIndividual.response.person[0]).map(
+                        (columnName) => (
+                          <Th key={columnName}>{columnName}</Th>
+                        )
+                      )}
+                      <Th>ตัวเลือก</Th>
+                    </Fragment>
+                  </Tr>
+                ) : displayData.person.length > 0 ? (
+                  <Tr type="thead">
+                    <Fragment>
+                      {Object.keys(displayData.person[0]).map((columnName) => (
+                        <Th key={columnName}>{columnName}</Th>
+                      ))}
+                      <Th>ตัวเลือก</Th>
+                    </Fragment>
+                  </Tr>
+                ) : (
+                  <></>
                 )}
-                <Th>ตัวเลือก</Th>
-              </Tr>
-            </Thead>
-            <Tbody id="address-tbody">
-              {dataIndividual.response.address.map((data) => (
-                <Tr type="tbody" key={data.address_id}>
-                  <Td>{data.address_id}</Td>
-                  <Td>{data.location}</Td>
-                  <Td>{data.address_type}</Td>
-                  <Option
-                    type="edit"
-                    id={data.address_id}
-                    onDelete={handleDeleteAddress}
-                  ></Option>
-                </Tr>
-              ))}
-            </Tbody>
-          </Fragment>
-        ) : (
-          <></>
-        )}
-      </Table>
-      <ButtonRightFrame>
-        <Button name="บันทึก" onClick={handleConfirmEditedData} />
+              </Thead>
 
-        <Link to="/customer">
-          <Button name="ยกเลิก" />
-        </Link>
-      </ButtonRightFrame>
+              {/* ข้อมูลในตารางของคน */}
+              <Tbody id="person-tbody">
+                {dataIndividual &&
+                dataIndividual.response.person &&
+                dataIndividual.response.person.length ? (
+                  dataIndividual.response.person.map((data) => (
+                    <Tr type="tbody" key={data.person_id}>
+                      <Td>{data.RowNum}</Td>
+                      <Td>{data.person_id}</Td>
+                      <Td>{data.fullname}</Td>
+                      <Td>{data.email}</Td>
+                      <Td>{data.mobile}</Td>
+                      <Td>{data.description}</Td>
+                      <Td>{data.role}</Td>
+                      <Option
+                        type="edit"
+                        id={data.person_id}
+                        onDelete={handleDeletePerson}
+                      ></Option>
+                    </Tr>
+                  ))
+                ) : (
+                  <></>
+                )}
+                {displayData.person.length > 0 ? (
+                  displayData.person.map((data) => (
+                    <Tr type="tbody" key={data.person_id}>
+                      <Td>{data.person_id}</Td>
+                      <Td>{data.fullname}</Td>
+                      <Td>{data.email}</Td>
+                      <Td>{data.mobile}</Td>
+                      <Td>{data.description}</Td>
+                      <Td>{data.role}</Td>
+                      <Option
+                        type="edit"
+                        id={data.person_id}
+                        onDelete={handleDeletePerson}
+                      ></Option>
+                    </Tr>
+                  ))
+                ) : (
+                  <></>
+                )}
+              </Tbody>
+            </Fragment>
+          </Table>
+
+          {/* ติดต่อ */}
+          <Divider title="ข้อมูลผู้ติดต่อ" />
+          <ButtonLeftFrame>
+            <Link to={`/customer/${id}/edit/add-new-contact`}>
+              <Button name="เพิ่มใหม่" />
+            </Link>
+            <Button name="เพิ่มที่มี" disabled={true} />
+          </ButtonLeftFrame>
+          <Table>
+            <Fragment>
+              <Thead>
+                {dataIndividual &&
+                dataIndividual.response.contact &&
+                dataIndividual.response.contact.length ? (
+                  <Tr type="thead">
+                    <Fragment>
+                      {Object.keys(dataIndividual.response.contact[0]).map(
+                        (columnName) => (
+                          <Th key={columnName}>{columnName}</Th>
+                        )
+                      )}
+                      <Th>ตัวเลือก</Th>
+                    </Fragment>
+                  </Tr>
+                ) : displayData.contact.length > 0 ? (
+                  <Tr type="thead">
+                    <Fragment>
+                      {Object.keys(displayData.contact[0]).map((columnName) => (
+                        <Th key={columnName}>{columnName}</Th>
+                      ))}
+                      <Th>ตัวเลือก</Th>
+                    </Fragment>
+                  </Tr>
+                ) : (
+                  <></>
+                )}
+              </Thead>
+              <Tbody id="contact-tbody">
+                {dataIndividual &&
+                dataIndividual.response.contact &&
+                dataIndividual.response.contact.length ? (
+                  dataIndividual.response.contact.map((data) => (
+                    <Tr type="tbody" key={data.contact_id}>
+                      <Td>{data.RowNum}</Td>
+                      <Td>{data.contact_id}</Td>
+                      <Td>{data.value}</Td>
+                      <Td>{data.contact_type}</Td>
+                      <Td>{data.owner_name}</Td>
+                      <Option
+                        type="edit"
+                        id={data.contact_id}
+                        onDelete={handleDeleteContact}
+                      ></Option>
+                    </Tr>
+                  ))
+                ) : (
+                  <></>
+                )}
+                {displayData.contact.length > 0 ? (
+                  displayData.contact.map((data) => (
+                    <Tr type="tbody" key={data.contact_id}>
+                      <Td>{data.contact_id}</Td>
+                      <Td>{data.value}</Td>
+                      <Td>{data.contact_type}</Td>
+                      <Td>{data.owner_name}</Td>
+                      <Option
+                        type="edit"
+                        id={data.contact_id}
+                        onDelete={handleDeleteContact}
+                      ></Option>
+                    </Tr>
+                  ))
+                ) : (
+                  <></>
+                )}
+              </Tbody>
+            </Fragment>
+          </Table>
+          <Table></Table>
+
+          {/* ที่อยู่ */}
+          <Divider title="ข้อมูลที่อยู่" />
+          <ButtonLeftFrame>
+            <Button name="เพิ่มใหม่" disabled={true} />
+            <Button
+              name="เพิ่มที่มี"
+              type="address"
+              onClick={handleSetBackdropAddress}
+            />
+          </ButtonLeftFrame>
+          <Table>
+            <Fragment>
+              <Thead>
+                <Tr type="thead">
+                  {dataIndividual &&
+                  dataIndividual.response.address &&
+                  dataIndividual.response.address.length ? (
+                    <Fragment>
+                      {Object.keys(dataIndividual.response.address[0]).map(
+                        (columnName) => (
+                          <Fragment>
+                            <Th key={columnName}>{columnName}</Th>
+                          </Fragment>
+                        )
+                      )}
+                      <Th>ตัวเลือก</Th>
+                    </Fragment>
+                  ) : displayData.address.length > 0 ? (
+                    <Fragment>
+                      {Object.keys(displayData.address[0]).map((columnName) => (
+                        <Fragment>
+                          <Th key={columnName}>{columnName}</Th>
+                        </Fragment>
+                      ))}
+                      <Th>ตัวเลือก</Th>
+                    </Fragment>
+                  ) : (
+                    <></>
+                  )}
+                </Tr>
+              </Thead>
+              <Tbody id="address-tbody">
+                {dataIndividual &&
+                dataIndividual.response.address &&
+                dataIndividual.response.address.length ? (
+                  dataIndividual.response.address.map((data) => (
+                    <Tr type="tbody" key={data.address_id}>
+                      <Td>{data.RowNum}</Td>
+                      <Td>{data.address_id}</Td>
+                      <Td>{data.location}</Td>
+                      <Td>{data.address_type}</Td>
+                      <Option
+                        type="edit"
+                        id={data.address_id}
+                        onDelete={handleDeleteAddress}
+                      ></Option>
+                    </Tr>
+                  ))
+                ) : (
+                  <></>
+                )}
+                {displayData.address.length > 0 ? (
+                  displayData.address.map((data: Address) => (
+                    <Tr type="tbody" key={data.address_id}>
+                      <Td>{data.RowNum}</Td>
+                      <Td>{data.address_id}</Td>
+                      <Td>{data.location}</Td>
+                      <Td>{data.address_type}</Td>
+                      <Option
+                        type="edit"
+                        id={data.address_id}
+                        onDelete={handleDeleteAddress}
+                      ></Option>
+                    </Tr>
+                  ))
+                ) : (
+                  <></>
+                )}
+              </Tbody>
+            </Fragment>
+          </Table>
+          <ButtonRightFrame>
+            <Button name="บันทึก" onClick={handleConfirmEditedData} />
+
+            <Link to="/customer">
+              <Button name="ยกเลิก" />
+            </Link>
+          </ButtonRightFrame>
+        </Fragment>
+      ) : (
+        <Loading />
+      )}
     </Fragment>
   );
 }

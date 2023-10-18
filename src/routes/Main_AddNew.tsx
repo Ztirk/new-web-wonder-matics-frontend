@@ -7,15 +7,13 @@ import ButtonLeftFrame from "../components/ButtonLeftFrame";
 import Selector from "../components/Selector";
 import Table from "../components/Table";
 import ButtonRightFrame from "../components/ฺButtonRightFrame";
-import { CustomerIndividual } from "../interface/customerType";
-import {
-  fetchIndividualDataData,
-  fetchCustomerTypes,
-  postNewCustomer,
-} from "../api/customerApi";
+import { CustomerIndividual } from "../interface/dataType";
+import { fetchCustomerTypes } from "../api/getData";
+import { getPopUpData } from "../api/getPopUpData";
+import { postNewCustomer } from "../api/postNewCustomer";
 import { PopUpComponent } from "../interface/componentType";
 import AddExistPopup from "../components/AddExistPopup";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Thead from "../components/Thead";
 import Tbody from "../components/Tbody";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,53 +24,29 @@ import {
   setPersonExist,
 } from "../features/addNewReducer";
 import { MasterCode } from "../interface/mastercodeType";
+import {
+  displayState,
+  setDisplayAddress,
+  setDisplayPerson,
+} from "../features/displayReducer";
+import Tr from "../components/Tr";
+import Th from "../components/Th";
+import Td from "../components/Td";
+import { Person } from "../interface/personType";
+import Option from "../components/Option";
+import { Address } from "../interface/reduxType";
 
 export default function Main_AddNew() {
+  // เก็บข้อมูล Selector
   const [selectorData, setSelectorData] = useState<MasterCode>();
 
-  const initAddExist: CustomerIndividual = {
-    message: "",
-    status: 0,
-    response: {
-      count_data: 0,
-      customer: {
-        customer_id: 0,
-        customer_name: "",
-        customer_type_code_id: 0,
-        email: "",
-        sales_type_code_id: 0,
-        telephone: "",
-        sales_type: "",
-        customer_type: "",
-      },
-      person: [
-        {
-          person_id: 0,
-          fullname: "",
-          email: "",
-          mobile: "",
-          description: "",
-          role: "",
-        },
-      ],
-      contact: [
-        {
-          contact_id: 0,
-          contact_type: "",
-          value: "",
-        },
-      ],
-      address: [
-        {
-          address_id: 0,
-          location: "",
-          address_type: "",
-        },
-      ],
-    },
-  };
-  const [addExistData, setAddExistData] =
-    useState<CustomerIndividual>(initAddExist);
+  // โหลดข้อมูล Selector
+  useEffect(() => {
+    fetchCustomerTypes(setSelectorData);
+  }, []);
+
+  // เก็บข้อมูล
+  const [addExistData, setAddExistData] = useState<CustomerIndividual>();
 
   const defaultToggleAddExist: PopUpComponent = {
     backdrop: false,
@@ -82,26 +56,40 @@ export default function Main_AddNew() {
     defaultToggleAddExist
   );
 
-  const addNewData = useSelector(addNewState);
-  const dispatch = useDispatch();
+  useEffect(() => {
+    if (!toggleAddExist.backdrop) {
+      navigate("");
+    }
+  }, [toggleAddExist.backdrop]);
 
+  // ReactRouter
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    fetchCustomerTypes(setSelectorData);
-  }, []);
+    if (location.search) {
+      getPopUpData(setAddExistData);
+    }
+  }, [location]);
 
+  // Redux
+  const addNewData = useSelector(addNewState);
+  const displayData = useSelector(displayState);
+
+  useEffect(() => {}, [displayData]);
+
+  // เพิ่มข้อมูลใหม่เมื่อใน State ได้กรอกชื่อลูกค้า ลักษณะลูกค้า และประเภทลูกค้า แล้ว
   useEffect(() => {
-    if (addNewData.customer && addNewData.customer.customer_type_code_id) {
+    console.log(addNewData);
+    if (
+      addNewData.customer &&
+      addNewData.customer.customer_type_code_id &&
+      addNewData.customer.sales_type_code_id
+    ) {
       postNewCustomer(addNewData);
     }
   }, [addNewData]);
-
-  useEffect(() => {
-    if (location.search) {
-      fetchIndividualDataData(setAddExistData);
-    }
-  }, [location]);
 
   const handleToggleAddExist: (data: PopUpComponent) => void = (data) => {
     if (data.type == "person") {
@@ -120,56 +108,25 @@ export default function Main_AddNew() {
   const handleSelectedPerson: () => void = () => {
     const add_exist_person_id: string[] = [];
     const selectedPersonElem = document.querySelectorAll("#selected-person-id");
-    const tablePersonElem = document.getElementById("person-tbody");
-    selectedPersonElem.forEach((_elem, i) => {
-      if (selectedPersonElem[i].childNodes[0].childNodes[0].checked == true) {
-        const createTrElem = document.createElement("tr");
-        createTrElem.className = "h-[66.213px]";
-        selectedPersonElem[i].childNodes.forEach((_elem, j) => {
-          if (j > 0) {
-            const cloneNode =
-              selectedPersonElem[i].childNodes[j].cloneNode(true);
-            createTrElem.appendChild(cloneNode);
-            if (j == 1) {
-              add_exist_person_id.push(
-                selectedPersonElem[i].childNodes[j].textContent
-              );
-            }
-          }
-        });
+    const personData: Person[] = [];
 
-        const deleteButt = document.createElement("td");
-        deleteButt.className = "border border-slate-300 px-3";
-        const nav = document.createElement("nav");
-        const ul = document.createElement("ul");
-        const li = document.createElement("li");
-        li.addEventListener("click", handleDeleteAddNewData);
-        li.className = "cursor-pointer";
-        li.textContent = "ลบ";
-        ul.append(li);
-        nav.append(ul);
-        deleteButt.append(nav);
-        createTrElem.append(deleteButt);
-        tablePersonElem?.append(createTrElem);
+    selectedPersonElem.forEach((elem, i) => {
+      if (selectedPersonElem[i].childNodes[0].childNodes[0].checked == true) {
+        const childNodes = elem.childNodes;
+        const person: Person = {
+          person_id: elem.getAttribute("data-id"),
+          fullname: childNodes[3].textContent,
+          mobile: childNodes[4].textContent,
+          email: childNodes[5].textContent,
+          description: childNodes[6].textContent,
+          role: childNodes[7].textContent,
+        };
+        personData.push(person);
+        add_exist_person_id.push(elem.getAttribute("data-id"));
       }
     });
-
+    dispatch(setDisplayPerson(personData));
     dispatch(setPersonExist(add_exist_person_id));
-
-    const theadPersonTable = document.getElementById("person-thead");
-
-    const theadPersonPopup = document.getElementById("person-thead-popup");
-    if (theadPersonTable?.childNodes.length == 0 && theadPersonPopup) {
-      const cloneNode = theadPersonPopup.cloneNode(true);
-      const thElem = document.createElement("th");
-
-      thElem.className = "border border-slate-300";
-      thElem.textContent = "ลบ";
-
-      cloneNode.removeChild(cloneNode.firstChild);
-      cloneNode.appendChild(thElem);
-      theadPersonTable?.appendChild(cloneNode);
-    }
 
     handleToggleAddExistCancel();
   };
@@ -179,55 +136,21 @@ export default function Main_AddNew() {
     const selectedAddressElem = document.querySelectorAll(
       "#selected-address-id"
     );
-    const tableAddressElem = document.getElementById("address-tbody");
-    selectedAddressElem.forEach((_elem, i) => {
-      if (selectedAddressElem[i].childNodes[0].childNodes[0].checked == true) {
-        const createTrElem = document.createElement("tr");
-        createTrElem.className = "h-[66.213px]";
-        selectedAddressElem[i].childNodes.forEach((_elem, j) => {
-          if (j > 0) {
-            const cloneNode =
-              selectedAddressElem[i].childNodes[j].cloneNode(true);
-            createTrElem.appendChild(cloneNode);
-            if (j == 1) {
-              add_exist_address_id.push(
-                selectedAddressElem[i].childNodes[j].textContent
-              );
-            }
-          }
-        });
+    const addressData: Address[] = [];
 
-        const deleteButt = document.createElement("td");
-        deleteButt.className = "border border-slate-300 px-3";
-        const nav = document.createElement("nav");
-        const ul = document.createElement("ul");
-        const li = document.createElement("li");
-        li.addEventListener("click", handleDeleteAddNewData);
-        li.className = "cursor-pointer";
-        li.textContent = "ลบ";
-        ul.append(li);
-        nav.append(ul);
-        deleteButt.append(nav);
-        createTrElem.append(deleteButt);
-        tableAddressElem?.append(createTrElem);
+    selectedAddressElem.forEach((elem, i) => {
+      if (selectedAddressElem[i].childNodes[0].childNodes[0].checked == true) {
+        const address: Address = {};
+        const childNodes = elem.childNodes;
+        address["address_id"] = elem.getAttribute("data-id");
+        address["location"] = childNodes[3].textContent;
+        address["address_type"] = childNodes[4].textContent;
+        addressData.push(address);
+        add_exist_address_id.push(elem.getAttribute("data-id"));
       }
     });
-
+    dispatch(setDisplayAddress(addressData));
     dispatch(setAddressExist(add_exist_address_id));
-
-    const theadAddressTable = document.getElementById("address-thead");
-    const theadAddressPopup = document.getElementById("address-thead-popup");
-
-    if (theadAddressTable?.childNodes.length == 0 && theadAddressPopup) {
-      const trForTheadElem = theadAddressPopup.cloneNode(true);
-      trForTheadElem.removeChild(trForTheadElem.firstChild);
-      const thElem = document.createElement("th");
-
-      thElem.className = "border border-slate-300";
-      thElem.textContent = "ลบ";
-      trForTheadElem.appendChild(thElem);
-      theadAddressTable?.appendChild(trForTheadElem);
-    }
 
     handleToggleAddExistCancel();
   };
@@ -303,7 +226,6 @@ export default function Main_AddNew() {
         />
       </InputFrame>
 
-      {/* เพิ่มข้อมูลคน */}
       <Divider title="ข้อมูลคน" />
       <ButtonLeftFrame>
         <Button name="เพิ่มใหม่" disabled={true} />
@@ -319,14 +241,41 @@ export default function Main_AddNew() {
         />
       </ButtonLeftFrame>
 
-      <Table>
-        <Fragment>
-          <Thead id="person-thead"></Thead>
-          <Tbody id="person-tbody"></Tbody>
-        </Fragment>
-      </Table>
+      {/* คน */}
+      {displayData.person.length > 0 ? (
+        <Table>
+          <Fragment>
+            <Thead id="person-thead">
+              <Tr type="thead">
+                {Object.keys(displayData.person[0]).map((columnName) => (
+                  <Th key={columnName}>{columnName}</Th>
+                ))}
+                <Th>ตัวเลือก</Th>
+              </Tr>
+            </Thead>
+            <Tbody id="person-tbody">
+              {displayData.person.map((data) => (
+                <Tr type="tbody" key={data.person_id}>
+                  <Td>{data.person_id}</Td>
+                  <Td>{data.fullname}</Td>
+                  <Td>{data.email}</Td>
+                  <Td>{data.mobile}</Td>
+                  <Td>{data.description}</Td>
+                  <Td>{data.role}</Td>
+                  <Option
+                    type="edit"
+                    id={data.person_id}
+                    // onDelete={handleDeletePerson}
+                  ></Option>
+                </Tr>
+              ))}
+            </Tbody>
+          </Fragment>
+        </Table>
+      ) : (
+        <></>
+      )}
 
-      {/* เพิ่มข้อมูลผู้ติดต่อ */}
       <Divider title="ข้อมูลผู้ติดต่อ" />
       <ButtonLeftFrame>
         <Link to={`/customer/add-new-customer/add-new-contact`}>
@@ -335,9 +284,37 @@ export default function Main_AddNew() {
         <Button name="เพิ่มที่มี" disabled={true} />
       </ButtonLeftFrame>
 
-      <Table type="contact" tbody={false} option="edit" />
+      {/* ติดต่อ */}
+      {displayData.contact.length > 0 ? (
+        <Table>
+          <Thead>
+            <Tr type="thead">
+              {Object.keys(displayData.contact[0]).map((columnName) => (
+                <Td>{columnName}</Td>
+              ))}
+              <Td>ตัวเลือก</Td>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {displayData.contact.map((data) => (
+              <Tr type="tbody" key={data.contact_id}>
+                <Td>{data.contact_id}</Td>
+                <Td>{data.value}</Td>
+                <Td>{data.contact_type}</Td>
+                <Td>{data.owner_name}</Td>
+                <Option
+                  type="edit"
+                  id={data.contact_id}
+                  // onDelete={handleDeleteContact}
+                ></Option>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      ) : (
+        <></>
+      )}
 
-      {/* เพิ่มข้อมูลที่อยู่ */}
       <Divider title="ข้อมูลที่อยู่" />
       <ButtonLeftFrame>
         <Button name="เพิ่มใหม่" disabled={true} />
@@ -353,12 +330,39 @@ export default function Main_AddNew() {
         />
       </ButtonLeftFrame>
 
-      <Table>
-        <Fragment>
-          <Thead id="address-thead" />
-          <Tbody id="address-tbody" />
-        </Fragment>
-      </Table>
+      {/* ที่อยู่ */}
+      {displayData.address.length > 0 ? (
+        <Table>
+          <Fragment>
+            <Thead id="address-thead">
+              <Tr type="thead">
+                {Object.keys(displayData.contact[0]).map((columnName) => (
+                  <Td>{columnName}</Td>
+                ))}
+                <Td>ตัวเลือก</Td>
+              </Tr>
+            </Thead>
+            <Tbody id="address-tbody">
+              {displayData.address.map((data: Address) => (
+                <Tr type="tbody" key={data.address_id}>
+                  <Td>{data.RowNum}</Td>
+                  <Td>{data.address_id}</Td>
+                  <Td>{data.location}</Td>
+                  <Td>{data.address_type}</Td>
+                  <Option
+                    type="edit"
+                    id={data.address_id}
+                    // onDelete={handleDeleteAddress}
+                  ></Option>
+                </Tr>
+              ))}
+            </Tbody>
+          </Fragment>
+        </Table>
+      ) : (
+        <></>
+      )}
+
       <ButtonRightFrame>
         <Button name="บันทึก" onClick={handleAddNewData} type="submit" />
         <Link to={".."} relative="path">

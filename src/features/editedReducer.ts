@@ -15,6 +15,9 @@ const initialState = {
   personNew: [],
   personExist: [],
   personDelete: [],
+  vehicleNew: [],
+  vehicleExist: [],
+  vehicleDelete: [],
 };
 
 const defaultState = {
@@ -32,6 +35,9 @@ const defaultState = {
   personNew: [],
   personExist: [],
   personDelete: [],
+  vehicleNew: [],
+  vehicleExist: [],
+  vehicleDelete: [],
 };
 
 const editedSlice = createSlice({

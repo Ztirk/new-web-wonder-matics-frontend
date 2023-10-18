@@ -1,10 +1,11 @@
-import { ApiStatus } from "./customerType";
+import { ApiStatus } from "./dataType";
 
 export interface Person extends ApiStatus {
   response: {
     count_data: number;
     person: [
       {
+        RowNum: number;
         person_id: number;
         fullname: string;
         mobile: string;

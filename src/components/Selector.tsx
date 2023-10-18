@@ -1,4 +1,4 @@
-import { CustomerMasterCodeType } from "../interface/customerType";
+import { CustomerMasterCodeType } from "../interface/dataType";
 import { MasterCode } from "../interface/mastercodeType";
 
 interface Props {

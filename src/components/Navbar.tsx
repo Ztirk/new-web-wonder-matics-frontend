@@ -20,6 +20,12 @@ export default function Navbar() {
           <Link to="/fleet">
             <li>Fleet</li>
           </Link>
+          <Link to="/vehicle">
+            <li>vehicle</li>
+          </Link>
+          <Link to="/test">
+            <li>Test</li>
+          </Link>
         </ul>
       </nav>
     </div>

@@ -1,9 +1,9 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { PopUpComponent } from "../interface/componentType";
 import Divider from "./Divider";
 import Input from "./Input";
 import Table from "./Table";
-import { IndividualData } from "../interface/customerType";
+import { IndividualData } from "../interface/dataType";
 import FormQuery from "./FormQuery";
 import { useLocation } from "react-router-dom";
 import ButtonRightFrame from "./ฺButtonRightFrame";
@@ -13,6 +13,7 @@ import Tbody from "./Tbody";
 import Th from "./Th";
 import Tr from "./Tr";
 import Td from "./Td";
+import PopUpLoading from "./PopUpLoading";
 
 interface Props {
   toggleAddExist: PopUpComponent;
@@ -21,6 +22,7 @@ interface Props {
   onCancel: () => void;
   onConfirm: () => void;
   selectedRef: React.Ref<HTMLTableCellElement>;
+  popUpLoading: boolean;
 }
 
 export default function AddExistPopup({
@@ -28,7 +30,9 @@ export default function AddExistPopup({
   popUpData,
   onCancel,
   onConfirm,
+  popUpLoading,
 }: Props) {
+  // React-Router
   const location = useLocation();
 
   return (
@@ -40,6 +44,7 @@ export default function AddExistPopup({
             className="absolute left-0 top-0 bg-black w-full h-full z-10 opacity-50 "
             onClick={onCancel}
           ></div>
+
           <div className="absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-white w-[1000px] h-[600px] z-20 rounded-md ">
             <div className="flex flex-col gap-5 py-5 px-5">
               {/* PopUp บุคคล */}
@@ -71,81 +76,91 @@ export default function AddExistPopup({
                       <Fragment></Fragment>
                     )}
                   </FormQuery>
-                  <div className="overflow-auto border ">
-                    <Table>
-                      {popUpData &&
-                      popUpData.response.person &&
-                      popUpData.response.person.length > 0 ? (
-                        <Fragment>
-                          <Thead>
-                            <Tr type="thead" id="person-thead-popup">
-                              <Th>No</Th>
-                              {Object.keys(popUpData.response.person[0]).map(
-                                (columnName) => (
-                                  <Th key={columnName}>{columnName}</Th>
-                                )
-                              )}
-                            </Tr>
-                          </Thead>
-                          <Tbody>
-                            {popUpData.response.person.map((data) => (
-                              <Tr
-                                type="tbody"
-                                id="selected-person-id"
-                                key={data.person_id}
-                              >
-                                <Td>
-                                  <Input type="checkbox" />
-                                </Td>
-                                <Td>{data.person_id}</Td>
-                                <Td>{data.fullname}</Td>
-                                <Td>{data.mobile}</Td>
-                                <Td>{data.email}</Td>
-                                <Td>{data.description}</Td>
-                                <Td>{data.role}</Td>
+                  {!popUpLoading ? (
+                    <div className="overflow-auto border ">
+                      <Table>
+                        {/* คน */}
+                        {popUpData &&
+                        popUpData.response.person &&
+                        popUpData.response.person.length > 0 ? (
+                          <Fragment>
+                            <Thead>
+                              <Tr type="thead" id="person-thead-popup">
+                                <Th>No</Th>
+                                {Object.keys(popUpData.response.person[0]).map(
+                                  (columnName) => (
+                                    <Th key={columnName}>{columnName}</Th>
+                                  )
+                                )}
                               </Tr>
-                            ))}
-                          </Tbody>
-                        </Fragment>
-                      ) : (
-                        <></>
-                      )}
-                      {popUpData &&
-                      popUpData.response.address &&
-                      popUpData.response.address.length > 0 ? (
-                        <Fragment>
-                          <Thead>
-                            <Tr type="thead" id="address-thead-popup">
-                              <Th>No</Th>
-                              {Object.keys(popUpData.response.address[0]).map(
-                                (columnName) => (
-                                  <Th key={columnName}>{columnName}</Th>
-                                )
-                              )}
-                            </Tr>
-                          </Thead>
-                          <Tbody>
-                            {popUpData.response.address.map((data) => (
-                              <Tr
-                                type="tbody"
-                                id="selected-address-id"
-                                key={data.address_id}
-                              >
-                                <Td>
-                                  <Input type="checkbox" />
-                                </Td>
-                                <Td>{data.address_id}</Td>
-                                <Td>{data.address_type}</Td>
-                                <Td>{data.location}</Td>
+                            </Thead>
+                            <Tbody>
+                              {popUpData.response.person.map((data) => (
+                                <Tr
+                                  type="tbody"
+                                  id="selected-person-id"
+                                  key={data.person_id}
+                                  dataId={data.person_id}
+                                >
+                                  <Td>
+                                    <Input type="checkbox" />
+                                  </Td>
+                                  <Td>{data.RowNum}</Td>
+                                  <Td>{data.person_id}</Td>
+                                  <Td>{data.fullname}</Td>
+                                  <Td>{data.mobile}</Td>
+                                  <Td>{data.email}</Td>
+                                  <Td>{data.description}</Td>
+                                  <Td>{data.role}</Td>
+                                </Tr>
+                              ))}
+                            </Tbody>
+                          </Fragment>
+                        ) : (
+                          <></>
+                        )}
+                        {/* ที่อยู่ */}
+                        {popUpData &&
+                        popUpData.response.address &&
+                        popUpData.response.address.length > 0 ? (
+                          <Fragment>
+                            <Thead>
+                              <Tr type="thead" id="address-thead-popup">
+                                <Th>No</Th>
+                                {Object.keys(popUpData.response.address[0]).map(
+                                  (columnName) => (
+                                    <Th key={columnName}>{columnName}</Th>
+                                  )
+                                )}
                               </Tr>
-                            ))}
-                          </Tbody>
-                        </Fragment>
-                      ) : (
-                        <></>
-                      )}
-                    </Table>
-                  </div>
+                            </Thead>
+                            <Tbody>
+                              {popUpData.response.address.map((data) => (
+                                <Tr
+                                  type="tbody"
+                                  id="selected-address-id"
+                                  key={data.address_id}
+                                  dataId={data.address_id}
+                                >
+                                  <Td>
+                                    <Input type="checkbox" />
+                                  </Td>
+                                  <Td>{data.RowNum}</Td>
+                                  <Td>{data.address_id}</Td>
+                                  <Td>{data.address_type}</Td>
+                                  <Td>{data.location}</Td>
+                                </Tr>
+                              ))}
+                            </Tbody>
+                          </Fragment>
+                        ) : (
+                          <></>
+                        )}
+                      </Table>
+                    </div>
+                  ) : (
+                    <PopUpLoading></PopUpLoading>
+                  )}
                 </div>
               </Fragment>
 

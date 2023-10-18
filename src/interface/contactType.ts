@@ -1,4 +1,4 @@
-import { ApiStatus } from "./customerType";
+import { ApiStatus } from "./dataType";
 
 export interface Contact extends ApiStatus {
   response: {

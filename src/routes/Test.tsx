@@ -1,28 +1,17 @@
 import { useSelector, useDispatch } from "react-redux";
 import { editedState, setPersonExist } from "../features/editedReducer";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { displayState } from "../features/displayReducer";
+import Td from "../components/Td";
+import Tr from "../components/Tr";
+import { useNavigate } from "react-router-dom";
 
 export default function Test() {
-  const edited = useSelector(editedState);
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(edited);
-  }, [edited]);
+    navigate("/");
+  }, []);
 
-  const handleClick1 = () => {
-    const form = document.getElementById("form") as HTMLFormElement;
-    form.submit();
-  };
-
-  return (
-    <div>
-      <form id="form">
-        <input required placeholder="lsakjf;sda;j" />
-      </form>
-      <button type="submit" onClick={handleClick1}>
-        กด
-      </button>
-    </div>
-  );
+  return <div>kslajdfj;lkas;kljfs</div>;
 }
