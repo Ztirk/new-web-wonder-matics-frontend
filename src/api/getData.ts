@@ -60,15 +60,4 @@ export async function fetchCustomerTypes(
   }
 }
 
-export async function deleteCustomer(id: string) {
-  try {
-    const res = await fetch(`http://10.0.102.87:3001/customer/${id}`, {
-      method: "DELETE",
-    });
-    const json = await res.json();
-    console.log(json);
-    window.location.reload();
-  } catch (err) {
-    console.log(err);
-  }
-}
+

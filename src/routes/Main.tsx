@@ -6,7 +6,7 @@ import Pagination from "../components/Pagination";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { Customer } from "../interface/dataType";
 import { ToggleDelete } from "../interface/componentType";
-import { fetchData, deleteCustomer } from "../api/getData";
+import { fetchData } from "../api/getData";
 import FormQuery from "../components/FormQuery";
 import Tr from "../components/Tr";
 import Td from "../components/Td";
@@ -21,6 +21,7 @@ import { Address } from "../interface/addressType";
 import { Fleet } from "../interface/fleetType";
 import { Person } from "../interface/personType";
 import Loading from "../components/Loading";
+import { deleteCustomer } from "../api/deleteCustomer";
 
 export default function Main() {
   // เก็บข้อมูลหน้าหลัก
@@ -67,15 +68,15 @@ export default function Main() {
     e: React.MouseEvent<HTMLLIElement>
   ) => void = (e) => {
     const title = e.currentTarget.title;
-    const customerName = e.currentTarget.getAttribute("customerName");
+    const dataName = e.currentTarget.getAttribute("data-name");
     const id = e.currentTarget.id;
 
-    setToggleDelete({ active: true, title: title, name: customerName, id: id });
+    setToggleDelete({ active: true, title: title, name: dataName, id: id });
   };
 
   // ยืนยันการลบข้อมูล
   const handleDeleteConfirm: () => void = () => {
-    deleteCustomer(toggleDelete.id);
+    deleteCustomer(toggleDelete.id, module);
     handleDeleteCancel();
   };
 
@@ -208,7 +209,7 @@ export default function Main() {
                             onView={`/customer/${data.customer_id}`}
                             id={data.customer_id}
                             title="ลูกค้า"
-                            customerName={data.customer_name}
+                            data-name={data.customer_name}
                             onDelete={handleToggleDeleteShowUp}
                           ></Option>
                         </Tr>
@@ -230,7 +231,7 @@ export default function Main() {
                             onView={`/person/${data.person_id}`}
                             id={data.person_id}
                             title="ลูกค้า"
-                            customerName={data.fullname}
+                            data-name={data.fullname}
                             onDelete={handleToggleDeleteShowUp}
                           ></Option>
                         </Tr>
@@ -250,7 +251,7 @@ export default function Main() {
                             onView={`/contact/${data.contact_id}`}
                             id={data.contact_id}
                             title="ลูกค้า"
-                            customerName={data.value}
+                            data-name={data.value}
                             onDelete={handleToggleDeleteShowUp}
                           ></Option>
                         </Tr>
@@ -269,7 +270,7 @@ export default function Main() {
                             onView={`/address/${data.address_id}`}
                             id={data.address_id}
                             title="ลูกค้า"
-                            customerName={data.location}
+                            data-name={data.location}
                             onDelete={handleToggleDeleteShowUp}
                           ></Option>
                         </Tr>
@@ -288,7 +289,7 @@ export default function Main() {
                             onView={`/fleet/${data.fleet_id}`}
                             id={data.fleet_id}
                             title="ลูกค้า"
-                            customerName={data.fleet_name}
+                            data-name={data.fleet_name}
                             onDelete={handleToggleDeleteShowUp}
                           ></Option>
                         </Tr>
@@ -311,7 +312,7 @@ export default function Main() {
                             onView={`/fleet/${data.fleet_id}`}
                             id={data.fleet_id}
                             title="ลูกค้า"
-                            customerName={data.fleet_name}
+                            data-name={data.fleet_name}
                             onDelete={handleToggleDeleteShowUp}
                           ></Option>
                         </Tr>

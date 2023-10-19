@@ -21,7 +21,7 @@ export default function Navbar() {
             <li>Fleet</li>
           </Link>
           <Link to="/vehicle">
-            <li>vehicle</li>
+            <li>Vehicle</li>
           </Link>
           <Link to="/test">
             <li>Test</li>

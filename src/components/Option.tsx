@@ -10,7 +10,7 @@ interface Props {
   onDelete: () => void;
   name: string;
   title: string;
-  customerName: string;
+  dataName: string;
 }
 
 export default function Option({
@@ -19,7 +19,7 @@ export default function Option({
   onEdit,
   id,
   onDelete,
-  customerName,
+  dataName,
   title,
 }: Props) {
   return (
@@ -44,7 +44,7 @@ export default function Option({
             onClick={onDelete}
             id={id}
             className="cursor-pointer"
-            customerName={customerName}
+            data-name={dataName}
             title={title}
           >
             ลบ

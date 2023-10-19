@@ -1,6 +1,5 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useEffect } from "react";
 
 export default function Login() {
   const handleUpdate: (e: React.FormEvent<HTMLFormElement>) => void = async (

@@ -9,7 +9,7 @@ export default function MainContent({ children }: Props) {
   return (
     <div className="bg-white h-full overflow-y-scroll overflow-x-hidden">
       <div className="py-8 px-5 grid gap-5">
-        <BreadCrumbs page="customer" />
+        <BreadCrumbs />
         {children}
       </div>
     </div>

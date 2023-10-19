@@ -23,27 +23,47 @@ export interface Customer extends ApiStatus {
 export interface IndividualData extends ApiStatus {
   response: {
     count_data: number;
-    customer: {
-      customer_id: number;
-      customer_name: string;
-      customer_type_code_id: number;
-      email: string;
-      sales_type_code_id: number;
-      telephone: string;
-      sales_type: string;
-      customer_type: string;
-    };
-    person: [
-      {
-        RowNum: number;
-        person_id: number;
-        fullname: string;
-        email: string;
-        mobile: string;
-        description: string;
-        role: string;
-      }
-    ];
+    customer:
+      | {
+          customer_id: number;
+          customer_name: string;
+          customer_type_code_id: number;
+          email: string;
+          sales_type_code_id: number;
+          telephone: string;
+          sales_type: string;
+          customer_type: string;
+        }
+      | [
+          {
+            RowNum: number;
+            customer_id: number;
+            customer_name: string;
+            telephone: string;
+            email: string;
+          }
+        ];
+    person:
+      | {
+          person_id: number;
+          firstname: string;
+          lastname: string;
+          nickname: string;
+          title_code_id: number;
+          title_type: string;
+          description: string;
+        }
+      | [
+          {
+            RowNum: number;
+            person_id: number;
+            fullname: string;
+            email: string;
+            mobile: string;
+            description: string;
+            role: string;
+          }
+        ];
     contact: [
       {
         RowNum: number;

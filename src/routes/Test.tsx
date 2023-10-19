@@ -5,13 +5,21 @@ import { displayState } from "../features/displayReducer";
 import Td from "../components/Td";
 import Tr from "../components/Tr";
 import { useNavigate } from "react-router-dom";
+import { TestUnion } from "../interface/test";
 
 export default function Test() {
-  const navigate = useNavigate();
+  const data = [1, 1, 1];
 
-  useEffect(() => {
-    navigate("/");
-  }, []);
+  useEffect(() => {}, []);
 
-  return <div>kslajdfj;lkas;kljfs</div>;
+  return (
+    <div>
+      {data.map((data, i) => (
+        <div key={i}>hello</div>
+      ))}
+      {data.map((data, i) => (
+        <div key={i}>hello</div>
+      ))}
+    </div>
+  );
 }
