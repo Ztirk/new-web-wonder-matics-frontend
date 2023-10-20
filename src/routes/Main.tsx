@@ -187,6 +187,14 @@ export default function Main() {
                         Object.keys(data.response.vehicle[0]).map(
                           (columnName) => <Th key={columnName}>{columnName}</Th>
                         )
+                      ) : data.response.device ? (
+                        Object.keys(data.response.device[0]).map(
+                          (columnName) => <Th key={columnName}>{columnName}</Th>
+                        )
+                      ) : data.response.deviceSerial ? (
+                        Object.keys(data.response.deviceSerial[0]).map(
+                          (columnName) => <Th key={columnName}>{columnName}</Th>
+                        )
                       ) : (
                         <></>
                       )}
@@ -304,7 +312,52 @@ export default function Main() {
                           <Td>{data.license_plate}</Td>
                           <Td>{data.frame_no}</Td>
                           <Td>{data.vehicle_type}</Td>
-                          <Td>{data.model}</Td>
+                          <Td>{data.model_type}</Td>
+
+                          <Option
+                            type="full"
+                            onEdit={`/fleet/${data.fleet_id}/edit`}
+                            onView={`/fleet/${data.fleet_id}`}
+                            id={data.fleet_id}
+                            title="ลูกค้า"
+                            data-name={data.fleet_name}
+                            onDelete={handleToggleDeleteShowUp}
+                          ></Option>
+                        </Tr>
+                      ))
+                    ) : data.response.device ? (
+                      data.response.device.map((data) => (
+                        <Tr type="tbody" key={data.vehicle_id}>
+                          {/* รถ */}
+
+                          <Td>{data.RowNum}</Td>
+                          <Td>{data.device_id}</Td>
+                          <Td>{data.veh_id}</Td>
+                          <Td>{data.device_serial_id}</Td>
+                          <Td>{data.box_type}</Td>
+                          <Td>{data.sim_type}</Td>
+
+                          <Option
+                            type="full"
+                            onEdit={`/fleet/${data.fleet_id}/edit`}
+                            onView={`/fleet/${data.fleet_id}`}
+                            id={data.fleet_id}
+                            title="ลูกค้า"
+                            data-name={data.fleet_name}
+                            onDelete={handleToggleDeleteShowUp}
+                          ></Option>
+                        </Tr>
+                      ))
+                    ) : data.response.deviceSerial ? (
+                      data.response.deviceSerial.map((data) => (
+                        <Tr type="tbody" key={data.vehicle_id}>
+                          {/* รถ */}
+
+                          <Td>{data.RowNum}</Td>
+                          <Td>{data.device_serial_id}</Td>
+                          <Td>{data.serial_id}</Td>
+                          <Td>{data.device_type}</Td>
+                          <Td>{data.create_date}</Td>
 
                           <Option
                             type="full"

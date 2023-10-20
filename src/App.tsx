@@ -95,6 +95,30 @@ function App() {
             element={<Main_Edit />}
           ></Route>
 
+          {/* device */}
+          <Route path="/device" element={<Main />}></Route>
+          <Route
+            path="/device/add-new-device"
+            element={<Main_AddNew />}
+          ></Route>
+          <Route path="/device/:vehicle_id" element={<Main_View />}></Route>
+          <Route
+            path="/device/:vehicle_id/edit"
+            element={<Main_Edit />}
+          ></Route>
+
+          {/* device_serial */}
+          <Route path="/deviceserial" element={<Main />}></Route>
+          <Route
+            path="/deviceserial/add-new-deviceserial"
+            element={<Main_AddNew />}
+          ></Route>
+          <Route path="/deviceserial/:vehicle_id" element={<Main_View />}></Route>
+          <Route
+            path="/deviceserial/:vehicle_id/edit"
+            element={<Main_Edit />}
+          ></Route>
+
           {/* Test */}
           <Route path="/test" element={<Test />}></Route>
         </Route>

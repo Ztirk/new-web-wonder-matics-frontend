@@ -23,6 +23,12 @@ export default function Navbar() {
           <Link to="/vehicle">
             <li>Vehicle</li>
           </Link>
+          <Link to="/device">
+            <li>Device</li>
+          </Link>
+          <Link to="/deviceserial">
+            <li>Device Serial</li>
+          </Link>
           <Link to="/test">
             <li>Test</li>
           </Link>
