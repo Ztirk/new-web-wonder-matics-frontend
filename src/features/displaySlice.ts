@@ -4,12 +4,8 @@ const initialState = {
   person: [],
   contact: [],
   address: [],
-};
-
-const defaultState = {
-  person: [],
-  contact: [],
-  address: [],
+  vehicle: [],
+  fleet: [],
 };
 
 const displaySlice = createSlice({
@@ -25,6 +21,7 @@ const displaySlice = createSlice({
     },
 
     setDisplayAddress(state, action) {
+
       state.address = action.payload;
     },
 

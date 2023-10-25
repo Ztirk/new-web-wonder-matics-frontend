@@ -12,10 +12,10 @@ import {
   IndividualData,
   CustomerMasterCodeType,
   EditedData,
-} from "../interface/dataType";
-import { fetchCustomerTypes, fetchData } from "../api/getData";
+} from "../interface/customerType";
+import { getSelector } from "../api/getSelector";
 import { getPopUpData } from "../api/getPopUpData";
-import { putEditedData } from "../api/putCustomer";
+import { putEditedData } from "../api/putData";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import Tbody from "../components/Tbody";
 import Thead from "../components/Thead";
@@ -28,21 +28,20 @@ import Option from "../components/Option";
 import { useDispatch, useSelector } from "react-redux";
 import {
   editedState,
-  setAddressDelete,
-  setAddressExist,
-  setContactDelete,
-  setCustomer,
-  setDefault,
-  setPersonDelete,
-  setPersonExist,
-} from "../features/editedReducer";
+  setEditAddressDeleteInCustomer,
+  setEditAddressExistInCustomer,
+  setEditContactDeleteInCustomer,
+  setEditCustomer,
+  setEditPersonDeleteInCustomer,
+  setEditPersonExistInCustomer,
+} from "../features/editCustomerSlice";
 import Loading from "../components/Loading";
 import { Address, Person } from "../interface/reduxType";
 import {
   displayState,
   setDisplayAddress,
   setDisplayPerson,
-} from "../features/displayReducer";
+} from "../features/displaySlice";
 import { fetchIndividualData } from "../api/getIndividualData";
 
 export default function Main_Edit() {
@@ -61,7 +60,7 @@ export default function Main_Edit() {
 
   useEffect(() => {
     fetchIndividualData(id, setDataIndividal, module, setLoading);
-    fetchCustomerTypes(setSelectorData);
+    getSelector(setSelectorData);
   }, []);
 
   useEffect(() => {
@@ -125,7 +124,7 @@ export default function Main_Edit() {
     if (!customer_name || !customer_type_code_id || !sales_type_code_id) {
       alert("Fill In The Blank");
     } else {
-      dispatch(setCustomer(customer));
+      dispatch(setEditCustomer(customer));
     }
   };
 
@@ -151,7 +150,7 @@ export default function Main_Edit() {
       }
     });
     dispatch(setDisplayPerson(personData));
-    dispatch(setPersonExist(add_exist_person_id));
+    dispatch(setEditPersonExistInCustomer(add_exist_person_id));
 
     handleToggleAddExistCancel();
   };
@@ -174,7 +173,7 @@ export default function Main_Edit() {
       }
     });
     dispatch(setDisplayAddress(addressData));
-    dispatch(setAddressExist(add_exist_address_id));
+    dispatch(setEditAddressExistInCustomer(add_exist_address_id));
 
     handleToggleAddExistCancel();
   };
@@ -203,7 +202,7 @@ export default function Main_Edit() {
   ) => {
     const person_id = e.currentTarget.id;
 
-    dispatch(setPersonDelete(person_id));
+    dispatch(setEditPersonDeleteInCustomer(person_id));
 
     e.currentTarget.parentElement?.parentElement?.parentElement?.parentElement.remove();
   };
@@ -213,7 +212,7 @@ export default function Main_Edit() {
   ) => {
     const address_id = e.currentTarget.id;
 
-    dispatch(setAddressDelete(address_id));
+    dispatch(setEditAddressDeleteInCustomer(address_id));
 
     e.currentTarget.parentElement?.parentElement?.parentElement?.parentElement.remove();
   };
@@ -223,7 +222,7 @@ export default function Main_Edit() {
   ) => {
     const contact_id = e.currentTarget.id;
 
-    dispatch(setContactDelete(contact_id));
+    dispatch(setEditContactDeleteInCustomer(contact_id));
 
     e.currentTarget.parentElement?.parentElement?.parentElement?.parentElement.remove();
   };
@@ -232,19 +231,7 @@ export default function Main_Edit() {
     <Fragment>
       {!loading ? (
         <Fragment>
-          <AddExistPopup
-            popUpData={popUpData}
-            onCancel={handleToggleAddExistCancel}
-            toggleAddExist={toggleAddExist}
-            onConfirm={
-              toggleAddExist.type == "person"
-                ? handleConfirmSelectedPersonData
-                : toggleAddExist.type == "address"
-                ? handleConfirmSelectedAddressData
-                : ""
-            }
-            popUpLoading={popUpLoading}
-          />
+          <AddExistPopup popUpData={popUpData} popUpLoading={popUpLoading} />
           <Divider title="ข้อมูลลูกค้า" />
           <InputFrame>
             <Input
@@ -274,11 +261,7 @@ export default function Main_Edit() {
           <Divider title="ข้อมูลคน" />
           <ButtonLeftFrame>
             <Button name="เพิ่มใหม่" disabled={true} />
-            <Button
-              name="เพิ่มที่มี"
-              type="person"
-              onClick={handleSetBackdropPerson}
-            />
+            <Button name="เพิ่มที่มี" type="person" onClick={() => {}} />
           </ButtonLeftFrame>
           <Table>
             <Fragment>
@@ -311,8 +294,8 @@ export default function Main_Edit() {
                 )}
               </Thead>
 
-              {/* ข้อมูลในตารางของคน */}
-              <Tbody id="person-tbody">
+              {/* คน */}
+              <Tbody>
                 {dataIndividual &&
                 dataIndividual.response.person &&
                 dataIndividual.response.person.length ? (
@@ -338,6 +321,7 @@ export default function Main_Edit() {
                 {displayData.person.length > 0 ? (
                   displayData.person.map((data) => (
                     <Tr type="tbody" key={data.person_id}>
+                      <Td>-</Td>
                       <Td>{data.person_id}</Td>
                       <Td>{data.fullname}</Td>
                       <Td>{data.email}</Td>

@@ -3,7 +3,7 @@ import { PopUpComponent } from "../interface/componentType";
 import Divider from "./Divider";
 import Input from "./Input";
 import Table from "./Table";
-import { IndividualData } from "../interface/dataType";
+import { IndividualData } from "../interface/customerType";
 import FormQuery from "./FormQuery";
 import { useLocation } from "react-router-dom";
 import ButtonRightFrame from "./ฺButtonRightFrame";
@@ -14,35 +14,89 @@ import Th from "./Th";
 import Tr from "./Tr";
 import Td from "./Td";
 import PopUpLoading from "./PopUpLoading";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  popUpAddExistState,
+  setPopUpAddExistDefault,
+} from "../features/popUpAddExistSlice";
+import { setDisplayAddress, setDisplayPerson } from "../features/displaySlice";
+import {
+  setAddNewAddressExistInCustomer,
+  setAddNewPersonExistInCustomer,
+} from "../features/addNewCustomerSlice";
 
 interface Props {
-  toggleAddExist: PopUpComponent;
   dataIndividual: IndividualData;
   popUpData: IndividualData;
   onCancel: () => void;
-  onConfirm: () => void;
   selectedRef: React.Ref<HTMLTableCellElement>;
   popUpLoading: boolean;
 }
 
-export default function AddExistPopup({
-  toggleAddExist,
-  popUpData,
-  onCancel,
-  onConfirm,
-  popUpLoading,
-}: Props) {
+export default function AddExistPopup({ popUpData, popUpLoading }: Props) {
   // React-Router
   const location = useLocation();
 
+  // Redux
+  const dispatch = useDispatch();
+  const popUpAddExist = useSelector(popUpAddExistState);
+
+  const handleSelectedPerson = () => {
+    const add_exist_person_id: string[] = [];
+    const personData: Person[] = [];
+    const selectedPersonElem = document.querySelectorAll("#selected-person-id");
+
+    selectedPersonElem.forEach((elem, i) => {
+      if (selectedPersonElem[i].childNodes[0].childNodes[0].checked == true) {
+        const childNodes = elem.childNodes;
+        const person: Person = {
+          person_id: elem.getAttribute("data-id"),
+          fullname: childNodes[3].textContent,
+          mobile: childNodes[4].textContent,
+          email: childNodes[5].textContent,
+          description: childNodes[6].textContent,
+          role: childNodes[7].textContent,
+        };
+        personData.push(person);
+        add_exist_person_id.push(elem.getAttribute("data-id"));
+      }
+    });
+    dispatch(setDisplayPerson(personData));
+    dispatch(setAddNewPersonExistInCustomer(add_exist_person_id));
+    dispatch(setPopUpAddExistDefault());
+  };
+
+  const handleSelectedAddress = () => {
+    const add_exist_address_id: string[] = [];
+    const selectedAddressElem = document.querySelectorAll(
+      "#selected-address-id"
+    );
+    const addressData: Address[] = [];
+
+    selectedAddressElem.forEach((elem, i) => {
+      if (selectedAddressElem[i].childNodes[0].childNodes[0].checked == true) {
+        const address: Address = {};
+        const childNodes = elem.childNodes;
+        address["address_id"] = elem.getAttribute("data-id");
+        address["location"] = childNodes[3].textContent;
+        address["address_type"] = childNodes[4].textContent;
+        addressData.push(address);
+        add_exist_address_id.push(elem.getAttribute("data-id"));
+      }
+    });
+    dispatch(setDisplayAddress(addressData));
+    dispatch(setAddNewAddressExistInCustomer(add_exist_address_id));
+    dispatch(setPopUpAddExistDefault());
+  };
+
   return (
     <Fragment>
-      {toggleAddExist.backdrop ? (
+      {popUpAddExist.backdrop ? (
         <Fragment>
           {/* ฉากดำ */}
           <div
             className="absolute left-0 top-0 bg-black w-full h-full z-10 opacity-50 "
-            onClick={onCancel}
+            onClick={() => dispatch(setPopUpAddExistDefault())}
           ></div>
 
           <div className="absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-white w-[1000px] h-[600px] z-20 rounded-md ">
@@ -51,22 +105,22 @@ export default function AddExistPopup({
 
               <Fragment>
                 <h1 className="font-bold">
-                  {toggleAddExist.type == "person"
+                  {popUpAddExist.type == "person"
                     ? "เชื่อมโยงลูกค้า กับ บุคคล"
-                    : toggleAddExist.type == "address"
+                    : popUpAddExist.type == "address"
                     ? "เชื่อมโยงลูกค้า กับ ที่อยู่"
                     : ""}
                 </h1>
                 <Divider title="" />
                 <div className=" flex flex-col gap-5 h-[425px] ">
                   <FormQuery path={location.pathname}>
-                    {toggleAddExist.type == "person" ? (
+                    {popUpAddExist.type == "person" ? (
                       <Input
                         name="personFilter"
                         type="filter"
                         label="ข้อมูลบุคคล"
                       />
-                    ) : toggleAddExist.type == "address" ? (
+                    ) : popUpAddExist.type == "address" ? (
                       <Input
                         name="addressFilter"
                         type="filter"
@@ -165,8 +219,22 @@ export default function AddExistPopup({
               </Fragment>
 
               <ButtonRightFrame>
-                <Button name="ยืนยัน" onClick={onConfirm} />
-                <Button name="ยกเลิก" onClick={onCancel} />
+                <Button
+                  name="ยืนยัน"
+                  onClick={
+                    popUpAddExist.type == "person"
+                      ? handleSelectedPerson
+                      : popUpAddExist.type == "address"
+                      ? handleSelectedAddress
+                      : ""
+                  }
+                />
+                <Button
+                  name="ยกเลิก"
+                  onClick={() => {
+                    dispatch(setPopUpAddExistDefault());
+                  }}
+                />
               </ButtonRightFrame>
             </div>
           </div>

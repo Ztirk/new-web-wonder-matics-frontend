@@ -20,73 +20,53 @@ const initialState = {
   vehicleDelete: [],
 };
 
-const defaultState = {
-  update_by: 0,
-  customer: {
-    customer_name: "",
-    customer_type_code_id: 0,
-    sales_type_code_id: 0,
-  },
-  addressNew: [],
-  addressExist: [],
-  addressDelete: [],
-  contact: [],
-  contactDelete: [],
-  personNew: [],
-  personExist: [],
-  personDelete: [],
-  vehicleNew: [],
-  vehicleExist: [],
-  vehicleDelete: [],
-};
-
 const editedSlice = createSlice({
   name: "edited",
   initialState,
   reducers: {
-    setCustomer(state, action) {
+    setEditCustomer(state, action) {
       state.customer = action.payload;
     },
 
-    setPersonExist(state, action) {
+    setEditPersonExistInCustomer(state, action) {
       state.personExist = action.payload;
     },
 
-    setPersonDelete(state, action) {
+    setEditPersonDeleteInCustomer(state, action) {
       state.personDelete.push(action.payload);
     },
 
-    setContact(state, action) {
+    setEditContactInCustomer(state, action) {
       state.contact.push(action.payload);
     },
 
-    setContactDelete(state, action) {
+    setEditContactDeleteInCustomer(state, action) {
       state.contactDelete.push(action.payload);
     },
 
-    setAddressExist(state, action) {
+    setEditAddressExistInCustomer(state, action) {
       state.addressExist = action.payload;
     },
 
-    setAddressDelete(state, action) {
+    setEditAddressDeleteInCustomer(state, action) {
       state.addressDelete.push(action.payload);
     },
 
-    setDefault(state) {
+    setEditDefaultInCustomer(state) {
       state = defaultState;
     },
   },
 });
 
 export const {
-  setPersonExist,
-  setCustomer,
-  setContact,
-  setAddressExist,
-  setDefault,
-  setAddressDelete,
-  setPersonDelete,
-  setContactDelete,
+  setEditPersonExistInCustomer,
+  setEditCustomer,
+  setEditContactInCustomer,
+  setEditAddressExistInCustomer,
+  setEditDefaultInCustomer,
+  setEditAddressDeleteInCustomer,
+  setEditPersonDeleteInCustomer,
+  setEditContactDeleteInCustomer,
 } = editedSlice.actions;
 
 export const editedState = (state) => state.edited;

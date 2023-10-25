@@ -7,13 +7,14 @@ import { MasterCode } from "../interface/mastercodeType";
 import { getMasterCode } from "../api/getMasterCode";
 import ButtonRightFrame from "../components/ฺButtonRightFrame";
 import Button from "../components/Button";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setContact } from "../features/editedReducer";
-import { setContactNew } from "../features/addNewReducer";
-import { setDisplayContact } from "../features/displayReducer";
+import { setEditContactInCustomer } from "../features/editCustomerSlice";
+import { setAddNewContactNewInCustomer } from "../features/addNewCustomerSlice";
+import { setDisplayContact } from "../features/displaySlice";
 import InputFrame from "../components/InputFrame";
 import { Contact, putPostContact } from "../interface/reduxType";
+import { v4 as uuidv4 } from "uuid";
 
 export default function Main_AddNew_Contact() {
   const initContactType: MasterCode = {
@@ -21,6 +22,15 @@ export default function Main_AddNew_Contact() {
     status: 0,
     response: [[{ code_id: 0, category: "", class: "", value: "" }]],
   };
+
+  // React-Router
+  const location = useLocation();
+  const segments = location.pathname
+    .split("/")
+    .filter((segment) => segment !== "");
+  const menu = segments[0];
+
+  // Redux
   const [contactType, setContactType] = useState<MasterCode>(initContactType);
   const dispatch = useDispatch();
 
@@ -28,7 +38,6 @@ export default function Main_AddNew_Contact() {
     getMasterCode(setContactType, "contact", null);
   }, []);
 
-  //
   const handleAddNewContact = () => {
     const selectElem = document.getElementById(
       "ประเภทการติดต่อ"
@@ -42,12 +51,16 @@ export default function Main_AddNew_Contact() {
       document.getElementById("รายละเอียดการติดต่อ") as HTMLInputElement
     ).value;
 
+    const uuid = uuidv4();
+
     const putPostContact: putPostContact = {
+      uuid: uuid,
       contact_code_id: contact_code_id,
       value: value,
     };
 
     const displayContact: Contact = {
+      uuid: uuid,
       contact_id: "-",
       contact_type: contactType,
       value: value,
@@ -56,8 +69,13 @@ export default function Main_AddNew_Contact() {
     console.log(contactType);
 
     dispatch(setDisplayContact(displayContact));
-    dispatch(setContact(putPostContact));
-    dispatch(setContactNew(putPostContact));
+
+    if (menu == "customer") {
+      dispatch(setEditContactInCustomer(putPostContact));
+      dispatch(setAddNewContactNewInCustomer(putPostContact));
+    } else if (menu == "person") {
+    } else if (menu == "address") {
+    }
   };
 
   return (

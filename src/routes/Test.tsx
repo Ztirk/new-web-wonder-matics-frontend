@@ -1,25 +1,14 @@
-import { useSelector, useDispatch } from "react-redux";
-import { editedState, setPersonExist } from "../features/editedReducer";
-import { useEffect, useState } from "react";
-import { displayState } from "../features/displayReducer";
-import Td from "../components/Td";
-import Tr from "../components/Tr";
-import { useNavigate } from "react-router-dom";
-import { TestUnion } from "../interface/test";
+import { useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 export default function Test() {
-  const data = [1, 1, 1];
-
-  useEffect(() => {}, []);
+  const handleClick = () => {
+    console.log(uuidv4());
+  };
 
   return (
     <div>
-      {data.map((data, i) => (
-        <div key={i}>hello</div>
-      ))}
-      {data.map((data, i) => (
-        <div key={i}>hello</div>
-      ))}
+      <button onClick={handleClick}>jlkasdfjkl;daslkjf</button>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 export async function putEditedData(data: EditedData, id: string) {
   try {
-    const res = await fetch(`http://10.0.102.87:3001/customer/${id}`, {
+    const res = await fetch(`http://10.0.102.63:3001/customer/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
       headers: {
@@ -9,7 +9,10 @@ export async function putEditedData(data: EditedData, id: string) {
     });
     const json = await res.json();
     console.log(json);
-    // window.location.href = "/customer";
+
+    if (res.ok) {
+      window.location.href = "/customer";
+    }
   } catch (err) {
     console.log(err);
   }

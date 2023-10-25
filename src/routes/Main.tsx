@@ -4,7 +4,7 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import Pagination from "../components/Pagination";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
-import { Customer } from "../interface/dataType";
+import { Customer } from "../interface/customerType";
 import { ToggleDelete } from "../interface/componentType";
 import { fetchData } from "../api/getData";
 import FormQuery from "../components/FormQuery";
@@ -21,7 +21,7 @@ import { Address } from "../interface/addressType";
 import { Fleet } from "../interface/fleetType";
 import { Person } from "../interface/personType";
 import Loading from "../components/Loading";
-import { deleteCustomer } from "../api/deleteCustomer";
+import { deleteData } from "../api/deleteData";
 
 export default function Main() {
   // เก็บข้อมูลหน้าหลัก
@@ -53,14 +53,14 @@ export default function Main() {
     .filter((segment) => segment !== "");
 
   // ชื่อ Menu หลัก
-  const module = segment[0];
+  const menu = segment[0];
 
   // ค้นหา query params
   const [searchParams, setSearchParams] = useSearchParams();
 
   // เมื่อมีการเปลี่ยน path จะทำงาน
   useEffect(() => {
-    fetchData(setData, module, setLoading);
+    fetchData(setData, menu, setLoading);
   }, [location]);
 
   // แสดง PopUp ยืนยันการกดลบข้อมูลสำหรับหน้าหลัก
@@ -76,7 +76,7 @@ export default function Main() {
 
   // ยืนยันการลบข้อมูล
   const handleDeleteConfirm: () => void = () => {
-    deleteCustomer(toggleDelete.id, module);
+    deleteData(toggleDelete.id, menu);
     handleDeleteCancel();
   };
 
@@ -144,7 +144,15 @@ export default function Main() {
               name="filter"
             />
             <InputNAddNewFrame>
-              <Link to="/customer/add-new-customer">
+              <Link
+                to={
+                  menu == "customer"
+                    ? "/customer/add-new-customer"
+                    : menu == "person"
+                    ? "/person/add-new-person"
+                    : ""
+                }
+              >
                 <Button name="เพิ่มใหม่" />
               </Link>
             </InputNAddNewFrame>
@@ -290,7 +298,7 @@ export default function Main() {
                           <Td>{data.RowNum}</Td>
                           <Td>{data.fleet_id}</Td>
                           <Td>{data.fleet_name}</Td>
-                          <Td>{data.parent_fleet_id}</Td>
+                          <Td>{data.vehicle_count}</Td>
                           <Option
                             type="full"
                             onEdit={`/fleet/${data.fleet_id}/edit`}

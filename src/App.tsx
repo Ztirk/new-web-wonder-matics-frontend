@@ -38,6 +38,7 @@ function App() {
           <Route
             path="/customer/:customer_id/edit/add-new-contact"
             element={<Main_AddNew_Contact />}
+            s
           ></Route>
           <Route
             path="/customer/:customer_id/edit/add-new-person"

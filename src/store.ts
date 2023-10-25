@@ -1,8 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
-import editedReducer from "./features/editedReducer";
-import addNewReducer from "./features/addNewReducer";
-import displayReducer from "./features/displayReducer";
+import editCustomerSlice from "./features/editCustomerSlice";
+import addNewCustomerSlice from "./features/addNewCustomerSlice";
+import displaySlice from "./features/displaySlice";
+import popUpAddExistSlice from "./features/popUpAddExistSlice";
 
 export default configureStore({
-  reducer: { edited: editedReducer, addNew: addNewReducer, display: displayReducer },
+  reducer: {
+    edited: editCustomerSlice,
+    addNew: addNewCustomerSlice,
+    display: displaySlice,
+    popUpAddExist: popUpAddExistSlice,
+  },
 });

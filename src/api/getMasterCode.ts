@@ -5,7 +5,7 @@ export async function getMasterCode(
 ): Promise<void> {
   try {
     const res = await fetch(
-      `http://10.0.102.87:3001/master_code?category=${category}&class=${className}`,
+      `http://10.0.102.63:3001/master_code?category=${category}&class=${className}`,
       {
         method: "GET",
       }

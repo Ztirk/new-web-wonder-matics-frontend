@@ -10,7 +10,7 @@ export async function getPopUpData(
     setPopUpLoading(true);
     if (personFilter) {
       const res = await fetch(
-        `http://10.0.102.87:3001/person?filter=${personFilter}`,
+        `http://10.0.102.63:3001/person?filter=${personFilter}`,
         {
           method: "GET",
         }
@@ -19,7 +19,7 @@ export async function getPopUpData(
       setIndividualDataData(json);
     } else if (addressFilter) {
       const res = await fetch(
-        `http://10.0.102.87:3001/address?filter=${addressFilter}`,
+        `http://10.0.102.63:3001/address?filter=${addressFilter}`,
         {
           method: "GET",
         }

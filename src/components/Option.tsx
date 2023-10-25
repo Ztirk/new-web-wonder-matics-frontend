@@ -7,7 +7,7 @@ interface Props {
   onView: string;
   onEdit: string;
   id: string;
-  onDelete: () => void;
+  onDelete: (e: React.MouseEvent<HTMLLIElement>) => void;
   name: string;
   title: string;
   dataName: string;
