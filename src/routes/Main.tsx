@@ -4,7 +4,7 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import Pagination from "../components/Pagination";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
-import { Customer } from "../interface/customerType";
+import { Customer } from "../interface/dataType";
 import { ToggleDelete } from "../interface/componentType";
 import { fetchData } from "../api/getData";
 import FormQuery from "../components/FormQuery";

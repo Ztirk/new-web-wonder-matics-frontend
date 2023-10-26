@@ -1,16 +1,20 @@
+import axios from "axios";
+import { EditedData } from "../interface/dataType";
+
 export async function putEditedData(data: EditedData, id: string) {
   try {
-    const res = await fetch(`http://10.0.102.63:3001/customer/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const json = await res.json();
-    console.log(json);
+    const res = await axios.put(
+      `${import.meta.env.VITE_ERP_BASE_URL}/customer/${id}`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log(res.data);
 
-    if (res.ok) {
+    if (res.status == 201) {
       window.location.href = "/customer";
     }
   } catch (err) {

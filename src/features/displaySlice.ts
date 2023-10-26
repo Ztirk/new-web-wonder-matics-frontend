@@ -1,6 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { DisplayData } from "../interface/reduxType";
 
-const initialState = {
+const initialState: DisplayData = {
+  customer: [],
   person: [],
   contact: [],
   address: [],
@@ -12,7 +14,7 @@ const displaySlice = createSlice({
   name: "display",
   initialState,
   reducers: {
-    setDisplayPerson(state, action) {
+    setDisplayPerson(state, action: PayloadAction<>) {
       state.person = action.payload;
     },
 
@@ -21,7 +23,6 @@ const displaySlice = createSlice({
     },
 
     setDisplayAddress(state, action) {
-
       state.address = action.payload;
     },
 

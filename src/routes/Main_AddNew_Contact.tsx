@@ -74,7 +74,9 @@ export default function Main_AddNew_Contact() {
       dispatch(setEditContactInCustomer(putPostContact));
       dispatch(setAddNewContactNewInCustomer(putPostContact));
     } else if (menu == "person") {
+
     } else if (menu == "address") {
+      
     }
   };
 

@@ -1,16 +1,21 @@
+import axios from "axios";
+
 export async function postNewData(addNewData: AddNewData) {
   console.log(addNewData);
   console.log("hello");
   try {
-    const res = await fetch("http://10.0.102.63:3001/customer", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(addNewData),
-    });
-    const json = await res.json();
-    console.log(json);
+    const res = await axios.post(
+      `${import.meta.env.VITE_ERP_BASE_URL}/customer`,
+      addNewData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log(res.data);
 
-    if (res.ok) {
+    if (res.status == 201) {
       window.location.href = "/customer";
     }
   } catch (err) {

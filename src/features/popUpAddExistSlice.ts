@@ -9,6 +9,11 @@ const popUpAddExistSlice = createSlice({
   name: "popUpAddExist",
   initialState,
   reducers: {
+    setPopUpAddExistCustomer(state) {
+      state.backdrop = true;
+      state.type = "customer";
+    },
+
     setPopUpAddExistPerson(state) {
       state.backdrop = true;
       state.type = "person";
@@ -36,6 +41,7 @@ export const {
   setPopUpAddExistContact,
   setPopUpAddExistPerson,
   setPopUpAddExistDefault,
+  setPopUpAddExistCustomer,
 } = popUpAddExistSlice.actions;
 
 export const popUpAddExistState = (state) => state.popUpAddExist;

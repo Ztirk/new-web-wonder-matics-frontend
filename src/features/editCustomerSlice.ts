@@ -18,6 +18,9 @@ const initialState = {
   vehicleNew: [],
   vehicleExist: [],
   vehicleDelete: [],
+  fleetExist: [],
+  fleetNew: [],
+  fleetDelete: [],
 };
 
 const editedSlice = createSlice({

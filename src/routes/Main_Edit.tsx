@@ -12,7 +12,7 @@ import {
   IndividualData,
   CustomerMasterCodeType,
   EditedData,
-} from "../interface/customerType";
+} from "../interface/dataType";
 import { getSelector } from "../api/getSelector";
 import { getPopUpData } from "../api/getPopUpData";
 import { putEditedData } from "../api/putData";

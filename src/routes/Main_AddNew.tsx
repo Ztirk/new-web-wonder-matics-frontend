@@ -7,7 +7,7 @@ import ButtonLeftFrame from "../components/ButtonLeftFrame";
 import Selector from "../components/Selector";
 import Table from "../components/Table";
 import ButtonRightFrame from "../components/ฺButtonRightFrame";
-import { CustomerIndividual } from "../interface/customerType";
+import { Customer, CustomerIndividual } from "../interface/dataType";
 import { getSelector } from "../api/getSelector";
 import { getPopUpData } from "../api/getPopUpData";
 import { postNewData } from "../api/postNewData";
@@ -25,17 +25,19 @@ import {
   setAddNewPersonDeleteInCustomer,
 } from "../features/addNewCustomerSlice";
 import { MasterCode } from "../interface/mastercodeType";
-import { displayState } from "../features/displaySlice";
 import Tr from "../components/Tr";
 import Th from "../components/Th";
 import Td from "../components/Td";
 import Option from "../components/Option";
-import { Address } from "../interface/reduxType";
+import { Address, DisplayData, initialState } from "../interface/reduxType";
 import {
   popUpAddExistState,
   setPopUpAddExistAddress,
+  setPopUpAddExistCustomer,
   setPopUpAddExistPerson,
 } from "../features/popUpAddExistSlice";
+import { useAppSelector } from "../hooks";
+import { displayState } from "../features/displaySlice";
 
 export default function Main_AddNew() {
   // ReactRouter
@@ -52,12 +54,12 @@ export default function Main_AddNew() {
   const [selectorData, setSelectorData] = useState<MasterCode>();
 
   // useRef
-  const firstname = useRef();
-  const lastname = useRef();
-  const title = useRef();
-  const nickname = useRef();
-  const role = useRef();
-  const description = useRef();
+  const firstname = useRef<HTMLInputElement>(null);
+  const lastname = useRef<HTMLInputElement>(null);
+  const title = useRef<HTMLSelectElement>(null);
+  const nickname = useRef<HTMLInputElement>(null);
+  const role = useRef<HTMLSelectElement>(null);
+  const description = useRef<HTMLInputElement>(null);
 
   // เก็บข้อมูล
   const [addExistData, setAddExistData] = useState<CustomerIndividual>();
@@ -67,14 +69,14 @@ export default function Main_AddNew() {
     getSelector(setSelectorData, menu);
 
     if (location.search) {
-      getPopUpData(setAddExistData, setPopUpLoading);
+      getPopUpData(setAddExistData, setPopUpLoading, menu);
     }
   }, [location]);
 
   // Redux
   const dispatch = useDispatch();
   const addNewData = useSelector(addNewState);
-  const displayData = useSelector(displayState);
+  const displayData: DisplayData = useSelector(displayState);
   const popUpAddExist = useSelector(popUpAddExistState);
 
   useEffect(() => {
@@ -190,38 +192,44 @@ export default function Main_AddNew() {
         <Fragment>
           <Divider title="ข้อมูลบุคคล" />
           <InputFrame>
-            <Input label="ชื่อ" placeholder="ชื่อ" type="regular" name="ชื่อ" />
+            <Input
+              label="ชื่อ"
+              placeholder="ชื่อ"
+              type="regular"
+              name="ชื่อ"
+              ref={firstname}
+            />
             <Input
               label="นามสกุล"
               placeholder="นามสกุล"
               type="regular"
-              ref="นามสกุล"
+              ref={lastname}
             />
             <Selector
               label="คำนำหน้า"
               defaultValue="เลือกคำนำหน้า"
               selectorData={selectorData}
               number={0}
-              ref="ประเภทลูกค้า"
+              ref={title}
             />
             <Input
               label="ชื่อเล่น"
               placeholder="ชื่อเล่น"
               type="regular"
-              ref="ชื่อเล่น"
+              ref={nickname}
             />
             <Selector
               label="ตำแหน่ง"
               defaultValue="เลือกตำแหน่ง"
               selectorData={selectorData}
-              number={0}
-              ref="ประเภทลูกค้า"
+              number={1}
+              ref={role}
             />
             <Input
               label="รายละเอียด"
               placeholder="รายละเอียด"
               type="regular"
-              ref="รายละเอียด"
+              ref={description}
             />
           </InputFrame>
         </Fragment>
@@ -229,19 +237,79 @@ export default function Main_AddNew() {
         <></>
       )}
 
-      <Divider title="ข้อมูลคน" />
-      <ButtonLeftFrame>
-        <Button name="เพิ่มใหม่" disabled={true} />
-        <Button
-          name="เพิ่มที่มี"
-          type="person"
-          onClick={() => {
-            dispatch(setPopUpAddExistPerson());
-          }}
-        />
-      </ButtonLeftFrame>
+      {/* ลูกค้า */}
 
+      {menu !== "customer" ? (
+        <Fragment>
+          <Divider title="ข้อมูลลูกค้า" />
+          <ButtonLeftFrame>
+            <Button name="เพิ่มใหม่" disabled={true} />
+            <Button
+              name="เพิ่มที่มี"
+              type="customer"
+              onClick={() => {
+                dispatch(setPopUpAddExistCustomer());
+              }}
+            />
+          </ButtonLeftFrame>
+        </Fragment>
+      ) : (
+        <></>
+      )}
+
+      {displayData.customer.length > 0 ? (
+        <Table>
+          <Fragment>
+            <Thead id="customer-thead">
+              <Tr type="thead">
+                {Object.keys(displayData.customer[0]).map((columnName) => (
+                  <Th key={columnName}>{columnName}</Th>
+                ))}
+
+                <Th>ตัวเลือก</Th>
+              </Tr>
+            </Thead>
+            <Tbody id="customer-tbody">
+              {displayData.customer.map((data) => (
+                <Tr type="tbody" key={data.customer_id}>
+                  <Td>{data.RowNum}</Td>
+                  <Td>{data.customer_id}</Td>
+                  <Td>{data.customer_name}</Td>
+                  <Td>{data.telephone}</Td>
+                  <Td>{data.email}</Td>
+                  <Option
+                    type="edit"
+                    id={data.customer_id}
+                    onDelete={handleDeletePerson}
+                  ></Option>
+                </Tr>
+              ))}
+            </Tbody>
+          </Fragment>
+        </Table>
+      ) : (
+        <></>
+      )}
       {/* คน */}
+
+      {menu !== "person" ? (
+        <Fragment>
+          <Divider title="ข้อมูลคน" />
+          <ButtonLeftFrame>
+            <Button name="เพิ่มใหม่" disabled={true} />
+            <Button
+              name="เพิ่มที่มี"
+              type="person"
+              onClick={() => {
+                dispatch(setPopUpAddExistPerson());
+              }}
+            />
+          </ButtonLeftFrame>
+        </Fragment>
+      ) : (
+        <></>
+      )}
+
       {displayData.person.length > 0 ? (
         <Table>
           <Fragment>

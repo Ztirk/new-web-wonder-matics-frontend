@@ -1,4 +1,4 @@
-import { CustomerMasterCodeType } from "../interface/customerType";
+import { CustomerMasterCodeType } from "../interface/dataType";
 import { MasterCode } from "../interface/mastercodeType";
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
   defaultId: string;
   id: string;
   name: string;
+  ref: React.RefObject<HTMLSelectElement>;
 }
 
 export default function Selector({
@@ -19,6 +20,7 @@ export default function Selector({
   defaultId,
   id,
   name,
+  ref,
 }: Props) {
   return (
     <div className="flex flex-col">
@@ -27,6 +29,7 @@ export default function Selector({
         className="pl-3 border border-gray-400 rounded-md h-[40px] w-[240px]"
         id={id}
         name={name}
+        ref={ref}
       >
         <option id={defaultId} selected disabled>
           {defaultValue}

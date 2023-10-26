@@ -8,6 +8,7 @@ interface Props {
   name?: string;
   defaultValue?: string;
   id?: string;
+  ref: React.RefObject<HTMLInputElement>;
 }
 
 export default function Input({
@@ -17,6 +18,7 @@ export default function Input({
   name,
   defaultValue,
   id,
+  ref,
 }: Props) {
   return (
     <Fragment>
@@ -50,6 +52,7 @@ export default function Input({
             list="data"
             name={name}
             defaultValue={defaultValue == undefined ? "" : defaultValue}
+            ref={ref}
             // onKeyDown={handleEnter}
           />
 

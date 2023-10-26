@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import { fetchIndividualData } from "../api/getIndividualData";
-import { IndividualData } from "../interface/customerType";
+import { IndividualData } from "../interface/dataType";
 import { Link, useLocation } from "react-router-dom";
 import Divider from "../components/Divider";
 import Button from "../components/Button";

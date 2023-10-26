@@ -1,4 +1,5 @@
-import { CustomerMasterCodeType } from "../interface/customerType";
+import axios from "axios";
+import { CustomerMasterCodeType } from "../interface/dataType";
 
 export async function getSelector(
   setSelectorData: React.Dispatch<React.SetStateAction<CustomerMasterCodeType>>,
@@ -6,17 +7,19 @@ export async function getSelector(
 ): Promise<void> {
   try {
     if (menu == "customer") {
-      const response = await fetch(
-        `http://10.0.102.63:3001/master_code?category=customer&class=sales_type&category=customer&class=customer_type`
+      const res = await axios.get(
+        `${
+          import.meta.env.VITE_ERP_BASE_URL
+        }/master_code?category=customer&class=sales_type&category=customer&class=customer_type`
       );
-      const json = await response.json();
-      setSelectorData(json);
+      setSelectorData(res.data);
     } else if (menu == "person") {
-      const response = await fetch(
-        `http://10.0.102.63:3001/master_code?/master_code?category=person&class=title&category=role&class=null`
+      const res = await axios.get(
+        `${
+          import.meta.env.VITE_ERP_BASE_URL
+        }/master_code?category=person&class=title&category=role&class=null`
       );
-      const json = await response.json();
-      setSelectorData(json);
+      setSelectorData(res.data);
     }
   } catch (err) {
     console.log(err);

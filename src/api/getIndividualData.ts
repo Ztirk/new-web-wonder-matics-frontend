@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export async function fetchIndividualData(
   id: string,
   setDataIndividal: React.Dispatch<React.SetStateAction<IndividualData>>,
@@ -6,9 +8,10 @@ export async function fetchIndividualData(
 ): Promise<void> {
   setLoading(true);
   try {
-    const response = await fetch(`http://10.0.102.63:3001/${module}/${id}`);
-    const json = await response.json();
-    setDataIndividal(json);
+    const res = await axios.get(
+      `${import.meta.env.VITE_ERP_BASE_URL}/${module}/${id}`
+    );
+    setDataIndividal(res.data);
   } catch (err) {
     console.log(err);
   } finally {

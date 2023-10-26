@@ -3,7 +3,7 @@ import { PopUpComponent } from "../interface/componentType";
 import Divider from "./Divider";
 import Input from "./Input";
 import Table from "./Table";
-import { IndividualData } from "../interface/customerType";
+import { IndividualData } from "../interface/dataType";
 import FormQuery from "./FormQuery";
 import { useLocation } from "react-router-dom";
 import ButtonRightFrame from "./ฺButtonRightFrame";
@@ -24,11 +24,10 @@ import {
   setAddNewAddressExistInCustomer,
   setAddNewPersonExistInCustomer,
 } from "../features/addNewCustomerSlice";
+import { AddExistPopUp } from "../interface/addExistPopUpType";
 
 interface Props {
-  dataIndividual: IndividualData;
-  popUpData: IndividualData;
-  onCancel: () => void;
+  popUpData: AddExistPopUp;
   selectedRef: React.Ref<HTMLTableCellElement>;
   popUpLoading: boolean;
 }
@@ -126,6 +125,36 @@ export default function AddExistPopup({ popUpData, popUpLoading }: Props) {
                         type="filter"
                         label="ข้อมูลที่อยู่"
                       />
+                    ) : popUpAddExist.type == "customer" ? (
+                      <Input
+                        name="customerFilter"
+                        type="filter"
+                        label="ข้อมูลลูกค้า"
+                      />
+                    ) : popUpAddExist.type == "vehicle" ? (
+                      <Input
+                        name="customerFilter"
+                        type="filter"
+                        label="ข้อมูลยานพาหนะ"
+                      />
+                    ) : popUpAddExist.type == "fleet" ? (
+                      <Input
+                        name="customerFilter"
+                        type="filter"
+                        label="ข้อมูลกลุ่มยานยนต์"
+                      />
+                    ) : popUpAddExist.type == "device" ? (
+                      <Input
+                        name="customerFilter"
+                        type="filter"
+                        label="อุปกรณ์หลัก"
+                      />
+                    ) : popUpAddExist.type == "deviceSerial" ? (
+                      <Input
+                        name="customerFilter"
+                        type="filter"
+                        label="รหัสอุปกรณ์หลัก"
+                      />
                     ) : (
                       <Fragment></Fragment>
                     )}
@@ -133,6 +162,44 @@ export default function AddExistPopup({ popUpData, popUpLoading }: Props) {
                   {!popUpLoading ? (
                     <div className="overflow-auto border ">
                       <Table>
+                        {/* ลูกค้า */}
+                        {popUpData &&
+                        popUpData.response.customer &&
+                        popUpData.response.customer.length > 0 ? (
+                          <Fragment>
+                            <Thead>
+                              <Tr type="thead" id="person-thead-popup">
+                                <Th>No</Th>
+                                {Object.keys(
+                                  popUpData.response.customer[0]
+                                ).map((columnName) => (
+                                  <Th key={columnName}>{columnName}</Th>
+                                ))}
+                              </Tr>
+                            </Thead>
+                            <Tbody>
+                              {popUpData.response.customer.map((data) => (
+                                <Tr
+                                  type="tbody"
+                                  id="selected-person-id"
+                                  key={data.customer_id}
+                                  dataId={data.customer_id}
+                                >
+                                  <Td>
+                                    <Input type="checkbox" />
+                                  </Td>
+                                  <Td>{data.RowNum}</Td>
+                                  <Td>{data.customer_id}</Td>
+                                  <Td>{data.customer_name}</Td>
+                                  <Td>{data.telephone}</Td>
+                                  <Td>{data.email}</Td>
+                                </Tr>
+                              ))}
+                            </Tbody>
+                          </Fragment>
+                        ) : (
+                          <></>
+                        )}
                         {/* คน */}
                         {popUpData &&
                         popUpData.response.person &&
