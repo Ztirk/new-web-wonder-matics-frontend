@@ -122,7 +122,55 @@ export default function Main_View() {
                   />
                 </InputFrame>
               </Fragment>
-            ) : (
+            ) : !Array.isArray(individualData.response.person) &&
+            individualData.response.person.person_id ? (
+            <Fragment>
+              {/* คน */}
+              <Divider title="ข้อมูลบุคคล" />
+              <InputFrame>
+                <Input
+                  type="disable"
+                  placeholder={individualData?.response.person.firstname}
+                  label="ชื่อ"
+                  defaultValue={individualData?.response.person.firstname}
+                />
+                <Input
+                  type="disable"
+                  placeholder={individualData?.response.person.lastname}
+                  label="นามสกุล"
+                  defaultValue={individualData?.response.person.lastname}
+                />
+                <Input
+                  type="disable"
+                  placeholder={individualData?.response.person.title_type}
+                  label="คำนำหน้า"
+                  defaultValue={individualData?.response.person.title_type}
+                />
+                <Input
+                  type="disable"
+                  placeholder={individualData?.response.person.nickname}
+                  label="ชื่อเล่น"
+                  defaultValue={individualData?.response.person.nickname}
+                />
+                <Input
+                  type="disable"
+                  placeholder={
+                    individualData?.response.person.role[0].role_type
+                  }
+                  label="ตำแหน่ง"
+                  defaultValue={
+                    individualData?.response.person.role[0].role_type
+                  }
+                />
+                <Input
+                  type="disable"
+                  placeholder={individualData?.response.person.description}
+                  label="รายละเอียด"
+                  defaultValue={individualData?.response.person.description}
+                />
+              </InputFrame>
+            </Fragment>
+          ) :  (
               <></>
             )
           ) : (

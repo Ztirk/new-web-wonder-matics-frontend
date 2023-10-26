@@ -1,9 +1,7 @@
 import React, { Fragment, useState } from "react";
-import { PopUpComponent } from "../interface/componentType";
 import Divider from "./Divider";
 import Input from "./Input";
 import Table from "./Table";
-import { IndividualData } from "../interface/dataType";
 import FormQuery from "./FormQuery";
 import { useLocation } from "react-router-dom";
 import ButtonRightFrame from "./ฺButtonRightFrame";

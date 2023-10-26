@@ -4,7 +4,7 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import Pagination from "../components/Pagination";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
-import { Customer } from "../interface/dataType";
+import { Data } from "../interface/dataType";
 import { ToggleDelete } from "../interface/componentType";
 import { fetchData } from "../api/getData";
 import FormQuery from "../components/FormQuery";
@@ -16,18 +16,12 @@ import Thead from "../components/Thead";
 import Tbody from "../components/Tbody";
 import DeletePopUp from "../components/DeletePopUp";
 import InputNAddNewFrame from "../components/Input&AddNewFrame";
-import { Contact } from "../interface/contactType";
-import { Address } from "../interface/addressType";
-import { Fleet } from "../interface/fleetType";
-import { Person } from "../interface/personType";
 import Loading from "../components/Loading";
 import { deleteData } from "../api/deleteData";
 
 export default function Main() {
   // เก็บข้อมูลหน้าหลัก
-  const [data, setData] = useState<
-    Customer & Person & Contact & Address & Fleet
-  >();
+  const [data, setData] = useState<Data>();
 
   // ค่าเริ่มต้นสำหรับปุ่มลบ
   const defaultToggleDelete = {
@@ -38,7 +32,7 @@ export default function Main() {
   };
 
   // loading while fetching
-  const [loading, setLoading] = useState<Boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // ปุ่มลบข้อมูล
   const [toggleDelete, setToggleDelete] =
@@ -161,8 +155,9 @@ export default function Main() {
                 <Fragment>
                   <Thead>
                     <Tr type="thead">
-                      {data.response.customer ? (
-                        Object.keys(data?.response.customer[0]).map(
+                      {"customer" in data.response &&
+                      data.response.customer[0] ? (
+                        Object.keys(data.response.customer[0]).map(
                           (columnName) => (
                             <Th key={columnName}>
                               {columnName == "customer_name"
@@ -175,31 +170,37 @@ export default function Main() {
                             </Th>
                           )
                         )
-                      ) : data.response.person ? (
-                        Object.keys(data?.response.person[0]).map(
+                      ) : "person" in data.response &&
+                        data.response.person[0] ? (
+                        Object.keys(data.response.person[0]).map(
                           (columnName) => <Th key={columnName}>{columnName}</Th>
                         )
-                      ) : data.response.contact ? (
+                      ) : "contact" in data.response &&
+                        data.response.contact[0] ? (
                         Object.keys(data.response.contact[0]).map(
                           (columnName) => <Th key={columnName}>{columnName}</Th>
                         )
-                      ) : data.response.address ? (
+                      ) : "address" in data.response &&
+                        data.response.address[0] ? (
                         Object.keys(data.response.address[0]).map(
                           (columnName) => <Th key={columnName}>{columnName}</Th>
                         )
-                      ) : data.response.fleet ? (
+                      ) : "fleet" in data.response && data.response.fleet[0] ? (
                         Object.keys(data.response.fleet[0]).map(
                           (columnName) => <Th key={columnName}>{columnName}</Th>
                         )
-                      ) : data.response.vehicle ? (
+                      ) : "vehicle" in data.response &&
+                        data.response.vehicle[0] ? (
                         Object.keys(data.response.vehicle[0]).map(
                           (columnName) => <Th key={columnName}>{columnName}</Th>
                         )
-                      ) : data.response.device ? (
+                      ) : "device" in data.response &&
+                        data.response.device[0] ? (
                         Object.keys(data.response.device[0]).map(
                           (columnName) => <Th key={columnName}>{columnName}</Th>
                         )
-                      ) : data.response.deviceSerial ? (
+                      ) : "deviceSerial" in data.response &&
+                        data.response.deviceSerial[0] ? (
                         Object.keys(data.response.deviceSerial[0]).map(
                           (columnName) => <Th key={columnName}>{columnName}</Th>
                         )
@@ -210,7 +211,7 @@ export default function Main() {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {data.response.customer ? (
+                    {"customer" in data.response && data.response.customer ? (
                       data.response.customer.map((data) => (
                         <Tr type="tbody" key={data.customer_id}>
                           {/* ลูกค้า */}
@@ -230,7 +231,7 @@ export default function Main() {
                           ></Option>
                         </Tr>
                       ))
-                    ) : data.response.person ? (
+                    ) : "person" in data.response && data.response.person ? (
                       data.response.person.map((data) => (
                         <Tr type="tbody" key={data.person_id}>
                           {/* คน */}
@@ -252,7 +253,7 @@ export default function Main() {
                           ></Option>
                         </Tr>
                       ))
-                    ) : data.response.contact ? (
+                    ) : "contact" in data.response && data.response.contact ? (
                       data.response.contact.map((data) => (
                         <Tr type="tbody" key={data.contact_id}>
                           {/* ติดต่อ */}
@@ -272,7 +273,7 @@ export default function Main() {
                           ></Option>
                         </Tr>
                       ))
-                    ) : data.response.address ? (
+                    ) : "address" in data.response && data.response.address ? (
                       data.response.address.map((data) => (
                         <Tr type="tbody" key={data.address_id}>
                           {/* ที่อยู๋ */}
@@ -291,7 +292,7 @@ export default function Main() {
                           ></Option>
                         </Tr>
                       ))
-                    ) : data.response.fleet ? (
+                    ) : "fleet" in data.response && data.response.fleet ? (
                       data.response.fleet.map((data) => (
                         <Tr type="tbody" key={data.fleet_id}>
                           {/* ฟลีต */}
@@ -310,7 +311,7 @@ export default function Main() {
                           ></Option>
                         </Tr>
                       ))
-                    ) : data.response.vehicle ? (
+                    ) : "vehicle" in data.response && data.response.vehicle ? (
                       data.response.vehicle.map((data) => (
                         <Tr type="tbody" key={data.vehicle_id}>
                           {/* รถ */}
@@ -333,9 +334,9 @@ export default function Main() {
                           ></Option>
                         </Tr>
                       ))
-                    ) : data.response.device ? (
+                    ) : "device" in data.response && data.response.device ? (
                       data.response.device.map((data) => (
-                        <Tr type="tbody" key={data.vehicle_id}>
+                        <Tr type="tbody" key={data.device_id}>
                           {/* รถ */}
 
                           <Td>{data.RowNum}</Td>
@@ -347,18 +348,19 @@ export default function Main() {
 
                           <Option
                             type="full"
-                            onEdit={`/fleet/${data.fleet_id}/edit`}
-                            onView={`/fleet/${data.fleet_id}`}
+                            onEdit={`/device/${data.device_id}/edit`}
+                            onView={`/device/${data.device_id}`}
                             id={data.fleet_id}
                             title="ลูกค้า"
-                            data-name={data.fleet_name}
+                            data-name={data.device_id}
                             onDelete={handleToggleDeleteShowUp}
                           ></Option>
                         </Tr>
                       ))
-                    ) : data.response.deviceSerial ? (
+                    ) : "deviceSerial" in data.response &&
+                      data.response.deviceSerial ? (
                       data.response.deviceSerial.map((data) => (
-                        <Tr type="tbody" key={data.vehicle_id}>
+                        <Tr type="tbody" key={data.device_serial_id}>
                           {/* รถ */}
 
                           <Td>{data.RowNum}</Td>
@@ -369,11 +371,11 @@ export default function Main() {
 
                           <Option
                             type="full"
-                            onEdit={`/fleet/${data.fleet_id}/edit`}
-                            onView={`/fleet/${data.fleet_id}`}
-                            id={data.fleet_id}
+                            onEdit={`/deviceSerial/${data.device_serial_id}/edit`}
+                            onView={`/deviceSerial/${data.device_serial_id}`}
+                            id={data.device_serial_id}
                             title="ลูกค้า"
-                            data-name={data.fleet_name}
+                            data-name={data.device_serial_id}
                             onDelete={handleToggleDeleteShowUp}
                           ></Option>
                         </Tr>
@@ -387,12 +389,16 @@ export default function Main() {
                 <></>
               )}
             </Table>
-            <Pagination
-              counted_page={data?.response.count_data}
-              onClickPage={onClickPage}
-              increPage={increPage}
-              decrePage={decrePage}
-            />
+            {data && "count_data" in data.response ? (
+              <Pagination
+                counted_page={data.response.count_data}
+                onClickPage={onClickPage}
+                increPage={increPage}
+                decrePage={decrePage}
+              />
+            ) : (
+              <></>
+            )}
           </FormQuery>
         </Fragment>
       ) : (

@@ -7,11 +7,9 @@ import ButtonLeftFrame from "../components/ButtonLeftFrame";
 import Selector from "../components/Selector";
 import Table from "../components/Table";
 import ButtonRightFrame from "../components/ฺButtonRightFrame";
-import { Customer, CustomerIndividual } from "../interface/dataType";
 import { getSelector } from "../api/getSelector";
 import { getPopUpData } from "../api/getPopUpData";
 import { postNewData } from "../api/postNewData";
-import { PopUpComponent } from "../interface/componentType";
 import AddExistPopup from "../components/AddExistPopup";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Thead from "../components/Thead";
@@ -29,26 +27,27 @@ import Tr from "../components/Tr";
 import Th from "../components/Th";
 import Td from "../components/Td";
 import Option from "../components/Option";
-import { Address, DisplayData, initialState } from "../interface/reduxType";
+import { Address, DisplayData } from "../interface/reduxType";
 import {
   popUpAddExistState,
   setPopUpAddExistAddress,
   setPopUpAddExistCustomer,
   setPopUpAddExistPerson,
 } from "../features/popUpAddExistSlice";
-import { useAppSelector } from "../hooks";
 import { displayState } from "../features/displaySlice";
 
-export default function Main_AddNew() {
+export default function Main_AddNewNViewNEdit() {
   // ReactRouter
   const [popUpLoading, setPopUpLoading] = useState<boolean>(false);
 
-  const navigate = useNavigate();
   const location = useLocation();
   const segments = location.pathname
     .split("/")
     .filter((segment) => segment !== "");
   const menu = segments[0];
+  const addNewOid = segments[1];
+  const edit = segments[2];
+  const addNew2 = segments[3];
 
   // เก็บข้อมูล Selector
   const [selectorData, setSelectorData] = useState<MasterCode>();
@@ -62,7 +61,8 @@ export default function Main_AddNew() {
   const description = useRef<HTMLInputElement>(null);
 
   // เก็บข้อมูล
-  const [addExistData, setAddExistData] = useState<CustomerIndividual>();
+  const [addExistData, setAddExistData] = useState<Data>();
+  const [individualData, setIndividualData] = useState<>();
 
   // โหลดข้อมูล Selector
   useEffect(() => {
@@ -81,9 +81,9 @@ export default function Main_AddNew() {
 
   useEffect(() => {
     if (!popUpAddExist.backdrop) {
-      navigate("");
+      setAddExistData();
     }
-  }, [popUpAddExist.backdrop]);
+  }, [popUpAddExist]);
 
   useEffect(() => {
     console.log(displayData);
