@@ -1,17 +1,19 @@
 import { ApiStatus } from "./apiStatus";
 
+export interface AddressShape {
+  address: [AddressIterate] | [];
+}
+
+export interface AddressIterate {
+  RowNum: number;
+  address_id: number;
+  location: string;
+  address_type: string;
+}
+
 export interface Address extends ApiStatus {
   response: {
-    address:
-      | [
-          {
-            RowNum: number;
-            address_id: number;
-            location: string;
-            address_type: string;
-          }
-        ]
-      | [];
+    address: AddressShape;
   };
 }
 

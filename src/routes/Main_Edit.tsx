@@ -42,7 +42,7 @@ import {
   setDisplayAddress,
   setDisplayPerson,
 } from "../features/displaySlice";
-import { fetchIndividualData } from "../api/getIndividualData";
+import { getIndividualData } from "../api/getIndividualData";
 
 export default function Main_Edit() {
   const [dataIndividual, setDataIndividal] = useState<IndividualData>();
@@ -59,7 +59,7 @@ export default function Main_Edit() {
   );
 
   useEffect(() => {
-    fetchIndividualData(id, setDataIndividal, module, setLoading);
+    getIndividualData(id, setDataIndividal, module, setLoading);
     getSelector(setSelectorData);
   }, []);
 

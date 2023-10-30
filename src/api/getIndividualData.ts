@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export async function fetchIndividualData(
+export async function getIndividualData(
   id: string,
   setDataIndividal: React.Dispatch<React.SetStateAction<IndividualData>>,
   module: string,

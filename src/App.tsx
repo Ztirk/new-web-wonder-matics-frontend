@@ -9,7 +9,7 @@ import Login from "./routes/Login";
 import Main_AddNewNViewNEdit from "./routes/Main_AddNewNViewNEdit";
 import Frame from "./routes/Frame";
 import Main_AddNew_Contact from "./routes/Main_AddNew_Contact";
-import Main_AddNew_Person from "./routes/Main_AddNew_Person";
+import Main_AddNew_Person from "./routes/AddNewPerson";
 import Test from "./routes/test";
 
 export function App() {
@@ -106,17 +106,17 @@ export function App() {
           <Route path="/device/:device_id/edit" element={<Main_AddNewNViewNEdit />}></Route>
 
           {/* device_serial */}
-          <Route path="/deviceserial" element={<Main />}></Route>
+          <Route path="/device-serial" element={<Main />}></Route>
           <Route
-            path="/deviceserial/add-new-deviceserial"
+            path="/device-serial/add-new-device-serial"
             element={<Main_AddNewNViewNEdit />}
           ></Route>
           <Route
-            path="/deviceserial/:device_serial_id"
+            path="/device-serial/:device_serial_id"
             element={<Main_AddNewNViewNEdit />}
           ></Route>
           <Route
-            path="/deviceserial/:device_serial_id/edit"
+            path="/device-serial/:device_serial_id/edit"
             element={<Main_AddNewNViewNEdit />}
           ></Route>
 

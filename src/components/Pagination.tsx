@@ -1,4 +1,6 @@
+import { useLocation, useSearchParams } from "react-router-dom";
 import Input from "./Input";
+import { useEffect } from "react";
 
 interface Props {
   counted_page: number;
@@ -13,10 +15,26 @@ export default function Pagination({
   increPage,
   decrePage,
 }: Props) {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const createPagi = () => {
     const pagi = [];
+    let limit = 8;
+    let page = Number(searchParams.get("page"));
+    let ceil = Math.ceil(counted_page / 10);
+    if (!Number(page)) {
+      page = 1;
+    }
 
-    for (let i = 1; i <= Math.ceil(counted_page / 10); i++) {
+    if (page < 5) {
+      limit = page;
+    } else if (page > ceil - 5) {
+      limit = ceil - page;
+    } else {
+      limit = 4;
+    }
+
+    for (let i = page - limit; i <= page + limit; i++) {
       pagi.push(
         <li
           className="cursor-pointer"
@@ -41,7 +59,7 @@ export default function Pagination({
         </div>
 
         <nav>
-          <ul className="grid grid-cols-10 gap-3">{createPagi()}</ul>
+          <ul className="grid grid-cols-9 gap-3">{createPagi()}</ul>
         </nav>
 
         <div onClick={increPage} className="cursor-pointer">

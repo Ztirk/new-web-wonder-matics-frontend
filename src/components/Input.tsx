@@ -9,6 +9,7 @@ interface Props {
   defaultValue?: string;
   id?: string;
   ref: React.RefObject<HTMLInputElement>;
+  disabled: boolean;
 }
 
 export default function Input({
@@ -19,6 +20,7 @@ export default function Input({
   defaultValue,
   id,
   ref,
+  disabled,
 }: Props) {
   return (
     <Fragment>
@@ -29,7 +31,7 @@ export default function Input({
               ? " gap-5 items-center"
               : type == "pagi"
               ? " gap-2 items-center"
-              : type == "regular" || type == "disable" || type == "selector"
+              : type == "regular"
               ? "flex-col"
               : ""
           }`}
@@ -48,7 +50,7 @@ export default function Input({
               type == "pagi" ? "w-[40px]" : "w-[240px]"
             }`}
             placeholder={placeholder}
-            disabled={type == "disable" ? true : false}
+            disabled={disabled}
             list="data"
             name={name}
             defaultValue={defaultValue == undefined ? "" : defaultValue}

@@ -6,7 +6,7 @@ import Pagination from "../components/Pagination";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { Data } from "../interface/dataType";
 import { ToggleDelete } from "../interface/componentType";
-import { fetchData } from "../api/getData";
+import { getData } from "../api/getData";
 import FormQuery from "../components/FormQuery";
 import Tr from "../components/Tr";
 import Td from "../components/Td";
@@ -54,7 +54,7 @@ export default function Main() {
 
   // เมื่อมีการเปลี่ยน path จะทำงาน
   useEffect(() => {
-    fetchData(setData, menu, setLoading);
+    getData(setData, menu, setLoading);
   }, [location]);
 
   // แสดง PopUp ยืนยันการกดลบข้อมูลสำหรับหน้าหลัก
@@ -144,6 +144,18 @@ export default function Main() {
                     ? "/customer/add-new-customer"
                     : menu == "person"
                     ? "/person/add-new-person"
+                    : menu == "address"
+                    ? "/address/add-new-address"
+                    : menu == "contact"
+                    ? "/contact/add-new-contact"
+                    : menu == "vehicle"
+                    ? "/vehicle/add-new-vehicle"
+                    : menu == "fleet"
+                    ? "/fleet/add-new-fleet"
+                    : menu == "device"
+                    ? "/device/add-new-device"
+                    : menu == "device-serial"
+                    ? "/device-serial/add-new-device"
                     : ""
                 }
               >
@@ -325,11 +337,11 @@ export default function Main() {
 
                           <Option
                             type="full"
-                            onEdit={`/fleet/${data.fleet_id}/edit`}
-                            onView={`/fleet/${data.fleet_id}`}
-                            id={data.fleet_id}
+                            onEdit={`/vehicle/${data.vehicle_id}/edit`}
+                            onView={`/vehicle/${data.vehicle_id}`}
+                            id={data.vehicle_id}
                             title="ลูกค้า"
-                            data-name={data.fleet_name}
+                            data-name={data.vehicle_name}
                             onDelete={handleToggleDeleteShowUp}
                           ></Option>
                         </Tr>
@@ -350,7 +362,7 @@ export default function Main() {
                             type="full"
                             onEdit={`/device/${data.device_id}/edit`}
                             onView={`/device/${data.device_id}`}
-                            id={data.fleet_id}
+                            id={data.device_id}
                             title="ลูกค้า"
                             data-name={data.device_id}
                             onDelete={handleToggleDeleteShowUp}
@@ -371,8 +383,8 @@ export default function Main() {
 
                           <Option
                             type="full"
-                            onEdit={`/deviceSerial/${data.device_serial_id}/edit`}
-                            onView={`/deviceSerial/${data.device_serial_id}`}
+                            onEdit={`/device-serial/${data.device_serial_id}/edit`}
+                            onView={`/device-serial/${data.device_serial_id}`}
                             id={data.device_serial_id}
                             title="ลูกค้า"
                             data-name={data.device_serial_id}

@@ -1,18 +1,19 @@
 import { ApiStatus } from "./apiStatus";
 
+export interface ContactShape {
+  contact: [ContactIterate] | [];
+}
+
+export interface ContactIterate {
+  RowNum: number;
+  contact_id: number;
+  contact_type: string;
+  value: string;
+  owner_name: string;
+}
 export interface Contact extends ApiStatus {
   response: {
-    contact:
-      | [
-          {
-            RowNum: number;
-            contact_id: number;
-            contact_type: string;
-            value: string;
-            owner_name: string;
-          }
-        ]
-      | [];
+    contact: ContactShape;
   };
 }
 

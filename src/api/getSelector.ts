@@ -20,6 +20,13 @@ export async function getSelector(
         }/master_code?category=person&class=title&category=role&class=null`
       );
       setSelectorData(res.data);
+    } else if (menu == "address") {
+      const res = await axios.get(
+        `${
+          import.meta.env.VITE_ERP_BASE_URL
+        }/master_code?category=address&class=null&category=address&class=person&category=address&class=customer`
+      );
+      setSelectorData(res.data);
     }
   } catch (err) {
     console.log(err);

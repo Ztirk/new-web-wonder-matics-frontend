@@ -35,6 +35,14 @@ import {
   setPopUpAddExistPerson,
 } from "../features/popUpAddExistSlice";
 import { displayState } from "../features/displaySlice";
+import { getIndividualData } from "../api/getIndividualData";
+import { IndividualData } from "../interface/dataType";
+import { CustomerIterate, CustomerShape } from "../interface/customerType";
+import { FleetIterate, IndividualFleetShape } from "../interface/fleetType";
+import { PersonIterate } from "../interface/personType";
+import { ContactIterate } from "../interface/contactType";
+import { AddressIterate } from "../interface/addressType";
+import { VehicleIterate } from "../interface/vehicleType";
 
 export default function Main_AddNewNViewNEdit() {
   // ReactRouter
@@ -45,7 +53,7 @@ export default function Main_AddNewNViewNEdit() {
     .split("/")
     .filter((segment) => segment !== "");
   const menu = segments[0];
-  const addNewOid = segments[1];
+  const addNewOId = segments[1];
   const edit = segments[2];
   const addNew2 = segments[3];
 
@@ -62,15 +70,20 @@ export default function Main_AddNewNViewNEdit() {
 
   // เก็บข้อมูล
   const [addExistData, setAddExistData] = useState<Data>();
-  const [individualData, setIndividualData] = useState<>();
+  const [individualData, setIndividualData] = useState<IndividualData>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   // โหลดข้อมูล Selector
   useEffect(() => {
-    getSelector(setSelectorData, menu);
-
     if (location.search) {
       getPopUpData(setAddExistData, setPopUpLoading, menu);
     }
+
+    if (!isNaN(Number(addNewOId))) {
+      getIndividualData(addNewOId, setIndividualData, menu, setLoading);
+    }
+
+    getSelector(setSelectorData, menu);
   }, [location]);
 
   // Redux
@@ -169,22 +182,44 @@ export default function Main_AddNewNViewNEdit() {
             <Input
               label="ชื่อลูกค้า"
               placeholder="ชื่อลูกค้า"
+              defaultValue={
+                individualData &&
+                "customer" in individualData.response &&
+                !Array.isArray(individualData.response.customer)
+                  ? individualData.response.customer.customer_name
+                  : ""
+              }
               type="regular"
               name="ชื่อลูกค้า"
+              disabled={!isNaN(Number(addNewOId)) ? true : false}
             />
             <Selector
               label="ลักษณะลูกค้า"
-              defaultValue="เลือกลักษณะลูกค้า"
+              defaultValue={
+                individualData &&
+                "customer" in individualData.response &&
+                !Array.isArray(individualData.response.customer)
+                  ? individualData.response.customer.customer_type
+                  : "เลือกลักษณะลูกค้า"
+              }
               selectorData={selectorData}
               number={1}
               name="ลักษณะลูกค้า"
+              disabled={!isNaN(Number(addNewOId)) ? true : false}
             />
             <Selector
               label="ประเภทลูกค้า"
-              defaultValue="เลือกประเภทลูกค้า"
+              defaultValue={
+                individualData &&
+                "customer" in individualData.response &&
+                !Array.isArray(individualData.response.customer)
+                  ? individualData.response.customer.sales_type
+                  : "เลือกประเภทลูกค้า"
+              }
               selectorData={selectorData}
               number={0}
               name="ประเภทลูกค้า"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
             />
           </InputFrame>
         </Fragment>
@@ -198,12 +233,14 @@ export default function Main_AddNewNViewNEdit() {
               type="regular"
               name="ชื่อ"
               ref={firstname}
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
             />
             <Input
               label="นามสกุล"
               placeholder="นามสกุล"
               type="regular"
               ref={lastname}
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
             />
             <Selector
               label="คำนำหน้า"
@@ -211,12 +248,14 @@ export default function Main_AddNewNViewNEdit() {
               selectorData={selectorData}
               number={0}
               ref={title}
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
             />
             <Input
               label="ชื่อเล่น"
               placeholder="ชื่อเล่น"
               type="regular"
               ref={nickname}
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
             />
             <Selector
               label="ตำแหน่ง"
@@ -224,12 +263,268 @@ export default function Main_AddNewNViewNEdit() {
               selectorData={selectorData}
               number={1}
               ref={role}
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
             />
             <Input
               label="รายละเอียด"
               placeholder="รายละเอียด"
               type="regular"
               ref={description}
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+          </InputFrame>
+        </Fragment>
+      ) : menu == "address" ? (
+        <Fragment>
+          <Divider title="ข้อมูลที่อยู่" />
+          <InputFrame>
+            <Selector
+              label="ประเภทที่อยู่"
+              defaultValue="เลือกประเภทที่อยู่"
+              selectorData={selectorData}
+              number={0}
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="เลขที่"
+              placeholder="เลขที่"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="หมู่ที่"
+              placeholder="หมู่ที่"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="ซอย"
+              placeholder="ซอย"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="ถนน"
+              placeholder="ถนน"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="ตำบล/แขวง"
+              placeholder="ตำบล/แขวง"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="อำเภอ/เขต"
+              placeholder="อำเภอ/เขต"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="จังหวัด"
+              placeholder="จังหวัด"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="รหัสไปรษณีย์"
+              placeholder="รหัสไปรษณีย์"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+          </InputFrame>
+        </Fragment>
+      ) : menu == "fleet" ? (
+        <Fragment>
+          {/* ฟลีต */}
+          <Divider title="ข้อมูลฟลีต" />
+          <InputFrame>
+            <Input
+              label="ชื่อฟลีต"
+              placeholder="ชื่อฟลีต"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Selector
+              label="ชื่อหัวฟลีต"
+              defaultValue="เลือกชื่อหัวฟลีต"
+              selectorData={selectorData}
+              number={0}
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+          </InputFrame>
+        </Fragment>
+      ) : menu == "vehicle" ? (
+        <Fragment>
+          {/* ยานพาหนะ */}
+          <Divider title="ข้อมูลยานพาหนะ" />
+          <InputFrame>
+            <Selector
+              label="ประเภทยานพาหนะ"
+              defaultValue="เลือกประเภทยานพาหนะ"
+              selectorData={selectorData}
+              number={0}
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="ทะเบียนรถ"
+              placeholder="ทะเบียนรถ"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Selector
+              label="หมวดจังหวัด"
+              defaultValue="เลือกหมวดจังหวัด"
+              selectorData={selectorData}
+              number={0}
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="เลขตัวถัง"
+              placeholder="เลขตัวถัง"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Selector
+              label="ยี่ห้อยานยนต์"
+              defaultValue="เลือกยี่ห้อยานยนต์"
+              selectorData={selectorData}
+              number={0}
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Selector
+              label="รุ่นยานยนต์"
+              defaultValue="เลือกรุ่นยานยนต์"
+              selectorData={selectorData}
+              number={0}
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="ลักษณะในการจดทะเบียน"
+              placeholder="ลักษณะในการจดทะเบียน"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              type="regular"
+            />
+            <Selector
+              label="ประเภทใบขับขี่่"
+              defaultValue="เลือกประเภทใบขับขี่่"
+              selectorData={selectorData}
+              number={0}
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="จำนวนเพลา"
+              placeholder="จำนวนเพลา"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="จำนวนกงล้อ"
+              placeholder="จำนวนกงล้อ"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="จำนวนยาง"
+              placeholder="จำนวนยาง"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+          </InputFrame>
+          <Divider title="ค่ากำหนด" />
+          <InputFrame>
+            <Input
+              label="ความเร็วสูงสุด"
+              placeholder="ความเร็วสูงสุด"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="เวลา idel (นาที)"
+              placeholder="เวลา idel (นาที)"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="fuel tank number"
+              placeholder="fuel tank number"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="fuel tank capacity"
+              placeholder="fuel tank capacity"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="max fuel voltage 1"
+              placeholder="max fuel voltage 1"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="max fuel voltage 2"
+              placeholder="max fuel voltage 2"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+          </InputFrame>
+        </Fragment>
+      ) : menu == "device" ? (
+        <Fragment>
+          {/* อุปกรณ์ */}
+          <Divider title="ข้อมูลอุปกรณ์" />
+          <InputFrame>
+            <Input
+              label="device_id"
+              placeholder="device_id"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="veh_id"
+              placeholder="veh_id"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="วันที่เพิ่ม"
+              placeholder="วันที่เพิ่ม"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+          </InputFrame>
+        </Fragment>
+      ) : menu == "device-serial" ? (
+        <Fragment>
+          <Divider title="ข้อมูลชุดอุปกรณ์" />
+          <InputFrame>
+            <Input
+              label="device_serial"
+              placeholder="device_serial"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="IMEI"
+              placeholder="IMEI"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Selector
+              label="ประเภทกล่อง"
+              defaultValue="เลือกประเภทกล่อง"
+              selectorData={selectorData}
+              number={0}
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
+            />
+            <Input
+              label="วันที่เพิ่ม"
+              placeholder="วันที่เพิ่ม"
+              type="regular"
+              disabled={!isNaN(Number(addNewOId)) ? true : true}
             />
           </InputFrame>
         </Fragment>
@@ -239,25 +534,59 @@ export default function Main_AddNewNViewNEdit() {
 
       {/* ลูกค้า */}
 
-      {menu !== "customer" ? (
+      {menu == "person" || menu == "vehicle" || menu == "fleet" ? (
         <Fragment>
           <Divider title="ข้อมูลลูกค้า" />
-          <ButtonLeftFrame>
-            <Button name="เพิ่มใหม่" disabled={true} />
-            <Button
-              name="เพิ่มที่มี"
-              type="customer"
-              onClick={() => {
-                dispatch(setPopUpAddExistCustomer());
-              }}
-            />
-          </ButtonLeftFrame>
+          {edit || isNaN(Number(addNewOId)) ? (
+            <ButtonLeftFrame>
+              <Button name="เพิ่มใหม่" />
+              <Button
+                name="เพิ่มที่มี"
+                type="customer"
+                onClick={() => {
+                  dispatch(setPopUpAddExistCustomer());
+                }}
+              />
+            </ButtonLeftFrame>
+          ) : (
+            <></>
+          )}
         </Fragment>
       ) : (
         <></>
       )}
 
-      {displayData.customer.length > 0 ? (
+      {individualData &&
+      "customer" in individualData.response &&
+      Array.isArray(individualData.response.customer) &&
+      individualData.response.customer.length > 0 ? (
+        <Table>
+          <Thead>
+            <Tr type="thead">
+              {Object.keys(individualData?.response.customer[0]).map(
+                (columnName, i) => (
+                  <Th key={i}>{columnName}</Th>
+                )
+              )}
+            </Tr>
+          </Thead>
+          <Tbody>
+            {individualData.response.customer.map((data: CustomerIterate) => (
+              <Tr type="tbody" key={data.customer_id}>
+                <Td>{data.RowNum}</Td>
+                <Td>{data.customer_id}</Td>
+                <Td>{data.customer_name}</Td>
+                <Td>{data.email}</Td>
+                <Td>{data.telephone}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      ) : (
+        <></>
+      )}
+
+      {displayData.customer.length ? (
         <Table>
           <Fragment>
             <Thead id="customer-thead">
@@ -290,27 +619,66 @@ export default function Main_AddNewNViewNEdit() {
       ) : (
         <></>
       )}
-      {/* คน */}
+      {/* บุคคล */}
 
-      {menu !== "person" ? (
+      {menu == "customer" ||
+      menu == "fleet" ||
+      menu == "vehicle" ||
+      menu == "fleet" ? (
         <Fragment>
-          <Divider title="ข้อมูลคน" />
-          <ButtonLeftFrame>
-            <Button name="เพิ่มใหม่" disabled={true} />
-            <Button
-              name="เพิ่มที่มี"
-              type="person"
-              onClick={() => {
-                dispatch(setPopUpAddExistPerson());
-              }}
-            />
-          </ButtonLeftFrame>
+          <Divider title="ข้อมูลบุคคล" />
+          {edit || isNaN(Number(addNewOId)) ? (
+            <ButtonLeftFrame>
+              <Button name="เพิ่มใหม่" />
+              <Button
+                name="เพิ่มที่มี"
+                type="person"
+                onClick={() => {
+                  dispatch(setPopUpAddExistPerson());
+                }}
+              />
+            </ButtonLeftFrame>
+          ) : (
+            <></>
+          )}
         </Fragment>
       ) : (
         <></>
       )}
 
-      {displayData.person.length > 0 ? (
+      {individualData &&
+      "person" in individualData.response &&
+      Array.isArray(individualData.response.person) &&
+      individualData.response.person.length > 0 ? (
+        <Table>
+          <Thead>
+            <Tr type="thead">
+              {Object.keys(individualData?.response.person[0]).map(
+                (columnName, i) => (
+                  <Th key={i}>{columnName}</Th>
+                )
+              )}
+            </Tr>
+          </Thead>
+          <Tbody>
+            {individualData.response.person.map((data) => (
+              <Tr type="tbody" key={data.person_id}>
+                <Td>{data.RowNum}</Td>
+                <Td>{data.person_id}</Td>
+                <Td>{data.fullname}</Td>
+                <Td>{data.mobile}</Td>
+                <Td>{data.email}</Td>
+                <Td>{data.description}</Td>
+                <Td>{data.role}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      ) : (
+        <></>
+      )}
+
+      {displayData.person.length ? (
         <Table>
           <Fragment>
             <Thead id="person-thead">
@@ -322,7 +690,7 @@ export default function Main_AddNewNViewNEdit() {
               </Tr>
             </Thead>
             <Tbody id="person-tbody">
-              {displayData.person.map((data) => (
+              {displayData.person.map((data: PersonIterate) => (
                 <Tr type="tbody" key={data.person_id}>
                   <Td>{data.person_id}</Td>
                   <Td>{data.fullname}</Td>
@@ -344,16 +712,57 @@ export default function Main_AddNewNViewNEdit() {
         <></>
       )}
 
-      <Divider title="ข้อมูลผู้ติดต่อ" />
-      <ButtonLeftFrame>
-        <Link to={`/customer/add-new-customer/add-new-contact`}>
-          <Button name="เพิ่มใหม่" />
-        </Link>
-        <Button name="เพิ่มที่มี" disabled={true} />
-      </ButtonLeftFrame>
-
       {/* ติดต่อ */}
-      {displayData.contact.length > 0 ? (
+
+      {menu == "customer" ? (
+        <Fragment>
+          <Divider title="ข้อมูลผู้ติดต่อ" />
+          {edit || isNaN(Number(addNewOId)) ? (
+            <ButtonLeftFrame>
+              <Link to={`/customer/add-new-customer/add-new-contact`}>
+                <Button name="เพิ่มใหม่" />
+              </Link>
+              <Button name="เพิ่มที่มี" />
+            </ButtonLeftFrame>
+          ) : (
+            <></>
+          )}
+        </Fragment>
+      ) : (
+        <></>
+      )}
+
+      {individualData &&
+      "contact" in individualData.response &&
+      Array.isArray(individualData.response.contact) &&
+      individualData.response.contact.length > 0 ? (
+        <Table>
+          <Thead>
+            <Tr type="thead">
+              {Object.keys(individualData?.response.contact[0]).map(
+                (columnName, i) => (
+                  <Th key={i}>{columnName}</Th>
+                )
+              )}
+            </Tr>
+          </Thead>
+          <Tbody>
+            {individualData.response.contact.map((data: ContactIterate) => (
+              <Tr type="tbody" key={data.contact_id}>
+                <Td>{data.RowNum}</Td>
+                <Td>{data.contact_id}</Td>
+                <Td>{data.value}</Td>
+                <Td>{data.contact_type}</Td>
+                <Td>{data.owner_name}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      ) : (
+        <></>
+      )}
+
+      {displayData.contact.length ? (
         <Table>
           <Thead>
             <Tr type="thead">
@@ -383,25 +792,240 @@ export default function Main_AddNewNViewNEdit() {
         <></>
       )}
 
-      <Divider title="ข้อมูลที่อยู่" />
-      <ButtonLeftFrame>
-        <Button name="เพิ่มใหม่" disabled={true} />
-        <Button
-          name="เพิ่มที่มี"
-          type="address"
-          onClick={() => {
-            dispatch(setPopUpAddExistAddress());
-          }}
-        />
-      </ButtonLeftFrame>
-
       {/* ที่อยู่ */}
-      {displayData.address.length > 0 ? (
+      {menu == "customer" ? (
+        <Fragment>
+          <Divider title="ข้อมูลที่อยู่" />
+          {edit || isNaN(Number(addNewOId)) ? (
+            <ButtonLeftFrame>
+              <Button name="เพิ่มใหม่" />
+              <Button
+                name="เพิ่มที่มี"
+                type="address"
+                onClick={() => {
+                  dispatch(setPopUpAddExistAddress());
+                }}
+              />
+            </ButtonLeftFrame>
+          ) : (
+            <></>
+          )}
+        </Fragment>
+      ) : (
+        <></>
+      )}
+
+      {individualData &&
+      "address" in individualData.response &&
+      Array.isArray(individualData.response.address) &&
+      individualData.response.address.length > 0 ? (
+        <Table>
+          <Thead>
+            <Tr type="thead">
+              {Object.keys(individualData?.response.address[0]).map(
+                (columnName, i) => (
+                  <Fragment>
+                    <Th key={i}>{columnName}</Th>
+                  </Fragment>
+                )
+              )}
+            </Tr>
+          </Thead>
+          <Tbody>
+            {individualData.response.address.map((data: AddressIterate) => (
+              <Tr type="tbody" key={data.address_id}>
+                <Td>{data.RowNum}</Td>
+                <Td>{data.address_id}</Td>
+                <Td>{data.address_type}</Td>
+                <Td>{data.location}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      ) : (
+        <></>
+      )}
+
+      {displayData.address.length ? (
         <Table>
           <Fragment>
             <Thead id="address-thead">
               <Tr type="thead">
                 {Object.keys(displayData.address[0]).map((columnName) => (
+                  <Td>{columnName}</Td>
+                ))}
+                <Td>ตัวเลือก</Td>
+              </Tr>
+            </Thead>
+            <Tbody id="address-tbody">
+              {displayData.address.map((data: Address) => (
+                <Tr type="tbody" key={data.address_id}>
+                  <Td>{data.address_id}</Td>
+                  <Td>{data.location}</Td>
+                  <Td>{data.address_type}</Td>
+                  <Option
+                    type="edit"
+                    id={data.address_id}
+                    onDelete={handleDeleteAddress}
+                  ></Option>
+                </Tr>
+              ))}
+            </Tbody>
+          </Fragment>
+        </Table>
+      ) : (
+        <></>
+      )}
+
+      {/* ฟลีต */}
+
+      {menu == "customer" ? (
+        <Fragment>
+          <Divider title="ข้อมูลฟลีต" />
+          {edit || isNaN(Number(addNewOId)) ? (
+            <ButtonLeftFrame>
+              <Button name="เพิ่มใหม่" />
+              <Button
+                name="เพิ่มที่มี"
+                type="address"
+                onClick={() => {
+                  dispatch(setPopUpAddExistAddress());
+                }}
+              />
+            </ButtonLeftFrame>
+          ) : (
+            <></>
+          )}
+        </Fragment>
+      ) : (
+        <></>
+      )}
+
+      {individualData &&
+      "fleet" in individualData.response &&
+      Array.isArray(individualData.response.fleet) &&
+      individualData.response.fleet.length > 0 ? (
+        <Table>
+          <Thead>
+            <Tr type="thead">
+              {Object.keys(individualData?.response.fleet[0]).map(
+                (columnName, i) => (
+                  <Fragment>
+                    <Th key={i}>{columnName}</Th>
+                  </Fragment>
+                )
+              )}
+            </Tr>
+          </Thead>
+          <Tbody>
+            {individualData.response.fleet.map((data: FleetIterate) => (
+              <Tr type="tbody" key={data.fleet_id}>
+                <Td>{data.RowNum}</Td>
+                <Td>{data.fleet_id}</Td>
+                <Td>{data.fleet_name}</Td>
+                <Td>{data.vehicle_count}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      ) : (
+        <></>
+      )}
+
+      {displayData.fleet.length ? (
+        <Table>
+          <Fragment>
+            <Thead id="address-thead">
+              <Tr type="thead">
+                {Object.keys(displayData.fleet[0]).map((columnName) => (
+                  <Td>{columnName}</Td>
+                ))}
+                <Td>ตัวเลือก</Td>
+              </Tr>
+            </Thead>
+            <Tbody id="address-tbody">
+              {displayData.address.map((data: Address) => (
+                <Tr type="tbody" key={data.address_id}>
+                  <Td>{data.address_id}</Td>
+                  <Td>{data.location}</Td>
+                  <Td>{data.address_type}</Td>
+                  <Option
+                    type="edit"
+                    id={data.address_id}
+                    onDelete={handleDeleteAddress}
+                  ></Option>
+                </Tr>
+              ))}
+            </Tbody>
+          </Fragment>
+        </Table>
+      ) : (
+        <></>
+      )}
+      {/* ยานพาหนะ */}
+
+      {menu == "customer" || menu == "person" || menu == "fleet" ? (
+        <Fragment>
+          <Divider title="ข้อมูลยานพาหนะ" />
+
+          {edit || isNaN(Number(addNewOId)) ? (
+            <ButtonLeftFrame>
+              <Button name="เพิ่มใหม่" />
+              <Button
+                name="เพิ่มที่มี"
+                type="address"
+                onClick={() => {
+                  dispatch(setPopUpAddExistAddress());
+                }}
+              />
+            </ButtonLeftFrame>
+          ) : (
+            <></>
+          )}
+        </Fragment>
+      ) : (
+        <></>
+      )}
+
+      {individualData &&
+      "vehicle" in individualData.response &&
+      Array.isArray(individualData.response.vehicle) &&
+      individualData.response.vehicle.length > 0 ? (
+        <Table>
+          <Thead>
+            <Tr type="thead">
+              {Object.keys(individualData?.response.vehicle[0]).map(
+                (columnName, i) => (
+                  <Fragment>
+                    <Th key={i}>{columnName}</Th>
+                  </Fragment>
+                )
+              )}
+            </Tr>
+          </Thead>
+          <Tbody>
+            {individualData.response.vehicle.map((data: VehicleIterate) => (
+              <Tr type="tbody" key={data.vehicle_id}>
+                <Td>{data.RowNum}</Td>
+                <Td>{data.vehicle_id}</Td>
+                <Td>{data.license_plate}</Td>
+                <Td>{data.frame_no}</Td>
+                <Td>{data.vehicle_type}</Td>
+                <Td>{data.model_type}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      ) : (
+        <></>
+      )}
+
+      {displayData.fleet.length > 0 ? (
+        <Table>
+          <Fragment>
+            <Thead id="address-thead">
+              <Tr type="thead">
+                {Object.keys(displayData.vehicle[0]).map((columnName) => (
                   <Td>{columnName}</Td>
                 ))}
                 <Td>ตัวเลือก</Td>

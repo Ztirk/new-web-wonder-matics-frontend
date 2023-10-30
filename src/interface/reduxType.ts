@@ -1,3 +1,12 @@
+import { AddressShape } from "./addressType";
+import { ContactShape } from "./contactType";
+import { CustomerShape } from "./customerType";
+import { DeviceSerialShape } from "./deviceSerialType";
+import { DeviceShape } from "./deviceType";
+import { FleetShape } from "./fleetType";
+import { PersonShape } from "./personType";
+import { VehicleShape } from "./vehicleType";
+
 export interface setContact {
   contact_code_id: number;
   value: string;
@@ -8,47 +17,14 @@ export interface putPostContact {
   value: string;
 }
 
-export interface DisplayData {
-  customer:
-    | [
-        {
-          RowNum: number;
-          customer_id: number;
-          customer_name: string;
-          email: string;
-          telephone: string;
-        }
-      ]
-    | [];
-  address:
-    | [{ address_id: number; location: string; address_type: string }]
-    | [];
-  contact:
-    | [
-        {
-          uuid: string;
-          contact_id: number;
-          value: string;
-          contact_type: string;
-          owner_name: string;
-        }
-      ]
-    | [];
-  person:
-    | [
-        {
-          person_id: number;
-          fullname: string;
-          mobile: string;
-          email: string;
-          description: string;
-          role: string;
-        }
-      ]
-    | [];
-  vehicle: [];
-  fleet: [];
-}
+export type DisplayData = CustomerShape &
+  PersonShape &
+  AddressShape &
+  ContactShape &
+  VehicleShape &
+  FleetShape &
+  DeviceSerialShape &
+  DeviceShape;
 
 export interface EditedCustomer {
   update_by: number;

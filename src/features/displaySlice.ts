@@ -8,6 +8,8 @@ const initialState: DisplayData = {
   address: [],
   vehicle: [],
   fleet: [],
+  device: [],
+  deviceSerial: [],
 };
 
 const displaySlice = createSlice({

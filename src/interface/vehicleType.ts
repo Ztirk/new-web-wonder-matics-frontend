@@ -1,19 +1,21 @@
 import { ApiStatus } from "./apiStatus";
 
+export interface VehicleShape {
+  vehicle: [VehicleIterate] | [];
+}
+
+export interface VehicleIterate {
+  RowNum: number;
+  vehicle_id: number;
+  license_plate: string;
+  frame_no: string;
+  vehicle_type: string;
+  model_type: string;
+}
+
 export interface Vehicle extends ApiStatus {
   response: {
-    vehicle:
-      | [
-          {
-            RowNum: number;
-            vehicle_id: number;
-            license_plate: string;
-            frame_no: string;
-            vehicle_type: string;
-            model: string;
-          }
-        ]
-      | [];
+    vehicle: VehicleShape;
   };
 }
 

@@ -1,27 +1,31 @@
 import { ApiStatus } from "./apiStatus";
 
+export interface FleetShape {
+  fleet: [FleetIterate] | [];
+}
+
+export interface FleetIterate {
+  RowNum: number;
+  fleet_id: number;
+  fleet_name: string;
+  vehicle_count: number;
+}
+
 export interface Fleet extends ApiStatus {
   response: {
-    fleet:
-      | [
-          {
-            RowNum: number;
-            fleet_id: number;
-            fleet_name: string;
-            vehicle_count: number;
-          }
-        ]
-      | [];
+    fleet: FleetShape;
   };
 }
 
 export interface IndividualFleet extends ApiStatus {
-  fleet:
-    | {
-        RowNum: number;
-        fleet_id: number;
-        fleet_name: string;
-        vehicle_count: number;
-      }
-    | Fleet;
+  response: {
+    fleet:
+      | {
+          RowNum: number;
+          fleet_id: number;
+          fleet_name: string;
+          vehicle_count: number;
+        }
+      | Fleet;
+  };
 }

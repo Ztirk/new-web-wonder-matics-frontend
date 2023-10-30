@@ -26,7 +26,7 @@ export default function Navbar() {
           <Link to="/device">
             <li>Device</li>
           </Link>
-          <Link to="/deviceserial">
+          <Link to="/device-serial">
             <li>Device Serial</li>
           </Link>
           <Link to="/test">

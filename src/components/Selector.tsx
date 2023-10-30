@@ -10,6 +10,7 @@ interface Props {
   id: string;
   name: string;
   ref: React.RefObject<HTMLSelectElement>;
+  disabled: boolean;
 }
 
 export default function Selector({
@@ -21,6 +22,7 @@ export default function Selector({
   id,
   name,
   ref,
+  disabled,
 }: Props) {
   return (
     <div className="flex flex-col">
@@ -30,6 +32,7 @@ export default function Selector({
         id={id}
         name={name}
         ref={ref}
+        disabled={disabled}
       >
         <option id={defaultId} selected disabled>
           {defaultValue}

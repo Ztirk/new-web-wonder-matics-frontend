@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Divider from "../components/Divider";
 import Input from "../components/Input";
-import Form from "../components/Form";
 import Selector from "../components/Selector";
 import { MasterCode } from "../interface/mastercodeType";
 import { getMasterCode } from "../api/getMasterCode";

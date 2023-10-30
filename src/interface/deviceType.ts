@@ -1,17 +1,21 @@
 import { ApiStatus } from "./apiStatus";
 
+export interface DeviceShape {
+  device: [DeviceSerialIterate] | [];
+}
+
+export interface DeviceSerialIterate {
+  RowNum: number;
+  device_id: number;
+  veh_id: number;
+  device_serial_id: number;
+  box_type: string;
+  sim_type: string;
+}
+
 export interface Device extends ApiStatus {
   response: {
-    device: [
-      {
-        RowNum: number;
-        device_id: number;
-        veh_id: number;
-        device_serial_id: number;
-        box_type: string;
-        sim_type: string;
-      }
-    ];
+    device: DeviceShape;
   };
 }
 
