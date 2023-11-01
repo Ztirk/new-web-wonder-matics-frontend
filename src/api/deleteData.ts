@@ -2,6 +2,9 @@ import axios from "axios";
 
 export async function deleteData(id: string, module: string) {
   try {
+    if (module == "device-serial") {
+      module = "deviceSerial";
+    }
     const res = await axios.delete(
       `${import.meta.env.VITE_ERP_BASE_URL}/${module}/${id}`,
       {

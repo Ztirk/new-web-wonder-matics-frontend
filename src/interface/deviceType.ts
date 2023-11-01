@@ -1,9 +1,5 @@
 import { ApiStatus } from "./apiStatus";
 
-export interface DeviceShape {
-  device: [DeviceSerialIterate] | [];
-}
-
 export interface DeviceSerialIterate {
   RowNum: number;
   device_id: number;
@@ -15,7 +11,7 @@ export interface DeviceSerialIterate {
 
 export interface Device extends ApiStatus {
   response: {
-    device: DeviceShape;
+    device: DeviceSerialIterate[] | [];
   };
 }
 

@@ -13,16 +13,11 @@ import Tr from "./Tr";
 import Td from "./Td";
 import PopUpLoading from "./PopUpLoading";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  popUpAddExistState,
-  setPopUpAddExistDefault,
-} from "../features/popUpAddExistSlice";
+
 import { setDisplayAddress, setDisplayPerson } from "../features/displaySlice";
-import {
-  setAddNewAddressExistInCustomer,
-  setAddNewPersonExistInCustomer,
-} from "../features/addNewCustomerSlice";
+
 import { AddExistPopUp } from "../interface/addExistPopUpType";
+import { popUpAddExistState } from "../features/popUpAddExistSlice";
 
 interface Props {
   popUpData: AddExistPopUp;

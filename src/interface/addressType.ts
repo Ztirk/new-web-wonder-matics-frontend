@@ -1,9 +1,5 @@
 import { ApiStatus } from "./apiStatus";
 
-export interface AddressShape {
-  address: [AddressIterate] | [];
-}
-
 export interface AddressIterate {
   RowNum: number;
   address_id: number;
@@ -13,7 +9,8 @@ export interface AddressIterate {
 
 export interface Address extends ApiStatus {
   response: {
-    address: AddressShape;
+    count_data: number;
+    address: AddressIterate[] | [];
   };
 }
 

@@ -9,6 +9,9 @@ export async function getData(
 ): Promise<void> {
   setLoading(true);
   try {
+    if (module == "device-serial") {
+      module = "deviceSerial";
+    }
     const url = new URL(window.location.href);
     let page = url.searchParams.get("page");
     const filter = url.searchParams.get("filter");

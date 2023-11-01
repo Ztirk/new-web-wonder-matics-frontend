@@ -15,25 +15,13 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Thead from "../components/Thead";
 import Tbody from "../components/Tbody";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addNewState,
-  setAddNewAddressDeleteInCustomer,
-  setAddNewContactDeleteInCustomer,
-  setAddNewCustomer,
-  setAddNewPersonDeleteInCustomer,
-} from "../features/addNewCustomerSlice";
 import { MasterCode } from "../interface/mastercodeType";
 import Tr from "../components/Tr";
 import Th from "../components/Th";
 import Td from "../components/Td";
 import Option from "../components/Option";
 import { Address, DisplayData } from "../interface/reduxType";
-import {
-  popUpAddExistState,
-  setPopUpAddExistAddress,
-  setPopUpAddExistCustomer,
-  setPopUpAddExistPerson,
-} from "../features/popUpAddExistSlice";
+import { popUpAddExistState } from "../features/popUpAddExistSlice";
 import { displayState } from "../features/displaySlice";
 import { getIndividualData } from "../api/getIndividualData";
 import { IndividualData } from "../interface/dataType";
@@ -43,6 +31,7 @@ import { PersonIterate } from "../interface/personType";
 import { ContactIterate } from "../interface/contactType";
 import { AddressIterate } from "../interface/addressType";
 import { VehicleIterate } from "../interface/vehicleType";
+import AddNewCustomer from "./AddNewCustomer";
 
 export default function Main_AddNewNViewNEdit() {
   // ReactRouter
@@ -88,7 +77,6 @@ export default function Main_AddNewNViewNEdit() {
 
   // Redux
   const dispatch = useDispatch();
-  const addNewData = useSelector(addNewState);
   const displayData: DisplayData = useSelector(displayState);
   const popUpAddExist = useSelector(popUpAddExistState);
 
@@ -103,16 +91,7 @@ export default function Main_AddNewNViewNEdit() {
   }, [displayData]);
 
   // เพิ่มข้อมูลใหม่เมื่อใน State ได้กรอกชื่อลูกค้า ลักษณะลูกค้า และประเภทลูกค้า แล้ว
-  useEffect(() => {
-    console.log(addNewData);
-    if (
-      addNewData.customer &&
-      addNewData.customer.customer_type_code_id &&
-      addNewData.customer.sales_type_code_id
-    ) {
-      postNewData(addNewData);
-    }
-  }, [addNewData]);
+  useEffect(() => {}, []);
 
   const handleAddNewData: () => void = () => {
     const customer_name = document.querySelector("input")?.value;
@@ -133,14 +112,14 @@ export default function Main_AddNewNViewNEdit() {
     if (!customer_name || !customer_type_code_id || !sales_type_code_id) {
       alert("Fill In The Blank");
     } else {
-      dispatch(setAddNewCustomer(customer));
+      // dispatch(setAddNewCustomer(customer));
     }
   };
 
   const handleDeletePerson = (e: React.MouseEvent<HTMLLIElement>) => {
     const person_id = e.currentTarget.id;
 
-    dispatch(setAddNewPersonDeleteInCustomer(person_id));
+    // dispatch(setAddNewPersonDeleteInCustomer(person_id));
 
     e.currentTarget.parentElement?.parentElement?.parentElement?.parentElement.remove();
   };
@@ -148,7 +127,7 @@ export default function Main_AddNewNViewNEdit() {
   const handleDeleteContact = (e: React.MouseEvent<HTMLLIElement>) => {
     const contact_id = e.currentTarget.id;
 
-    dispatch(setAddNewContactDeleteInCustomer(contact_id));
+    // dispatch(setAddNewContactDeleteInCustomer(contact_id));
 
     e.currentTarget.parentElement?.parentElement?.parentElement?.parentElement.remove();
   };
@@ -156,7 +135,7 @@ export default function Main_AddNewNViewNEdit() {
   const handleDeleteAddress = (e: React.MouseEvent<HTMLLIElement>) => {
     const address_id = e.currentTarget.id;
 
-    dispatch(setAddNewAddressDeleteInCustomer(address_id));
+    // dispatch(setAddNewAddressDeleteInCustomer(address_id));
 
     e.currentTarget.parentElement?.parentElement?.parentElement?.parentElement.remove();
   };
@@ -164,7 +143,7 @@ export default function Main_AddNewNViewNEdit() {
   const handleDeleteVehicle = (e: React.MouseEvent<HTMLLIElement>) => {
     const person_id = e.currentTarget.id;
 
-    dispatch(setAddNewVehiclDeleteInCustomer(person_id));
+    // dispatch(setAddNewVehiclDeleteInCustomer(person_id));
 
     e.currentTarget.parentElement?.parentElement?.parentElement?.parentElement.remove();
   };
@@ -176,53 +155,12 @@ export default function Main_AddNewNViewNEdit() {
         popUpLoading={popUpLoading}
       />
       {menu == "customer" ? (
-        <Fragment>
-          <Divider title="ข้อมูลลูกค้า" />
-          <InputFrame>
-            <Input
-              label="ชื่อลูกค้า"
-              placeholder="ชื่อลูกค้า"
-              defaultValue={
-                individualData &&
-                "customer" in individualData.response &&
-                !Array.isArray(individualData.response.customer)
-                  ? individualData.response.customer.customer_name
-                  : ""
-              }
-              type="regular"
-              name="ชื่อลูกค้า"
-              disabled={!isNaN(Number(addNewOId)) ? true : false}
-            />
-            <Selector
-              label="ลักษณะลูกค้า"
-              defaultValue={
-                individualData &&
-                "customer" in individualData.response &&
-                !Array.isArray(individualData.response.customer)
-                  ? individualData.response.customer.customer_type
-                  : "เลือกลักษณะลูกค้า"
-              }
-              selectorData={selectorData}
-              number={1}
-              name="ลักษณะลูกค้า"
-              disabled={!isNaN(Number(addNewOId)) ? true : false}
-            />
-            <Selector
-              label="ประเภทลูกค้า"
-              defaultValue={
-                individualData &&
-                "customer" in individualData.response &&
-                !Array.isArray(individualData.response.customer)
-                  ? individualData.response.customer.sales_type
-                  : "เลือกประเภทลูกค้า"
-              }
-              selectorData={selectorData}
-              number={0}
-              name="ประเภทลูกค้า"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
-            />
-          </InputFrame>
-        </Fragment>
+        <AddNewCustomer
+          individualData={individualData}
+          edit={edit}
+          addNewOId={addNewOId}
+          selectorData={selectorData}
+        />
       ) : menu == "person" ? (
         <Fragment>
           <Divider title="ข้อมูลบุคคล" />
@@ -544,7 +482,7 @@ export default function Main_AddNewNViewNEdit() {
                 name="เพิ่มที่มี"
                 type="customer"
                 onClick={() => {
-                  dispatch(setPopUpAddExistCustomer());
+                  // dispatch(setPopUpAddExistCustomer());
                 }}
               />
             </ButtonLeftFrame>
@@ -568,6 +506,7 @@ export default function Main_AddNewNViewNEdit() {
                   <Th key={i}>{columnName}</Th>
                 )
               )}
+              <Th>ตัวเลือก</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -578,6 +517,11 @@ export default function Main_AddNewNViewNEdit() {
                 <Td>{data.customer_name}</Td>
                 <Td>{data.email}</Td>
                 <Td>{data.telephone}</Td>
+                <Option
+                  type="edit"
+                  id={data.customer_id}
+                  onDelete={handleDeleteContact}
+                ></Option>
               </Tr>
             ))}
           </Tbody>
@@ -610,7 +554,7 @@ export default function Main_AddNewNViewNEdit() {
                     type="edit"
                     id={data.customer_id}
                     onDelete={handleDeletePerson}
-                  ></Option>
+                  />
                 </Tr>
               ))}
             </Tbody>
@@ -634,7 +578,7 @@ export default function Main_AddNewNViewNEdit() {
                 name="เพิ่มที่มี"
                 type="person"
                 onClick={() => {
-                  dispatch(setPopUpAddExistPerson());
+                  // dispatch(setPopUpAddExistPerson());
                 }}
               />
             </ButtonLeftFrame>
@@ -658,6 +602,7 @@ export default function Main_AddNewNViewNEdit() {
                   <Th key={i}>{columnName}</Th>
                 )
               )}
+              <Th>ตัวเลือก</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -670,6 +615,11 @@ export default function Main_AddNewNViewNEdit() {
                 <Td>{data.email}</Td>
                 <Td>{data.description}</Td>
                 <Td>{data.role}</Td>
+                <Option
+                  type="edit"
+                  id={data.uuid}
+                  onDelete={handleDeleteContact}
+                />
               </Tr>
             ))}
           </Tbody>
@@ -719,7 +669,13 @@ export default function Main_AddNewNViewNEdit() {
           <Divider title="ข้อมูลผู้ติดต่อ" />
           {edit || isNaN(Number(addNewOId)) ? (
             <ButtonLeftFrame>
-              <Link to={`/customer/add-new-customer/add-new-contact`}>
+              <Link
+                to={
+                  edit == "edit"
+                    ? `/customer/${addNewOId}/edit/add-new-contact`
+                    : `/customer/add-new-customer/add-new-contact`
+                }
+              >
                 <Button name="เพิ่มใหม่" />
               </Link>
               <Button name="เพิ่มที่มี" />
@@ -744,6 +700,7 @@ export default function Main_AddNewNViewNEdit() {
                   <Th key={i}>{columnName}</Th>
                 )
               )}
+              <Th>ตัวเลือก</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -754,6 +711,11 @@ export default function Main_AddNewNViewNEdit() {
                 <Td>{data.value}</Td>
                 <Td>{data.contact_type}</Td>
                 <Td>{data.owner_name}</Td>
+                <Option
+                  type="edit"
+                  id={data.contact_id}
+                  onDelete={handleDeleteContact}
+                />
               </Tr>
             ))}
           </Tbody>
@@ -803,7 +765,7 @@ export default function Main_AddNewNViewNEdit() {
                 name="เพิ่มที่มี"
                 type="address"
                 onClick={() => {
-                  dispatch(setPopUpAddExistAddress());
+                  // dispatch(setPopUpAddExistAddress());
                 }}
               />
             </ButtonLeftFrame>
@@ -829,6 +791,7 @@ export default function Main_AddNewNViewNEdit() {
                   </Fragment>
                 )
               )}
+              <Th>ตัวเลือก</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -838,6 +801,11 @@ export default function Main_AddNewNViewNEdit() {
                 <Td>{data.address_id}</Td>
                 <Td>{data.address_type}</Td>
                 <Td>{data.location}</Td>
+                <Option
+                  type="edit"
+                  id={data.contact_id}
+                  onDelete={handleDeleteContact}
+                />
               </Tr>
             ))}
           </Tbody>
@@ -889,7 +857,7 @@ export default function Main_AddNewNViewNEdit() {
                 name="เพิ่มที่มี"
                 type="address"
                 onClick={() => {
-                  dispatch(setPopUpAddExistAddress());
+                  // dispatch(setPopUpAddExistAddress());
                 }}
               />
             </ButtonLeftFrame>
@@ -915,6 +883,7 @@ export default function Main_AddNewNViewNEdit() {
                   </Fragment>
                 )
               )}
+              <Th>ตัวเลือก</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -924,6 +893,11 @@ export default function Main_AddNewNViewNEdit() {
                 <Td>{data.fleet_id}</Td>
                 <Td>{data.fleet_name}</Td>
                 <Td>{data.vehicle_count}</Td>
+                <Option
+                  type="edit"
+                  id={data.contact_id}
+                  onDelete={handleDeleteContact}
+                />
               </Tr>
             ))}
           </Tbody>
@@ -975,7 +949,7 @@ export default function Main_AddNewNViewNEdit() {
                 name="เพิ่มที่มี"
                 type="address"
                 onClick={() => {
-                  dispatch(setPopUpAddExistAddress());
+                  // dispatch(setPopUpAddExistAddress());
                 }}
               />
             </ButtonLeftFrame>
@@ -1001,6 +975,7 @@ export default function Main_AddNewNViewNEdit() {
                   </Fragment>
                 )
               )}
+              <Th>ตัวเลือก</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -1012,6 +987,11 @@ export default function Main_AddNewNViewNEdit() {
                 <Td>{data.frame_no}</Td>
                 <Td>{data.vehicle_type}</Td>
                 <Td>{data.model_type}</Td>
+                <Option
+                  type="edit"
+                  id={data.contact_id}
+                  onDelete={handleDeleteContact}
+                />
               </Tr>
             ))}
           </Tbody>

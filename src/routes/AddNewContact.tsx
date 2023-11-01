@@ -8,9 +8,6 @@ import ButtonRightFrame from "../components/ฺButtonRightFrame";
 import Button from "../components/Button";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setEditContactInCustomer } from "../features/editCustomerSlice";
-import { setAddNewContactNewInCustomer } from "../features/addNewCustomerSlice";
-import { setDisplayContact } from "../features/displaySlice";
 import InputFrame from "../components/InputFrame";
 import { Contact, putPostContact } from "../interface/reduxType";
 import { v4 as uuidv4 } from "uuid";
@@ -67,15 +64,13 @@ export default function Main_AddNew_Contact() {
     };
     console.log(contactType);
 
-    dispatch(setDisplayContact(displayContact));
+    // dispatch(setDisplayContact(displayContact));
 
     if (menu == "customer") {
-      dispatch(setEditContactInCustomer(putPostContact));
-      dispatch(setAddNewContactNewInCustomer(putPostContact));
+      // dispatch(setEditContactInCustomer(putPostContact));
+      // dispatch(setAddNewContactNewInCustomer(putPostContact));
     } else if (menu == "person") {
-
     } else if (menu == "address") {
-      
     }
   };
 

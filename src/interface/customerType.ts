@@ -1,9 +1,5 @@
 import { ApiStatus } from "./apiStatus";
 
-export interface CustomerShape {
-  customer: [CustomerIterate] | [];
-}
-
 export interface CustomerIterate {
   RowNum: number;
   customer_id: number;
@@ -13,10 +9,11 @@ export interface CustomerIterate {
   sales_type_code_id: number;
   telephone: string;
 }
+
 export interface Customer extends ApiStatus {
   response: {
     count_data: number;
-    customer: CustomerShape;
+    customer: CustomerIterate[] | [];
   };
 }
 

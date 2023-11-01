@@ -17,30 +17,73 @@ export default function Pagination({
 }: Props) {
   const [searchParams, setSearchParams] = useSearchParams();
 
+  useEffect(() => {
+    let id = searchParams.get("page");
+
+    if (!id) {
+      id = "1";
+    }
+
+    const selectedPagi = document.querySelector(
+      `[data-name='pagi'][id='${id}']`
+    );
+    if (selectedPagi) {
+      selectedPagi.classList.add("bg-[#003E51]", "text-white", "rounded-md");
+    }
+  }, []);
+
   const createPagi = () => {
     const pagi = [];
-    let limit = 8;
     let page = Number(searchParams.get("page"));
-    let ceil = Math.ceil(counted_page / 10);
+    const ceil = Math.ceil(counted_page / 10);
     if (!Number(page)) {
       page = 1;
     }
+    let start: number;
+    let end: number;
 
-    if (page < 5) {
-      limit = page;
-    } else if (page > ceil - 5) {
-      limit = ceil - page;
+    if (ceil > 9) {
+      if (page == 1) {
+        start = 1;
+        end = start + 8;
+      } else if (page == 2) {
+        start = 1;
+        end = start + 7;
+      } else if (page == 3) {
+        start = 1;
+        end = start + 6;
+      } else if (page == 4) {
+        start = 1;
+        end = start + 5;
+      } else if (page == ceil) {
+        start = page - 8;
+        end = page;
+      } else if (page == ceil - 1) {
+        start = page - 7;
+        end = page + 1;
+      } else if (page == ceil - 2) {
+        start = page - 6;
+        end = page + 2;
+      } else if (page == ceil - 3) {
+        start = page - 5;
+        end = page + 3;
+      } else {
+        start = page - 4;
+        end = page + 4;
+      }
     } else {
-      limit = 4;
+      start = 1;
+      end = ceil;
     }
 
-    for (let i = page - limit; i <= page + limit; i++) {
+    for (let i = start; i <= end; i++) {
       pagi.push(
         <li
-          className="cursor-pointer"
+          className="cursor-pointer py-1 px-2 flex justify-center items-center"
           onClick={onClickPage}
           id={i.toString()}
           key={i}
+          data-name="pagi"
         >
           {i}
         </li>
@@ -59,7 +102,7 @@ export default function Pagination({
         </div>
 
         <nav>
-          <ul className="grid grid-cols-9 gap-3">{createPagi()}</ul>
+          <ul className="grid grid-cols-9 gap-3 ">{createPagi()}</ul>
         </nav>
 
         <div onClick={increPage} className="cursor-pointer">

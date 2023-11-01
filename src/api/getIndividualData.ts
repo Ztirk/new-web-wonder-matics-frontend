@@ -8,6 +8,9 @@ export async function getIndividualData(
 ): Promise<void> {
   setLoading(true);
   try {
+    if (module == "device-serial") {
+      module = "deviceSerial";
+    }
     const res = await axios.get(
       `${import.meta.env.VITE_ERP_BASE_URL}/${module}/${id}`
     );

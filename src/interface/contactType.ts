@@ -1,9 +1,5 @@
 import { ApiStatus } from "./apiStatus";
 
-export interface ContactShape {
-  contact: [ContactIterate] | [];
-}
-
 export interface ContactIterate {
   RowNum: number;
   contact_id: number;
@@ -13,7 +9,7 @@ export interface ContactIterate {
 }
 export interface Contact extends ApiStatus {
   response: {
-    contact: ContactShape;
+    contact: ContactIterate[];
   };
 }
 

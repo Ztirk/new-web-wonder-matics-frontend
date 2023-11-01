@@ -1,9 +1,5 @@
 import { ApiStatus } from "./apiStatus";
 
-export interface PersonShape {
-  person: [PersonIterate] | [];
-}
-
 export interface PersonIterate {
   RowNum: number;
   person_id: number;
@@ -16,7 +12,7 @@ export interface PersonIterate {
 
 export interface Person extends ApiStatus {
   response: {
-    person: PersonShape;
+    person: PersonIterate[] | [];
   };
 }
 

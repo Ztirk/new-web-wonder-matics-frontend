@@ -81,14 +81,15 @@ export default function Main() {
 
   // เมื่อกดเลขหน้าตรง Pagi
   const onClickPage: (e: React.MouseEvent<HTMLLIElement>) => void = (e) => {
-    const page = e.currentTarget.id;
+    const pageElem = e.currentTarget;
+    const page = pageElem.id;
     let filter = searchParams.get("filter");
     if (!filter) filter = "";
     setSearchParams({ page: page, filter: filter });
   };
 
   // สำหรับปุ่ม ถัดไปตรง Pagi
-  const increPage: (e: React.MouseEvent<HTMLDivElement>) => void = (e) => {
+  const increPage: () => void = () => {
     let page = searchParams.get("page");
     let filter = searchParams.get("filter");
     if (!page) {
@@ -106,7 +107,7 @@ export default function Main() {
   };
 
   // สำหรับปุ่มย้อนกลับตรง Pagi
-  const decrePage: (e: React.MouseEvent<HTMLDivElement>) => void = (e) => {
+  const decrePage: () => void = () => {
     let page = searchParams.get("page");
     let filter = searchParams.get("filter");
     if (!page) page = "";
@@ -238,7 +239,7 @@ export default function Main() {
                             onView={`/customer/${data.customer_id}`}
                             id={data.customer_id}
                             title="ลูกค้า"
-                            data-name={data.customer_name}
+                            dataName={data.customer_name}
                             onDelete={handleToggleDeleteShowUp}
                           ></Option>
                         </Tr>
@@ -259,8 +260,8 @@ export default function Main() {
                             onEdit={`/person/${data.person_id}/edit`}
                             onView={`/person/${data.person_id}`}
                             id={data.person_id}
-                            title="ลูกค้า"
-                            data-name={data.fullname}
+                            title="บุคคล"
+                            dataName={data.fullname}
                             onDelete={handleToggleDeleteShowUp}
                           ></Option>
                         </Tr>
@@ -279,8 +280,8 @@ export default function Main() {
                             onEdit={`/contact/${data.contact_id}/edit`}
                             onView={`/contact/${data.contact_id}`}
                             id={data.contact_id}
-                            title="ลูกค้า"
-                            data-name={data.value}
+                            title="การติดต่อ"
+                            dataName={data.value}
                             onDelete={handleToggleDeleteShowUp}
                           ></Option>
                         </Tr>
@@ -298,8 +299,8 @@ export default function Main() {
                             onEdit={`/address/${data.address_id}/edit`}
                             onView={`/address/${data.address_id}`}
                             id={data.address_id}
-                            title="ลูกค้า"
-                            data-name={data.location}
+                            title="ที่อยู่"
+                            dataName={data.location}
                             onDelete={handleToggleDeleteShowUp}
                           ></Option>
                         </Tr>
@@ -317,8 +318,8 @@ export default function Main() {
                             onEdit={`/fleet/${data.fleet_id}/edit`}
                             onView={`/fleet/${data.fleet_id}`}
                             id={data.fleet_id}
-                            title="ลูกค้า"
-                            data-name={data.fleet_name}
+                            title="ฟลีต"
+                            dataName={data.fleet_name}
                             onDelete={handleToggleDeleteShowUp}
                           ></Option>
                         </Tr>
@@ -340,8 +341,8 @@ export default function Main() {
                             onEdit={`/vehicle/${data.vehicle_id}/edit`}
                             onView={`/vehicle/${data.vehicle_id}`}
                             id={data.vehicle_id}
-                            title="ลูกค้า"
-                            data-name={data.vehicle_name}
+                            title="ยานพาหนะ"
+                            dataName={data.frame_no}
                             onDelete={handleToggleDeleteShowUp}
                           ></Option>
                         </Tr>
@@ -363,8 +364,8 @@ export default function Main() {
                             onEdit={`/device/${data.device_id}/edit`}
                             onView={`/device/${data.device_id}`}
                             id={data.device_id}
-                            title="ลูกค้า"
-                            data-name={data.device_id}
+                            title="ชุดอุปกรณ์"
+                            dataName={data.device_id}
                             onDelete={handleToggleDeleteShowUp}
                           ></Option>
                         </Tr>
@@ -387,7 +388,7 @@ export default function Main() {
                             onView={`/device-serial/${data.device_serial_id}`}
                             id={data.device_serial_id}
                             title="ลูกค้า"
-                            data-name={data.device_serial_id}
+                            dataName={data.device_serial_id}
                             onDelete={handleToggleDeleteShowUp}
                           ></Option>
                         </Tr>

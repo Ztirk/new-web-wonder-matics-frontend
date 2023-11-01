@@ -7,32 +7,78 @@ interface Props {
 
 export default function BreadCrumbs({ page }: Props) {
   const location = useLocation();
-  const segment = location.pathname
+  const segments = location.pathname
     .split("/")
     .filter((segment) => segment !== "");
 
-  const module = segment[0];
-  const id = segment[1];
+  const menu = segments[0];
+  const addNewOId = segments[1];
+  const editOAddNew = segments[2];
+  const addNew2 = segments[3];
+
   return (
     <div className="font-bold text-[20px] col-span-2">
       <div>
-        {segment.length >= 1 ? (
+        {segments.length >= 1 ? (
           <nav>
             <ul className="flex gap-2 items-center">
               <li>
-                <Link to={module}>{module}</Link>
+                <Link to={menu}>{menu}</Link>
               </li>
-              {segment.length >= 2 ? (
+              {segments.length >= 2 ? (
                 <Fragment>
                   <div>
                     <i className="fa-solid fa-greater-than"></i>
                   </div>
+
                   <li>
-                    <Link to={`/${module}/${id}`}>{id}</Link>
+                    <Link
+                      to={
+                        editOAddNew &&
+                        editOAddNew == "edit" &&
+                        !isNaN(Number(addNewOId))
+                          ? `/${menu}/${addNewOId}/${editOAddNew}`
+                          : `/${menu}/${addNewOId}`
+                      }
+                    >
+                      {editOAddNew && editOAddNew == "edit" ? "edit " : ""}
+                      {addNewOId}
+                    </Link>
                   </li>
+                  {segments.length >= 3 ? (
+                    editOAddNew !== "edit" ? (
+                      <Fragment>
+                        <div>
+                          <i className="fa-solid fa-greater-than"></i>
+                        </div>
+                        <li>
+                          <Link>{editOAddNew}</Link>
+                        </li>
+                      </Fragment>
+                    ) : (
+                      <Fragment>
+                        {segments.length >= 4 ? (
+                          <Fragment>
+                            <div>
+                              <i className="fa-solid fa-greater-than"></i>
+                            </div>
+                            <li>
+                              <Link to=".." relative="path">
+                                {addNew2}
+                              </Link>
+                            </li>
+                          </Fragment>
+                        ) : (
+                          <Fragment />
+                        )}
+                      </Fragment>
+                    )
+                  ) : (
+                    <Fragment />
+                  )}
                 </Fragment>
               ) : (
-                <Fragment></Fragment>
+                <Fragment />
               )}
             </ul>
           </nav>

@@ -24,9 +24,9 @@ export default function DeletePopUp({
             className="absolute left-0 top-0 bg-black w-full h-full z-10 opacity-50 "
             onClick={handleCancel}
           ></div>
-          <div className="absolute z-20 bg-white w-[500px] h-[240px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-md flex flex-col gap-3">
-            <h1 className="px-5 pt-3 font-bold text-[18px]">
-              {toggleDelete.title}
+          <div className="absolute z-20 bg-white w-[500px] h-[240px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-md flex flex-col gap-5">
+            <h1 className="px-5 pt-3 text-[18px]">
+              ลบข้อมูล <span className="font-bold">{toggleDelete.title}</span>
             </h1>
             <Divider title="" />
             <p className="px-5">

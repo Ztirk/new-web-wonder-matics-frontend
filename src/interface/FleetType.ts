@@ -1,9 +1,5 @@
 import { ApiStatus } from "./apiStatus";
 
-export interface FleetShape {
-  fleet: [FleetIterate] | [];
-}
-
 export interface FleetIterate {
   RowNum: number;
   fleet_id: number;
@@ -13,7 +9,7 @@ export interface FleetIterate {
 
 export interface Fleet extends ApiStatus {
   response: {
-    fleet: FleetShape;
+    fleet: FleetIterate[] | [];
   };
 }
 

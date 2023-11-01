@@ -1,9 +1,5 @@
 import { ApiStatus } from "./apiStatus";
 
-export interface VehicleShape {
-  vehicle: [VehicleIterate] | [];
-}
-
 export interface VehicleIterate {
   RowNum: number;
   vehicle_id: number;
@@ -15,7 +11,7 @@ export interface VehicleIterate {
 
 export interface Vehicle extends ApiStatus {
   response: {
-    vehicle: VehicleShape;
+    vehicle: VehicleIterate[] | [];
   };
 }
 

@@ -8,9 +8,10 @@ import {
 import Login from "./routes/Login";
 import Main_AddNewNViewNEdit from "./routes/Main_AddNewNViewNEdit";
 import Frame from "./routes/Frame";
-import Main_AddNew_Contact from "./routes/Main_AddNew_Contact";
+import Main_AddNew_Contact from "./routes/AddNewContact";
 import Main_AddNew_Person from "./routes/AddNewPerson";
 import Test from "./routes/test";
+import AddNewCustomer from "./routes/AddNewCustomer";
 
 export function App() {
   const router = createBrowserRouter(
@@ -51,8 +52,14 @@ export function App() {
             path="/person/add-new-person"
             element={<Main_AddNewNViewNEdit />}
           ></Route>
-          <Route path="/person/:person_id" element={<Main_AddNewNViewNEdit />}></Route>
-          <Route path="/person/:person_id/edit" element={<Main_AddNewNViewNEdit />}></Route>
+          <Route
+            path="/person/:person_id"
+            element={<Main_AddNewNViewNEdit />}
+          ></Route>
+          <Route
+            path="/person/:person_id/edit"
+            element={<Main_AddNewNViewNEdit />}
+          ></Route>
 
           {/* ติดต่อ */}
           <Route path="/contact" element={<Main />}></Route>
@@ -60,7 +67,10 @@ export function App() {
             path="/contact/add-new-contact"
             element={<Main_AddNewNViewNEdit />}
           ></Route>
-          <Route path="/contact/:contact_id" element={<Main_AddNewNViewNEdit />}></Route>
+          <Route
+            path="/contact/:contact_id"
+            element={<Main_AddNewNViewNEdit />}
+          ></Route>
           <Route
             path="/contact/:contact_id/edit"
             element={<Main_AddNewNViewNEdit />}
@@ -72,7 +82,10 @@ export function App() {
             path="/address/add-new-address"
             element={<Main_AddNewNViewNEdit />}
           ></Route>
-          <Route path="/address/:address_id" element={<Main_AddNewNViewNEdit />}></Route>
+          <Route
+            path="/address/:address_id"
+            element={<Main_AddNewNViewNEdit />}
+          ></Route>
           <Route
             path="/address/:address_id/edit"
             element={<Main_AddNewNViewNEdit />}
@@ -80,9 +93,26 @@ export function App() {
 
           {/* ฟลีต */}
           <Route path="/fleet" element={<Main />}></Route>
-          <Route path="/fleet/add-new-fleet" element={<Main_AddNewNViewNEdit />}></Route>
-          <Route path="/fleet/:fleet_id" element={<Main_AddNewNViewNEdit />}></Route>
-          <Route path="/fleet/:fleet_id/edit" element={<Main_AddNewNViewNEdit />}></Route>
+          <Route
+            path="/fleet/add-new-fleet"
+            element={<Main_AddNewNViewNEdit />}
+          ></Route>
+          <Route
+            path="/fleet/:fleet_id"
+            element={<Main_AddNewNViewNEdit />}
+          ></Route>
+          <Route
+            path="/fleet/:fleet_id/edit"
+            element={<Main_AddNewNViewNEdit />}
+          ></Route>
+          <Route
+            path="/fleet/add-new-fleet/add-new-customer"
+            element={<AddNewCustomer />}
+          ></Route>
+          <Route
+            path="/fleet/add-new-fleet/add-new-customer"
+            element={<AddNewCustomer />}
+          ></Route>
 
           {/* รถ */}
           <Route path="/vehicle" element={<Main />}></Route>
@@ -90,7 +120,10 @@ export function App() {
             path="/vehicle/add-new-vehicle"
             element={<Main_AddNewNViewNEdit />}
           ></Route>
-          <Route path="/vehicle/:vehicle_id" element={<Main_AddNewNViewNEdit />}></Route>
+          <Route
+            path="/vehicle/:vehicle_id"
+            element={<Main_AddNewNViewNEdit />}
+          ></Route>
           <Route
             path="/vehicle/:vehicle_id/edit"
             element={<Main_AddNewNViewNEdit />}
@@ -102,8 +135,14 @@ export function App() {
             path="/device/add-new-device"
             element={<Main_AddNewNViewNEdit />}
           ></Route>
-          <Route path="/device/:device_id" element={<Main_AddNewNViewNEdit />}></Route>
-          <Route path="/device/:device_id/edit" element={<Main_AddNewNViewNEdit />}></Route>
+          <Route
+            path="/device/:device_id"
+            element={<Main_AddNewNViewNEdit />}
+          ></Route>
+          <Route
+            path="/device/:device_id/edit"
+            element={<Main_AddNewNViewNEdit />}
+          ></Route>
 
           {/* device_serial */}
           <Route path="/device-serial" element={<Main />}></Route>
