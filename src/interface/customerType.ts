@@ -10,6 +10,18 @@ export interface CustomerIterate {
   telephone: string;
 }
 
+export interface SendCustomer {
+  customer: {
+    customer_name: string;
+    customer_type_code_id: number;
+    sales_type_code_id: number;
+  };
+}
+
+export interface CustomerDisplay {
+  customer: CustomerIterate[] | [];
+}
+
 export interface Customer extends ApiStatus {
   response: {
     count_data: number;

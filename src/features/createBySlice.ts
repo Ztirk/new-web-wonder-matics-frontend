@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DisplayData } from "../interface/reduxType";
 
-const initialState: DisplayData = {
+const initialState = {
   create_by: 0,
 };
 
@@ -13,6 +12,6 @@ const createBySlice = createSlice({
 
 export const {} = createBySlice.actions;
 
-export const createByState = (state) => state.display;
+export const createByState = (state) => state.createBy;
 
 export default createBySlice.reducer;

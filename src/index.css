@@ -7,3 +7,21 @@
     font-family: Prompt;
   }
 }
+
+@layer components {
+  .input-n-selector__size {
+    @apply px-3 h-[40px] w-[240px];
+  }
+
+  .input-n-selector__border {
+    @apply border border-gray-400 rounded-md;
+  }
+
+  .input-n-selector__shadow {
+    @apply drop-shadow-md;
+  }
+
+  .input-n-selector__invisible_bg {
+    @apply absolute left-0 top-0 w-full h-full;
+  }
+}

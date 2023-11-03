@@ -54,7 +54,10 @@ export default function Main() {
 
   // เมื่อมีการเปลี่ยน path จะทำงาน
   useEffect(() => {
-    getData(setData, menu, setLoading);
+    setLoading(true);
+    getData(setData, menu).then(() => {
+      setLoading(false);
+    });
   }, [location]);
 
   // แสดง PopUp ยืนยันการกดลบข้อมูลสำหรับหน้าหลัก

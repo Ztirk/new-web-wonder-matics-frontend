@@ -9,10 +9,27 @@ export interface VehicleIterate {
   model_type: string;
 }
 
+export interface VehicleDisplay {
+  vehicle: VehicleIterate[] | [];
+}
+
 export interface Vehicle extends ApiStatus {
   response: {
     vehicle: VehicleIterate[] | [];
   };
+}
+
+export interface SendVehicle {
+  frame_no: string;
+  license_plate: string;
+  vehicle_model_id: number;
+  registration_province_code_id: number;
+  registration_type_code_id: number;
+  driving_license_type_code_id: number;
+  number_of_axles: number;
+  number_of_wheels: number;
+  number_of_tires: number;
+  vehicle_type_code_id: number;
 }
 
 export interface IndividualVehicle extends ApiStatus {

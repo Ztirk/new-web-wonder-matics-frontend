@@ -7,6 +7,26 @@ export interface AddressIterate {
   address_type: string;
 }
 
+export interface AddressDisplay {
+  address: AddressIterate[] | [];
+}
+
+export interface SendAddress {
+  address: {
+    name: string;
+    house_no: string;
+    village_no: string;
+    alley: string;
+    road: string;
+    sub_district: string;
+    district: string;
+    province: string;
+    postal_code: string;
+    address_type: number[];
+    address_typeDelete: number[];
+  };
+}
+
 export interface Address extends ApiStatus {
   response: {
     count_data: number;

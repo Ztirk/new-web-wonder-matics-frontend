@@ -1,11 +1,11 @@
-import { AddressShape } from "./addressType";
-import { ContactShape } from "./contactType";
-import { CustomerShape } from "./customerType";
-import { DeviceSerialShape } from "./deviceSerialType";
-import { DeviceShape } from "./deviceType";
-import { FleetShape } from "./fleetType";
-import { PersonShape } from "./personType";
-import { VehicleShape } from "./vehicleType";
+import { AddressDisplay, SendAddress } from "./addressType";
+import { ContactDisplay, SendContact } from "./contactType";
+import { CustomerDisplay, SendCustomer } from "./customerType";
+import { DeviceSerialDisplay } from "./deviceSerialType";
+import { DeviceDisplay } from "./deviceType";
+import { FleetDisplay, SendFleet } from "./fleetType";
+import { PersonDisplay, SendPerson } from "./personType";
+import { SendVehicle, VehicleDisplay } from "./vehicleType";
 
 export interface setContact {
   contact_code_id: number;
@@ -17,14 +17,51 @@ export interface putPostContact {
   value: string;
 }
 
-export type DisplayData = CustomerShape &
-  PersonShape &
-  AddressShape &
-  ContactShape &
-  VehicleShape &
-  FleetShape &
-  DeviceSerialShape &
-  DeviceShape;
+export type DisplayData = CustomerDisplay &
+  PersonDisplay &
+  AddressDisplay &
+  ContactDisplay &
+  VehicleDisplay &
+  FleetDisplay &
+  DeviceSerialDisplay &
+  DeviceDisplay;
+
+export interface AddNewOAddExist {
+  customerNew: SendCustomer[];
+  customerExist: number[];
+  addressNew: SendAddress[];
+  addressExist: number[];
+  contact: SendContact[];
+  personNew: SendPerson[];
+  personExist: number[];
+  vehicleNew: SendVehicle[];
+  vehicleExist: number[];
+  fleetNew: SendFleet[];
+  fleetExist: number[];
+}
+
+export interface Delete {
+  customerDelete: number[];
+  personDelete: number[];
+  addressDelete: number[];
+  contactDelete: number[];
+  vehicleDelete: number[];
+  fleetDelete: number[];
+}
+
+export interface Memo {
+  customer_id: number[];
+  person_id: number[];
+  role_id: number[];
+  role_code_id: number[];
+  address_id: number[];
+  address_type_id: number[];
+  address_type_code_id: number[];
+  fleet_id: number[];
+  vehicle_id: number[];
+  device_id: number[];
+  device_serial_id: number[];
+}
 
 export interface EditedCustomer {
   update_by: number;

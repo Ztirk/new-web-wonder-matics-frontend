@@ -7,6 +7,16 @@ export interface ContactIterate {
   value: string;
   owner_name: string;
 }
+
+export interface ContactDisplay {
+  contact: ContactIterate[] | [];
+}
+
+export interface SendContact {
+  contact_code_id: number;
+  value: string;
+}
+
 export interface Contact extends ApiStatus {
   response: {
     contact: ContactIterate[];

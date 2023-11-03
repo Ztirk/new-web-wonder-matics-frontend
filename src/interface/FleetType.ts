@@ -7,6 +7,14 @@ export interface FleetIterate {
   vehicle_count: number;
 }
 
+export interface FleetDisplay {
+  fleet: FleetIterate[] | [];
+}
+
+export interface SendFleet {
+  fleet_name: string;
+  parent_fleet_id: number;
+}
 export interface Fleet extends ApiStatus {
   response: {
     fleet: FleetIterate[] | [];

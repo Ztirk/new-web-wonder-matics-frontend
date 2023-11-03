@@ -1,11 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DisplayData } from "../interface/reduxType";
+import { Delete, DisplayData } from "../interface/reduxType";
 
-const initialState: DisplayData = {
+const initialState: Delete = {
   customerDelete: [],
   personDelete: [],
   addressDelete: [],
-  contactDelete: [],
   vehicleDelete: [],
   fleetDelete: [],
 };
@@ -14,14 +13,16 @@ const deleteSlice = createSlice({
   name: "delete",
   initialState,
   reducers: {
-    
+    setCustomerDelete(state, action) {},
+    setPersonDelete(state, action) {},
+    setAddressDelete(state, action) {},
+    setVehicleDelete(state, action) {},
+    setFleetDelete(state, action) {},
   },
 });
 
-export const {
+export const {} = deleteSlice.actions;
 
-} = deleteSlice.actions;
-
-export const deleteState = (state) => state.display;
+export const deleteState = (state) => state.delete;
 
 export default deleteSlice.reducer;

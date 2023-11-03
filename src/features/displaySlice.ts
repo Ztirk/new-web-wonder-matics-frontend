@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { DisplayData } from "../interface/reduxType";
+import { PersonIterate } from "../interface/personType";
 
 const initialState: DisplayData = {
   customer: [],
@@ -16,29 +17,33 @@ const displaySlice = createSlice({
   name: "display",
   initialState,
   reducers: {
-    setDisplayPerson(state, action: PayloadAction<>) {
-      state.person = action.payload;
+    setDisplayPersonFetch(state, action: PayloadAction<PersonIterate>) {
+      state.person.push(action.payload);
     },
 
-    setDisplayContact(state, action) {
+    // setDisplayPersonInteract(state, action) {
+    //   state.
+    // }
+
+    setDisplayContactFetch(state, action) {
       state.contact.push(action.payload);
     },
 
-    setDisplayAddress(state, action) {
+    setDisplayAddressFetch(state, action) {
       state.address = action.payload;
     },
 
-    setDisplayDefault(state) {
+    setDisplayDefaultFetch(state) {
       state = defaultState;
     },
   },
 });
 
 export const {
-  setDisplayAddress,
-  setDisplayContact,
-  setDisplayDefault,
-  setDisplayPerson,
+  setDisplayAddressFetch,
+  setDisplayContactFetch,
+  setDisplayDefaultFetch,
+  setDisplayPersonFetch,
 } = displaySlice.actions;
 
 export const displayState = (state) => state.display;

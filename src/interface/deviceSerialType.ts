@@ -8,6 +8,10 @@ export interface DeviceSerialIterate {
   create_date: string;
 }
 
+export interface DeviceSerialDisplay {
+  deviceSerial: DeviceSerialIterate[] | [];
+}
+
 export interface DeviceSerial extends ApiStatus {
   response: {
     deviceSerial: DeviceSerialIterate[] | [];

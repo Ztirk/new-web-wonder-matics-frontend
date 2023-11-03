@@ -14,8 +14,6 @@ import Td from "./Td";
 import PopUpLoading from "./PopUpLoading";
 import { useDispatch, useSelector } from "react-redux";
 
-import { setDisplayAddress, setDisplayPerson } from "../features/displaySlice";
-
 import { AddExistPopUp } from "../interface/addExistPopUpType";
 import { popUpAddExistState } from "../features/popUpAddExistSlice";
 
@@ -53,9 +51,6 @@ export default function AddExistPopup({ popUpData, popUpLoading }: Props) {
         add_exist_person_id.push(elem.getAttribute("data-id"));
       }
     });
-    dispatch(setDisplayPerson(personData));
-    dispatch(setAddNewPersonExistInCustomer(add_exist_person_id));
-    dispatch(setPopUpAddExistDefault());
   };
 
   const handleSelectedAddress = () => {
@@ -76,9 +71,6 @@ export default function AddExistPopup({ popUpData, popUpLoading }: Props) {
         add_exist_address_id.push(elem.getAttribute("data-id"));
       }
     });
-    dispatch(setDisplayAddress(addressData));
-    dispatch(setAddNewAddressExistInCustomer(add_exist_address_id));
-    dispatch(setPopUpAddExistDefault());
   };
 
   return (

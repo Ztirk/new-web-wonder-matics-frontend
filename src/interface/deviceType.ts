@@ -1,6 +1,6 @@
 import { ApiStatus } from "./apiStatus";
 
-export interface DeviceSerialIterate {
+export interface DeviceIterate {
   RowNum: number;
   device_id: number;
   veh_id: number;
@@ -9,9 +9,13 @@ export interface DeviceSerialIterate {
   sim_type: string;
 }
 
+export interface DeviceDisplay {
+  device: DeviceIterate[] | [];
+}
+
 export interface Device extends ApiStatus {
   response: {
-    device: DeviceSerialIterate[] | [];
+    device: DeviceIterate[] | [];
   };
 }
 

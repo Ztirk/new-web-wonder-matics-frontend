@@ -10,6 +10,22 @@ export interface PersonIterate {
   role: string;
 }
 
+export interface PersonDisplay {
+  person: PersonIterate[] | [];
+}
+
+export interface SendPerson {
+  person: {
+    firstname: string;
+    lastname: string;
+    nickname: string;
+    title_code_id: number;
+    description: string;
+    roleDelete: number[];
+    role: number[];
+  };
+}
+
 export interface Person extends ApiStatus {
   response: {
     person: PersonIterate[] | [];
@@ -17,9 +33,9 @@ export interface Person extends ApiStatus {
 }
 
 export interface IndividualPerson extends ApiStatus {
-  response: {
-    person:
-      | {
+  response:
+    | {
+        person: {
           person_id: number;
           firstname: string;
           lastname: string;
@@ -28,7 +44,7 @@ export interface IndividualPerson extends ApiStatus {
           title_type: string;
           description: string;
           role: [{ role_code_id: number; role_type: string }];
-        }
-      | Person;
-  };
+        };
+      }
+    | Person;
 }

@@ -5,13 +5,13 @@ const initialState = {
 };
 
 const updateBySlice = createSlice({
-  name: "createBy",
+  name: "updateBy",
   initialState,
   reducers: {},
 });
 
 export const {} = updateBySlice.actions;
 
-export const updateByState = (state) => state.display;
+export const updateByState = (state) => state.updateBy;
 
 export default updateBySlice.reducer;

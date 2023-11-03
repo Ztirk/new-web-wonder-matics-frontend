@@ -1,17 +1,23 @@
-import { useSearchParams } from "react-router-dom";
-import { IndividualData } from "../interface/dataType";
+import { Fragment, useEffect, useRef, useState } from "react";
+
+import Selector from "../components/Selector";
+import { displayState, setDisplayPersonFetch } from "../features/displaySlice";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 export default function Test() {
-  const individualData: IndividualData = {};
+  const dispatch = useDispatch();
+  const display = useSelector(displayState);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    console.log(display);
+  }, [display]);
 
-  const params = () => {
-    setSearchParams({wtf: searchParams.get('new'), eiei: 'world'});
-  };
   return (
     <div>
-      <button onClick={params}>kljasdf;ljads;ljk</button>
+      <Selector />
+      <Selector />
+      <Selector />
     </div>
   );
 }

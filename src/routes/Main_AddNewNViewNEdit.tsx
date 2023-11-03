@@ -69,7 +69,15 @@ export default function Main_AddNewNViewNEdit() {
     }
 
     if (!isNaN(Number(addNewOId))) {
-      getIndividualData(addNewOId, setIndividualData, menu, setLoading);
+      setLoading(true);
+      getIndividualData(addNewOId, setIndividualData, menu).then(
+        () => {
+          setLoading(false);
+        },
+        (reason) => {
+          console.log(reason);
+        }
+      );
     }
 
     getSelector(setSelectorData, menu);
@@ -116,7 +124,9 @@ export default function Main_AddNewNViewNEdit() {
     }
   };
 
-  const handleDeletePerson = (e: React.MouseEvent<HTMLLIElement>) => {
+  const handleDeletePerson: (e: React.MouseEvent<HTMLLIElement>) => void = (
+    e
+  ) => {
     const person_id = e.currentTarget.id;
 
     // dispatch(setAddNewPersonDeleteInCustomer(person_id));
@@ -124,7 +134,9 @@ export default function Main_AddNewNViewNEdit() {
     e.currentTarget.parentElement?.parentElement?.parentElement?.parentElement.remove();
   };
 
-  const handleDeleteContact = (e: React.MouseEvent<HTMLLIElement>) => {
+  const handleDeleteContact: (e: React.MouseEvent<HTMLLIElement>) => void = (
+    e
+  ) => {
     const contact_id = e.currentTarget.id;
 
     // dispatch(setAddNewContactDeleteInCustomer(contact_id));
@@ -132,7 +144,9 @@ export default function Main_AddNewNViewNEdit() {
     e.currentTarget.parentElement?.parentElement?.parentElement?.parentElement.remove();
   };
 
-  const handleDeleteAddress = (e: React.MouseEvent<HTMLLIElement>) => {
+  const handleDeleteAddress: (e: React.MouseEvent<HTMLLIElement>) => void = (
+    e
+  ) => {
     const address_id = e.currentTarget.id;
 
     // dispatch(setAddNewAddressDeleteInCustomer(address_id));
@@ -140,7 +154,9 @@ export default function Main_AddNewNViewNEdit() {
     e.currentTarget.parentElement?.parentElement?.parentElement?.parentElement.remove();
   };
 
-  const handleDeleteVehicle = (e: React.MouseEvent<HTMLLIElement>) => {
+  const handleDeleteVehicle: (e: React.MouseEvent<HTMLLIElement>) => void = (
+    e
+  ) => {
     const person_id = e.currentTarget.id;
 
     // dispatch(setAddNewVehiclDeleteInCustomer(person_id));
@@ -155,12 +171,7 @@ export default function Main_AddNewNViewNEdit() {
         popUpLoading={popUpLoading}
       />
       {menu == "customer" ? (
-        <AddNewCustomer
-          individualData={individualData}
-          edit={edit}
-          addNewOId={addNewOId}
-          selectorData={selectorData}
-        />
+        <AddNewCustomer edit={edit} addNewOId={addNewOId} />
       ) : menu == "person" ? (
         <Fragment>
           <Divider title="ข้อมูลบุคคล" />
@@ -171,44 +182,99 @@ export default function Main_AddNewNViewNEdit() {
               type="regular"
               name="ชื่อ"
               ref={firstname}
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              defaultValue={
+                individualData &&
+                "person" in individualData.response &&
+                !Array.isArray(individualData.response.person)
+                  ? individualData.response.person.firstname
+                  : ""
+              }
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="นามสกุล"
               placeholder="นามสกุล"
               type="regular"
               ref={lastname}
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
+              defaultValue={
+                individualData &&
+                "person" in individualData.response &&
+                !Array.isArray(individualData.response.person)
+                  ? individualData.response.person.lastname
+                  : ""
+              }
             />
             <Selector
               label="คำนำหน้า"
-              defaultValue="เลือกคำนำหน้า"
               selectorData={selectorData}
               number={0}
               ref={title}
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              type="selector"
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
+              defaultValue={
+                individualData &&
+                "person" in individualData.response &&
+                !Array.isArray(individualData.response.person)
+                  ? individualData.response.person.title_type
+                  : "เลือกคำนำหน้า"
+              }
             />
             <Input
               label="ชื่อเล่น"
               placeholder="ชื่อเล่น"
               type="regular"
               ref={nickname}
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
+              defaultValue={
+                individualData &&
+                "person" in individualData.response &&
+                !Array.isArray(individualData.response.person)
+                  ? individualData.response.person.nickname
+                  : ""
+              }
             />
             <Selector
               label="ตำแหน่ง"
-              defaultValue="เลือกตำแหน่ง"
               selectorData={selectorData}
+              type="multi-selector"
               number={1}
               ref={role}
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
+              defaultValue={
+                individualData &&
+                "person" in individualData.response &&
+                !Array.isArray(individualData.response.person)
+                  ? individualData.response.person.role[0].role_type
+                  : "เลือกตำแหน่ง"
+              }
             />
             <Input
               label="รายละเอียด"
+              c
               placeholder="รายละเอียด"
               type="regular"
               ref={description}
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
+              defaultValue={
+                individualData &&
+                "person" in individualData.response &&
+                !Array.isArray(individualData.response.person)
+                  ? individualData.response.person.description
+                  : ""
+              }
             />
           </InputFrame>
         </Fragment>
@@ -221,55 +287,73 @@ export default function Main_AddNewNViewNEdit() {
               defaultValue="เลือกประเภทที่อยู่"
               selectorData={selectorData}
               number={0}
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="เลขที่"
               placeholder="เลขที่"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="หมู่ที่"
               placeholder="หมู่ที่"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="ซอย"
               placeholder="ซอย"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="ถนน"
               placeholder="ถนน"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="ตำบล/แขวง"
               placeholder="ตำบล/แขวง"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="อำเภอ/เขต"
               placeholder="อำเภอ/เขต"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="จังหวัด"
               placeholder="จังหวัด"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="รหัสไปรษณีย์"
               placeholder="รหัสไปรษณีย์"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
           </InputFrame>
         </Fragment>
@@ -282,14 +366,18 @@ export default function Main_AddNewNViewNEdit() {
               label="ชื่อฟลีต"
               placeholder="ชื่อฟลีต"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Selector
               label="ชื่อหัวฟลีต"
               defaultValue="เลือกชื่อหัวฟลีต"
               selectorData={selectorData}
               number={0}
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
           </InputFrame>
         </Fragment>
@@ -303,45 +391,59 @@ export default function Main_AddNewNViewNEdit() {
               defaultValue="เลือกประเภทยานพาหนะ"
               selectorData={selectorData}
               number={0}
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="ทะเบียนรถ"
               placeholder="ทะเบียนรถ"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Selector
               label="หมวดจังหวัด"
               defaultValue="เลือกหมวดจังหวัด"
               selectorData={selectorData}
               number={0}
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="เลขตัวถัง"
               placeholder="เลขตัวถัง"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Selector
               label="ยี่ห้อยานยนต์"
               defaultValue="เลือกยี่ห้อยานยนต์"
               selectorData={selectorData}
               number={0}
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Selector
               label="รุ่นยานยนต์"
               defaultValue="เลือกรุ่นยานยนต์"
               selectorData={selectorData}
               number={0}
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="ลักษณะในการจดทะเบียน"
               placeholder="ลักษณะในการจดทะเบียน"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
               type="regular"
             />
             <Selector
@@ -349,25 +451,33 @@ export default function Main_AddNewNViewNEdit() {
               defaultValue="เลือกประเภทใบขับขี่่"
               selectorData={selectorData}
               number={0}
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="จำนวนเพลา"
               placeholder="จำนวนเพลา"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="จำนวนกงล้อ"
               placeholder="จำนวนกงล้อ"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="จำนวนยาง"
               placeholder="จำนวนยาง"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
           </InputFrame>
           <Divider title="ค่ากำหนด" />
@@ -376,37 +486,49 @@ export default function Main_AddNewNViewNEdit() {
               label="ความเร็วสูงสุด"
               placeholder="ความเร็วสูงสุด"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="เวลา idel (นาที)"
               placeholder="เวลา idel (นาที)"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="fuel tank number"
               placeholder="fuel tank number"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="fuel tank capacity"
               placeholder="fuel tank capacity"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="max fuel voltage 1"
               placeholder="max fuel voltage 1"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="max fuel voltage 2"
               placeholder="max fuel voltage 2"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
           </InputFrame>
         </Fragment>
@@ -419,19 +541,25 @@ export default function Main_AddNewNViewNEdit() {
               label="device_id"
               placeholder="device_id"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="veh_id"
               placeholder="veh_id"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="วันที่เพิ่ม"
               placeholder="วันที่เพิ่ม"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
           </InputFrame>
         </Fragment>
@@ -443,26 +571,34 @@ export default function Main_AddNewNViewNEdit() {
               label="device_serial"
               placeholder="device_serial"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="IMEI"
               placeholder="IMEI"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Selector
               label="ประเภทกล่อง"
               defaultValue="เลือกประเภทกล่อง"
               selectorData={selectorData}
               number={0}
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
             <Input
               label="วันที่เพิ่ม"
               placeholder="วันที่เพิ่ม"
               type="regular"
-              disabled={!isNaN(Number(addNewOId)) ? true : true}
+              disabled={
+                edit !== "edit" && !isNaN(Number(addNewOId)) ? true : false
+              }
             />
           </InputFrame>
         </Fragment>

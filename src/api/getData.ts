@@ -4,10 +4,8 @@ import { Customer } from "../interface/dataType";
 // Get ข้อมูลในส่วนของหน้า Main
 export async function getData(
   setData: React.Dispatch<React.SetStateAction<Customer>>,
-  module: string,
-  setLoading: Boolean
+  module: string
 ): Promise<void> {
-  setLoading(true);
   try {
     if (module == "device-serial") {
       module = "deviceSerial";
@@ -44,7 +42,5 @@ export async function getData(
     }
   } catch (err) {
     console.log(err);
-  } finally {
-    setLoading(false);
   }
 }
