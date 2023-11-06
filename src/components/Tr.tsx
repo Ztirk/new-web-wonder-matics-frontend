@@ -10,7 +10,7 @@ export default function Tr({ children, type, id, dataId }: Props) {
     <tr
       className={
         type == "thead"
-          ? "text-center bg-[#003E51] text-white h-[35.87px]"
+          ? "text-center bg-[#F9FAFB] h-[35.87px]"
           : type == "tbody"
           ? "h-[66.213px]"
           : ""

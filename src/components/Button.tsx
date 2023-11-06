@@ -18,9 +18,9 @@ export default function Button({ name, disabled, onClick, type }: Props) {
       <button
         className={` h-[40px] w-[100px] rounded-md text-white ${
           name == "ค้นหา" || name == "เพิ่มใหม่"
-            ? "bg-[#007FA4]"
+            ? "bg-[#003E51]/80"
             : name == "ย้อนกลับ" || name == "ยกเลิก"
-            ? "bg-[#808080]"
+            ? "bg-[#D92D20]"
             : name == "เพิ่มที่มี"
             ? "bg-[#A88679]"
             : name == "บันทึก" || name == "ยืนยัน"

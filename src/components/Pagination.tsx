@@ -94,9 +94,9 @@ export default function Pagination({
   };
 
   return (
-    <div className="col-span-2 flex justify-end gap-3">
+    <div className="col-span-2  w-full">
       <div className="flex gap-3 items-center">
-        <i className="fa-solid fa-less-than"></i>
+        <i className="fa-solid fa-arrow-left" />
         <div onClick={decrePage} className="cursor-pointer">
           ก่อนหน้า
         </div>
@@ -108,14 +108,8 @@ export default function Pagination({
         <div onClick={increPage} className="cursor-pointer">
           ถัดไป
         </div>
-        <i className="fa-solid fa-greater-than"></i>
+        <i className="fa-solid fa-arrow-right" />
       </div>
-      <Input
-        label={`of ${Math.ceil(counted_page / 10)} pages`}
-        type="pagi"
-        placeholder="no"
-        name="page"
-      />
     </div>
   );
 }

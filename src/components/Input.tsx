@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import Button from "./Button";
+import { key } from "localforage";
 
 interface Props {
   label?: string;
@@ -8,8 +9,9 @@ interface Props {
   name?: string;
   defaultValue?: string;
   id?: string;
-  ref: React.RefObject<HTMLInputElement>;
+  refObject: React.RefObject<HTMLInputElement>;
   disabled: boolean;
+  onClick: () => void;
 }
 
 export default function Input({
@@ -19,8 +21,9 @@ export default function Input({
   name,
   defaultValue,
   id,
-  ref,
+  refObject,
   disabled,
+  onClick,
 }: Props) {
   return (
     <Fragment>
@@ -54,11 +57,12 @@ export default function Input({
             list="data"
             name={name}
             defaultValue={defaultValue == undefined ? "" : defaultValue}
-            ref={ref}
+            ref={refObject}
+            onKeyDown={(e) => (e.key == "Enter" ? onClick() : null)}
             // onKeyDown={handleEnter}
           />
 
-          {type == "filter" ? <Button name="ค้นหา" /> : <></>}
+          {type == "filter" ? <Button name="ค้นหา" onClick={onClick} /> : <></>}
           {type == "pagi" ? (
             <label htmlFor="input" className="font-bold">
               {label}
