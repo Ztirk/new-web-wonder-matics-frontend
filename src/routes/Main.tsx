@@ -23,6 +23,9 @@ import DeletePopUp from "../components/DeletePopUp";
 import InputNAddNewFrame from "../components/Input&AddNewFrame";
 import Loading from "../components/Loading";
 import { deleteData } from "../api/deleteData";
+import { useDispatch } from "react-redux";
+import { setDisplayDefaultFetch } from "../features/displaySlice";
+import { setAddOEditCustomerDefault } from "../features/addOEditCustomerSlice";
 
 export default function Main() {
   // เก็บข้อมูลหน้าหลัก
@@ -62,6 +65,13 @@ export default function Main() {
 
   const navigate = useNavigate();
 
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setAddOEditCustomerDefault());
+    dispatch(setDisplayDefaultFetch());
+  }, []);
+
   // เมื่อมีการเปลี่ยน path จะทำงาน
   useEffect(() => {
     setLoading(true);
@@ -69,10 +79,6 @@ export default function Main() {
       setLoading(false);
     });
   }, [location]);
-
-  useEffect(() => {
-    console.log(filter.current);
-  }, [filter]);
 
   // แสดง PopUp ยืนยันการกดลบข้อมูลสำหรับหน้าหลัก
   const handleToggleDeleteShowUp: (
@@ -165,27 +171,7 @@ export default function Main() {
             refObject={filter}
           />
           <InputNAddNewFrame>
-            <Link
-              to={
-                menu == "customer"
-                  ? "/customer/add-new-customer"
-                  : menu == "person"
-                  ? "/person/add-new-person"
-                  : menu == "address"
-                  ? "/address/add-new-address"
-                  : menu == "contact"
-                  ? "/contact/add-new-contact"
-                  : menu == "vehicle"
-                  ? "/vehicle/add-new-vehicle"
-                  : menu == "fleet"
-                  ? "/fleet/add-new-fleet"
-                  : menu == "device"
-                  ? "/device/add-new-device"
-                  : menu == "device-serial"
-                  ? "/device-serial/add-new-device"
-                  : ""
-              }
-            >
+            <Link to={`/${menu}/add-new-${menu}`}>
               <Button name="เพิ่มใหม่" />
             </Link>
           </InputNAddNewFrame>
@@ -426,19 +412,19 @@ export default function Main() {
               <></>
             )}
           </Table>
-          {data && "count_data" in data.response ? (
-            <Pagination
-              counted_page={data.response.count_data}
-              onClickPage={onClickPage}
-              increPage={increPage}
-              decrePage={decrePage}
-            />
-          ) : (
-            <></>
-          )}
         </Fragment>
       ) : (
         <Loading />
+      )}
+      {data && "count_data" in data.response ? (
+        <Pagination
+          counted_page={data.response.count_data}
+          onClickPage={onClickPage}
+          increPage={increPage}
+          decrePage={decrePage}
+        />
+      ) : (
+        <></>
       )}
     </Fragment>
   );

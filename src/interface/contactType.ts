@@ -13,8 +13,11 @@ export interface ContactDisplay {
 }
 
 export interface SendContact {
-  contact_code_id: number;
-  value: string;
+  contact: {
+    contact_id: number | string;
+    contact_code_id: number;
+    value: string;
+  };
 }
 
 export interface Contact extends ApiStatus {

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
-    <div className="w-[312px] h-full bg-white">
+    <div className="w-[312px] h-full bg-white z-30">
       <nav>
         <ul>
           <Link to="/customer">

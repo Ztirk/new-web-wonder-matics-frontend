@@ -1,11 +1,7 @@
-import { ChildrenProp } from "../interface/componentType";
-
-interface Props extends ChildrenProp {}
+interface Props {
+  children: React.ReactNode;
+}
 
 export default function Th({ children }: Props) {
-  return (
-    <th className=" border border-slate-300 " >
-      {children}
-    </th>
-  );
+  return <th className="px-3 text-left ">{children}</th>;
 }

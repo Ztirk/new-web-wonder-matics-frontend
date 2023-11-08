@@ -12,6 +12,12 @@ export interface DeviceSerialDisplay {
   deviceSerial: DeviceSerialIterate[] | [];
 }
 
+export interface SendDeviceSerial {
+  deviceSerial: {
+    device_serial_id: number;
+  };
+}
+
 export interface DeviceSerial extends ApiStatus {
   response: {
     deviceSerial: DeviceSerialIterate[] | [];
@@ -21,7 +27,7 @@ export interface DeviceSerial extends ApiStatus {
 export interface IndividualDeviceSerial extends ApiStatus {
   response:
     | {
-        device: {
+        deviceSerial: {
           device_serial_id: number;
           serial_id: number;
           imei_serial: number;

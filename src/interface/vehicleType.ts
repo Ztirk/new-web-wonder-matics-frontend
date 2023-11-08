@@ -20,16 +20,19 @@ export interface Vehicle extends ApiStatus {
 }
 
 export interface SendVehicle {
-  frame_no: string;
-  license_plate: string;
-  vehicle_model_id: number;
-  registration_province_code_id: number;
-  registration_type_code_id: number;
-  driving_license_type_code_id: number;
-  number_of_axles: number;
-  number_of_wheels: number;
-  number_of_tires: number;
-  vehicle_type_code_id: number;
+  vehicle: {
+    vehicle_id: number;
+    frame_no: string;
+    license_plate: string;
+    vehicle_model_id: number;
+    registration_province_code_id: number;
+    registration_type_code_id: number;
+    driving_license_type_code_id: number;
+    number_of_axles: number;
+    number_of_wheels: number;
+    number_of_tires: number;
+    vehicle_type_code_id: number;
+  };
 }
 
 export interface IndividualVehicle extends ApiStatus {

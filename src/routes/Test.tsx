@@ -9,27 +9,27 @@ import {
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import Input from "../components/Input";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { getData } from "../api/getData";
 
 export default function Test() {
-  const filter = useRef();
-
-  const display = useSelector(displayState);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const dispatch = useDispatch();
-
-  const handleClick = () => {
-    dispatch(setDisplayAddressFetch("eiei"));
-    setSearchParams({filter: 'bro'});
-  };
+  const data = [{ code_id: 1 }, { code_id: 2 }];
+  const [state, setState] = useState(1);
 
   useEffect(() => {
-    console.log(display);
-  }, [display]);
+    console.log(state);
+  }, []);
+
+  const id = () => {
+    const id = data.filter((data) => data.code_id !== state);
+
+    return <>{id[0].code_id}</>;
+  };
 
   return (
     <div>
-      <button onClick={handleClick}>hello</button>
+      <button>{id()}</button>
+      <button onClick={() => setState(state + 1)}>bro</button>
     </div>
   );
 }

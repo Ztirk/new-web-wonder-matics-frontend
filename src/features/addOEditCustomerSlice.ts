@@ -3,9 +3,10 @@ import { SendCustomer } from "../interface/customerType";
 
 const initialState: SendCustomer = {
   customer: {
+    customer_id: 0,
     customer_name: "",
-    customer_type_code_id: 0,
-    sales_type_code_id: 0,
+    customer_type_code_id: null,
+    sales_type_code_id: null,
   },
 };
 
@@ -13,44 +14,45 @@ const addOEditCustomerSlice = createSlice({
   name: "addOEditCustomer",
   initialState,
   reducers: {
-    setCustomerNameFetch(state, action: PayloadAction<string>) {
-      if (!state.customer.customer_name) {
-        state.customer.customer_name = action.payload;
-      }
+    setCustomerId: (state, action: PayloadAction<number>) => {
+      state.customer.customer_id = action.payload;
     },
-    setCustomerNameInteract(state, action: PayloadAction<string>) {
+
+    setCustomerName: (state, action: PayloadAction<string>) => {
       state.customer.customer_name = action.payload;
     },
 
-    setCustomerTypeCodeIdFetch(state, action: PayloadAction<number>) {
-      if (!state.customer.customer_type_code_id) {
-        state.customer.customer_type_code_id = action.payload;
-      }
-    },
-    setCustomerTypeCodeIdInteract(state, action: PayloadAction<number>) {
-      state.customer.customer_type_code_id = action.payload;
+    setCustomerTypeCodeId: (state, action: PayloadAction<number>) => {
+      state.customer.customer_type_code_id = action.payload
+        ? action.payload
+        : null;
     },
 
-    setSalesTypeCodeIdFetch(state, action: PayloadAction<number>) {
-      if (!state.customer.sales_type_code_id) {
-        state.customer.sales_type_code_id = action.payload;
-      }
+    setSalesTypeCodeId: (state, action: PayloadAction<number>) => {
+      state.customer.sales_type_code_id = action.payload
+        ? action.payload
+        : null;
     },
-    setSalesTypeCodeIdInteract(state, action: PayloadAction<number>) {
-      state.customer.sales_type_code_id = action.payload;
+
+    setAddOEditCustomerDefault: (state) => {
+      state.customer = {
+        customer_id: 0,
+        customer_name: "",
+        customer_type_code_id: 0,
+        sales_type_code_id: 0,
+      };
     },
   },
 });
 
 export const {
-  setCustomerNameFetch,
-  setCustomerNameInteract,
-  setCustomerTypeCodeIdFetch,
-  setCustomerTypeCodeIdInteract,
-  setSalesTypeCodeIdFetch,
-  setSalesTypeCodeIdInteract,
+  setCustomerId,
+  setCustomerName,
+  setCustomerTypeCodeId,
+  setSalesTypeCodeId,
+  setAddOEditCustomerDefault,
 } = addOEditCustomerSlice.actions;
 
-export const addOEditCustomerState = (state) => state.addNew;
+export const addOEditCustomerState = (state) => state.addOEditCustomer;
 
 export default addOEditCustomerSlice.reducer;

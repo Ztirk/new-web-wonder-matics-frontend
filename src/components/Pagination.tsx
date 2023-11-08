@@ -27,10 +27,17 @@ export default function Pagination({
     const selectedPagi = document.querySelector(
       `[data-name='pagi'][id='${id}']`
     );
+
     if (selectedPagi) {
-      selectedPagi.classList.add("bg-[#003E51]", "text-white", "rounded-md");
+      selectedPagi.classList.add("bg-[#F9FAFB]", "rounded-md");
     }
-  }, []);
+
+    return () => {
+      if (selectedPagi) {
+        selectedPagi.classList.remove("bg-[#F9FAFB]", "rounded-md");
+      }
+    };
+  }, [searchParams]);
 
   const createPagi = () => {
     const pagi = [];
@@ -94,21 +101,25 @@ export default function Pagination({
   };
 
   return (
-    <div className="col-span-2  w-full">
-      <div className="flex gap-3 items-center">
-        <i className="fa-solid fa-arrow-left" />
-        <div onClick={decrePage} className="cursor-pointer">
-          ก่อนหน้า
+    <div className="col-span-2 w-full">
+      <div className="flex gap-3 justify-between w-full items-center">
+        <div
+          onClick={decrePage}
+          className="cursor-pointer border border-[#EAECF0] py-2 px-4 rounded-md shadow-sm"
+        >
+          <i className="fa-solid fa-arrow-left" /> ก่อนหน้า
         </div>
 
         <nav>
           <ul className="grid grid-cols-9 gap-3 ">{createPagi()}</ul>
         </nav>
 
-        <div onClick={increPage} className="cursor-pointer">
-          ถัดไป
+        <div
+          onClick={increPage}
+          className="cursor-pointer border border-[#EAECF0] py-2 px-4 rounded-md shadow-sm"
+        >
+          ถัดไป <i className="fa-solid fa-arrow-right" />
         </div>
-        <i className="fa-solid fa-arrow-right" />
       </div>
     </div>
   );

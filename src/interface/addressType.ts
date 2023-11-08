@@ -13,6 +13,7 @@ export interface AddressDisplay {
 
 export interface SendAddress {
   address: {
+    address_id: number | string;
     name: string;
     house_no: string;
     village_no: string;

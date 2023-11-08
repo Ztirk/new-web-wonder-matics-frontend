@@ -5,7 +5,7 @@
 @layer base {
   html {
     font-family: Prompt;
-    color: #344054;
+    color: #475467;
   }
 }
 
@@ -15,7 +15,7 @@
   }
 
   .input-n-selector__border {
-    @apply border border-gray-400 rounded-md;
+    @apply border border-[#EAECF0] rounded-md;
   }
 
   .input-n-selector__shadow {

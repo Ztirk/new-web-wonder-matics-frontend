@@ -32,45 +32,11 @@ export default function AddExistPopup({ popUpData, popUpLoading }: Props) {
   const popUpAddExist = useSelector(popUpAddExistState);
 
   const handleSelectedPerson = () => {
-    const add_exist_person_id: string[] = [];
-    const personData: Person[] = [];
-    const selectedPersonElem = document.querySelectorAll("#selected-person-id");
-
-    selectedPersonElem.forEach((elem, i) => {
-      if (selectedPersonElem[i].childNodes[0].childNodes[0].checked == true) {
-        const childNodes = elem.childNodes;
-        const person: Person = {
-          person_id: elem.getAttribute("data-id"),
-          fullname: childNodes[3].textContent,
-          mobile: childNodes[4].textContent,
-          email: childNodes[5].textContent,
-          description: childNodes[6].textContent,
-          role: childNodes[7].textContent,
-        };
-        personData.push(person);
-        add_exist_person_id.push(elem.getAttribute("data-id"));
-      }
-    });
+    
   };
 
   const handleSelectedAddress = () => {
-    const add_exist_address_id: string[] = [];
-    const selectedAddressElem = document.querySelectorAll(
-      "#selected-address-id"
-    );
-    const addressData: Address[] = [];
-
-    selectedAddressElem.forEach((elem, i) => {
-      if (selectedAddressElem[i].childNodes[0].childNodes[0].checked == true) {
-        const address: Address = {};
-        const childNodes = elem.childNodes;
-        address["address_id"] = elem.getAttribute("data-id");
-        address["location"] = childNodes[3].textContent;
-        address["address_type"] = childNodes[4].textContent;
-        addressData.push(address);
-        add_exist_address_id.push(elem.getAttribute("data-id"));
-      }
-    });
+   
   };
 
   return (

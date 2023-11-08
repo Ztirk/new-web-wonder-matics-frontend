@@ -32,7 +32,9 @@ export default function Button({ name, disabled, onClick, type }: Props) {
         type="submit"
       >
         {name == "ค้นหา" ? (
-          <i className="fa-solid fa-magnifying-glass"></i>
+          <>
+            <i className="fa-solid fa-magnifying-glass" />{" "}
+          </>
         ) : (
           <></>
         )}

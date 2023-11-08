@@ -1,69 +1,49 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Selector from "../components/Selector";
 import Divider from "../components/Divider";
 import Input from "../components/Input";
 import InputFrame from "../components/InputFrame";
-import { IndividualData } from "../interface/dataType";
 import { MasterCode } from "../interface/mastercodeType";
+import { useSelector } from "react-redux";
+import { addOEditCustomerState } from "../features/addOEditCustomerSlice";
+import { getSelector } from "../api/getSelector";
 
-interface Props extends ChildNode {
-  individualData?: IndividualData;
-  edit?: string;
-  addNewOId: string | number;
-  selectorData: MasterCode;
+interface Props {
+  addNew2OEdit?: string;
+  addNew1OId: string | number;
 }
 
-export default function AddNewCustomer({
-  individualData,
-  edit,
-  selectorData,
-  addNewOId,
-}: Props) {
+export default function AddNewCustomer({ addNew2OEdit, addNew1OId }: Props) {
+  const addOEditCustomer = useSelector(addOEditCustomerState);
+  const [selectorData, setSelectorData] = useState<MasterCode>();
+
+  useEffect(() => {
+    getSelector(setSelectorData, "customer");
+  }, []);
+
   return (
     <Fragment>
       <Divider title="ข้อมูลลูกค้า" />
       <InputFrame>
         <Input
-          label="ชื่อลูกค้า"
+          label="ชื่อลูกค้า*"
           placeholder="ชื่อลูกค้า"
-          defaultValue={
-            individualData &&
-            "customer" in individualData.response &&
-            !Array.isArray(individualData.response.customer)
-              ? individualData.response.customer.customer_name
-              : ""
-          }
+          defaultValue={addOEditCustomer.customer.customer_name}
           type="regular"
           name="ชื่อลูกค้า"
-          disabled={!edit && !isNaN(Number(addNewOId)) ? true : false}
+          disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
         />
         <Selector
-          label="ลักษณะลูกค้า"
-          defaultValue={
-            individualData &&
-            "customer" in individualData.response &&
-            !Array.isArray(individualData.response.customer)
-              ? individualData.response.customer.customer_type
-              : "เลือกลักษณะลูกค้า"
-          }
-          selectorData={selectorData}
-          number={1}
-          name="ลักษณะลูกค้า"
-          disabled={!edit && !isNaN(Number(addNewOId)) ? true : false}
+          label="ลักษณะลูกค้า*"
+          selectorData={selectorData?.response[1]}
+          type={"selector"}
+          disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
         />
         <Selector
-          label="ประเภทลูกค้า"
-          defaultValue={
-            individualData &&
-            "customer" in individualData.response &&
-            !Array.isArray(individualData.response.customer)
-              ? individualData.response.customer.sales_type
-              : "เลือกประเภทลูกค้า"
-          }
-          selectorData={selectorData}
-          number={0}
-          name="ประเภทลูกค้า"
-          disabled={!edit && !isNaN(Number(addNewOId)) ? true : false}
+          label="ประเภทลูกค้า*"
+          selectorData={selectorData?.response[0]}
+          type={"selector"}
+          disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
         />
       </InputFrame>
     </Fragment>

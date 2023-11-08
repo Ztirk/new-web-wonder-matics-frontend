@@ -1,9 +1,7 @@
-import { ChildrenProp } from "../interface/componentType";
-
-interface Props extends ChildrenProp {
-  id?: string;
+interface Props {
+  children: React.ReactNode;
 }
 
-export default function Tbody({ children, id }: Props) {
-  return <tbody id={id}>{children}</tbody>;
+export default function Tbody({ children }: Props) {
+  return <tbody>{children}</tbody>;
 }

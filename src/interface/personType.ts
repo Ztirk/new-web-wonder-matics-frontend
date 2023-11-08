@@ -16,6 +16,7 @@ export interface PersonDisplay {
 
 export interface SendPerson {
   person: {
+    person_id: number;
     firstname: string;
     lastname: string;
     nickname: string;

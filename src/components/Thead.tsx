@@ -1,9 +1,7 @@
-import { ChildrenProp } from "../interface/componentType";
-
-interface Props extends ChildrenProp {
-  id?: string;
+interface Props {
+  children: React.ReactNode;
 }
 
-export default function Thead({ children, id }: Props) {
-  return <thead id={id}>{children}</thead>;
+export default function Thead({ children }: Props) {
+  return <thead>{children}</thead>;
 }

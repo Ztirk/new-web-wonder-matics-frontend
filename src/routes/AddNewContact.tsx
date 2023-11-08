@@ -3,7 +3,7 @@ import Divider from "../components/Divider";
 import Input from "../components/Input";
 import Selector from "../components/Selector";
 import { MasterCode } from "../interface/mastercodeType";
-import { getMasterCode } from "../api/getMasterCode";
+
 import ButtonRightFrame from "../components/ฺButtonRightFrame";
 import Button from "../components/Button";
 import { Link, useLocation } from "react-router-dom";
@@ -12,7 +12,7 @@ import InputFrame from "../components/InputFrame";
 import { Contact, putPostContact } from "../interface/reduxType";
 import { v4 as uuidv4 } from "uuid";
 
-export default function Main_AddNew_Contact() {
+export default function AddNewContact() {
   const initContactType: MasterCode = {
     message: "",
     status: 0,

@@ -8,10 +8,13 @@ import {
 import Login from "./routes/Login";
 import Main_AddNewNViewNEdit from "./routes/Main_AddNewNViewNEdit";
 import Frame from "./routes/Frame";
-import Main_AddNew_Contact from "./routes/AddNewContact";
-import Main_AddNew_Person from "./routes/AddNewPerson";
+import AddNewContact from "./routes/AddNewContact";
+import AddNewPerson from "./routes/AddNewPerson";
 import Test from "./routes/test";
 import AddNewCustomer from "./routes/AddNewCustomer";
+import AddNewVehicle from "./routes/AddNewVehicle";
+import AddNewAddress from "./routes/AddNewAddress";
+import AddNewFleet from "./routes/AddNewFleet";
 
 export function App() {
   const router = createBrowserRouter(
@@ -30,20 +33,48 @@ export function App() {
             element={<Main_AddNewNViewNEdit />}
           ></Route>
           <Route
-            path="/customer/add-new-customer/add-new-contact"
-            element={<Main_AddNew_Contact />}
-          ></Route>
-          <Route
             path="/customer/:customer_id/edit"
             element={<Main_AddNewNViewNEdit />}
           ></Route>
           <Route
-            path="/customer/:customer_id/edit/add-new-contact"
-            element={<Main_AddNew_Contact />}
+            path="/customer/add-new-customer/add-new-contact"
+            element={<AddNewContact />}
+          ></Route>
+          <Route
+            path="/customer/add-new-customer/add-new-vehicle"
+            element={<AddNewVehicle />}
+          ></Route>
+          <Route
+            path="/customer/add-new-customer/add-new-person"
+            element={<AddNewPerson />}
+          ></Route>
+          <Route
+            path="/customer/add-new-customer/add-new-address"
+            element={<AddNewAddress />}
+          ></Route>
+          <Route
+            path="/customer/add-new-customer/add-new-fleet"
+            element={<AddNewFleet />}
           ></Route>
           <Route
             path="/customer/:customer_id/edit/add-new-person"
-            element={<Main_AddNew_Person />}
+            element={<AddNewPerson />}
+          ></Route>
+          <Route
+            path="/customer/:customer_id/edit/add-new-vehicle"
+            element={<AddNewVehicle />}
+          ></Route>
+          <Route
+            path="/customer/:customer_id/edit/add-new-contact"
+            element={<AddNewContact />}
+          ></Route>
+          <Route
+            path="/customer/:customer_id/edit/add-new-fleet"
+            element={<AddNewFleet />}
+          ></Route>
+          <Route
+            path="/customer/:customer_id/edit/add-new-address"
+            element={<AddNewAddress />}
           ></Route>
 
           {/* คน */}

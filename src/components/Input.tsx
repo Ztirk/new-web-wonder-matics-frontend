@@ -32,26 +32,18 @@ export default function Input({
           className={`flex  ${
             type == "filter"
               ? " gap-5 items-center"
-              : type == "pagi"
-              ? " gap-2 items-center"
               : type == "regular"
               ? "flex-col"
               : ""
           }`}
         >
-          {type == "pagi" ? (
-            <></>
-          ) : (
-            <label htmlFor={""} className="font-bold">
-              {label}
-            </label>
-          )}
+          <label htmlFor={""} className="font-bold">
+            {label}
+          </label>
 
           <input
             id={id}
-            className={`pl-3 border border-gray-400 rounded-md h-[40px] ${
-              type == "pagi" ? "w-[40px]" : "w-[240px]"
-            }`}
+            className={`pl-3 border border- rounded-md h-[40px] w-[240px]`}
             placeholder={placeholder}
             disabled={disabled}
             list="data"
@@ -63,13 +55,6 @@ export default function Input({
           />
 
           {type == "filter" ? <Button name="ค้นหา" onClick={onClick} /> : <></>}
-          {type == "pagi" ? (
-            <label htmlFor="input" className="font-bold">
-              {label}
-            </label>
-          ) : (
-            <Fragment></Fragment>
-          )}
         </div>
       ) : (
         <input type="checkbox" className="h-[20px] w-full" />

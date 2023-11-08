@@ -13,11 +13,21 @@ const deleteSlice = createSlice({
   name: "delete",
   initialState,
   reducers: {
-    setCustomerDelete(state, action) {},
-    setPersonDelete(state, action) {},
-    setAddressDelete(state, action) {},
-    setVehicleDelete(state, action) {},
-    setFleetDelete(state, action) {},
+    setCustomerDelete(state, action: PayloadAction<number>) {
+      state.customerDelete.push(action.payload);
+    },
+    setPersonDelete(state, action: PayloadAction<number>) {
+      state.personDelete.push(action.payload);
+    },
+    setAddressDelete(state, action: PayloadAction<number>) {
+      state.addressDelete.push(action.payload);
+    },
+    setVehicleDelete(state, action: PayloadAction<number>) {
+      state.vehicleDelete.push(action.payload);
+    },
+    setFleetDelete(state, action: PayloadAction<number>) {
+      state.fleetDelete.push(action.payload);
+    },
   },
 });
 

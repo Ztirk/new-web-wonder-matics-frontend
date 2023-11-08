@@ -13,6 +13,12 @@ export interface DeviceDisplay {
   device: DeviceIterate[] | [];
 }
 
+export interface SendDevice {
+  device: {
+    device_id: number;
+  };
+}
+
 export interface Device extends ApiStatus {
   response: {
     device: DeviceIterate[] | [];

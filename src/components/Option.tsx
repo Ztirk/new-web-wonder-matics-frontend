@@ -29,10 +29,10 @@ export default function Option({
           {type == "full" ? (
             <>
               <Link to={onView}>
-                <li>ดู</li>
+                <i className="fa-regular fa-eye"></i>
               </Link>
               <Link to={onEdit}>
-                <li>แก้ไข</li>
+                <i className="fa-regular fa-pen-to-square"></i>
               </Link>
             </>
           ) : type == "edit" ? (
@@ -47,7 +47,7 @@ export default function Option({
             data-name={dataName}
             title={title}
           >
-            ลบ
+            <i className="fa-regular fa-trash-can"></i>
           </li>
         </ul>
       </nav>

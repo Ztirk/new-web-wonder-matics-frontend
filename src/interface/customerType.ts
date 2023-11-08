@@ -12,9 +12,10 @@ export interface CustomerIterate {
 
 export interface SendCustomer {
   customer: {
+    customer_id: number;
     customer_name: string;
-    customer_type_code_id: number;
-    sales_type_code_id: number;
+    customer_type_code_id: number | null;
+    sales_type_code_id: number | null;
   };
 }
 

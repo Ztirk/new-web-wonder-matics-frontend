@@ -12,8 +12,11 @@ export interface FleetDisplay {
 }
 
 export interface SendFleet {
-  fleet_name: string;
-  parent_fleet_id: number;
+  fleet: {
+    fleet_id: number;
+    fleet_name: string;
+    parent_fleet_id: number;
+  };
 }
 export interface Fleet extends ApiStatus {
   response: {

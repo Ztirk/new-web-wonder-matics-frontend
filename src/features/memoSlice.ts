@@ -19,38 +19,38 @@ const memoSlice = createSlice({
   name: "memo",
   initialState,
   reducers: {
-    setCustomerId(state, action: PayloadAction<number[]>) {
-      state.customer_id = action.payload;
+    setCustomerId(state, action: PayloadAction<number>) {
+      state.customer_id.push(action.payload);
     },
-    setPersonId(state, action: PayloadAction<number[]>) {
-      state.person_id = action.payload;
+    setPersonId(state, action: PayloadAction<number>) {
+      state.person_id.push(action.payload);
     },
-    setRoleId(state, action: PayloadAction<number[]>) {
-      state.role_id = action.payload;
+    setRoleId(state, action: PayloadAction<number>) {
+      state.role_id.push(action.payload);
     },
-    setRoleCodeId(state, action: PayloadAction<number[]>) {
-      state.role_code_id = action.payload;
+    setRoleCodeId(state, action: PayloadAction<number>) {
+      state.role_code_id.push(action.payload);
     },
-    setAddressId(state, action: PayloadAction<number[]>) {
-      state.address_id = action.payload;
+    setAddressId(state, action: PayloadAction<number>) {
+      state.address_id.push(action.payload);
     },
-    setAddressTypeId(state, action: PayloadAction<number[]>) {
-      state.address_type_id = action.payload;
+    setAddressTypeId(state, action: PayloadAction<number>) {
+      state.address_type_id.push(action.payload);
     },
-    setAddressTypeCodeId(state, action: PayloadAction<number[]>) {
-      state.address_type_code_id = action.payload;
+    setAddressTypeCodeId(state, action: PayloadAction<number>) {
+      state.address_type_code_id.push(action.payload);
     },
-    setDeviceId(state, action: PayloadAction<number[]>) {
-      state.device_id = action.payload;
+    setDeviceId(state, action: PayloadAction<number>) {
+      state.device_id.push(action.payload);
     },
-    setDeviceSerialId(state, action: PayloadAction<number[]>) {
-      state.device_serial_id = action.payload;
+    setDeviceSerialId(state, action: PayloadAction<number>) {
+      state.device_serial_id.push(action.payload);
     },
-    setFleetId(state, action: PayloadAction<number[]>) {
-      state.fleet_id = action.payload;
+    setFleetId(state, action: PayloadAction<number>) {
+      state.fleet_id.push(action.payload);
     },
-    setVehicleId(state, action: PayloadAction<number[]>) {
-      state.vehicle_id = action.payload;
+    setVehicleId(state, action: PayloadAction<number>) {
+      state.vehicle_id.push(action.payload);
     },
   },
 });
