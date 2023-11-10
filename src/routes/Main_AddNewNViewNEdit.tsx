@@ -1,25 +1,25 @@
 import { Fragment, useEffect, useRef, useState } from "react";
-import Divider from "../components/Divider";
-import InputFrame from "../components/InputFrame";
-import Input from "../components/Input";
-import Button from "../components/Button";
-import ButtonLeftFrame from "../components/ButtonLeftFrame";
-import Selector from "../components/Selector";
-import Table from "../components/Table";
-import ButtonRightFrame from "../components/ฺButtonRightFrame";
+import Divider from "../components/Table/Divider";
+import InputFrame from "../components/Input/InputFrame";
+import Input from "../components/Input/Input";
+import Button from "../components/Button/Button";
+import ButtonLeftFrame from "../components/Button/ButtonLeftFrame";
+import Selector from "../components/Input/Selector";
+import Table from "../components/Table/Table";
+import ButtonRightFrame from "../components/Button/ฺButtonRightFrame";
 import { getSelector } from "../api/getSelector";
 import { getPopUpData } from "../api/getPopUpData";
 import { postNewData } from "../api/postNewData";
-import AddExistPopup from "../components/AddExistPopup";
+import AddExistPopup from "../components/PopUp/AddExistPopup";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import Thead from "../components/Thead";
-import Tbody from "../components/Tbody";
+import Thead from "../components/Table/Thead";
+import Tbody from "../components/Table/Tbody";
 import { useDispatch, useSelector } from "react-redux";
 import { MasterCode } from "../interface/mastercodeType";
-import Tr from "../components/Tr";
-import Th from "../components/Th";
-import Td from "../components/Td";
-import Option from "../components/Option";
+import Tr from "../components/Table/Tr";
+import Th from "../components/Table/Th";
+import Td from "../components/Table/Td";
+import Option from "../components/Table/Option";
 import { Address, DisplayData } from "../interface/reduxType";
 import { popUpAddExistState } from "../features/popUpAddExistSlice";
 import {
@@ -34,18 +34,24 @@ import { getIndividualData } from "../api/getIndividualData";
 import { IndividualData } from "../interface/dataType";
 import {
   CustomerIterate,
-  CustomerShape,
+  IndividualCustomer,
   SendCustomer,
+  StoringIndividualCustomer,
 } from "../interface/customerType";
-import { FleetIterate, IndividualFleetShape } from "../interface/fleetType";
+import {
+  FleetIterate,
+  IndividualFleetShape,
+  SendFleet,
+} from "../interface/fleetType";
 import {
   PersonDisplay,
   PersonIterate,
   SendPerson,
+  StoringIndividualPerson,
 } from "../interface/personType";
-import { Contact, ContactIterate } from "../interface/contactType";
-import { AddressIterate } from "../interface/addressType";
-import { Vehicle, VehicleIterate } from "../interface/vehicleType";
+import { Contact, ContactIterate, SendContact } from "../interface/contactType";
+import { AddressIterate, SendAddress } from "../interface/addressType";
+import { SendVehicle, Vehicle, VehicleIterate } from "../interface/vehicleType";
 import AddNewCustomer from "./AddNewCustomer";
 import {
   addOEditCustomerState,
@@ -53,8 +59,8 @@ import {
   setCustomerName,
   setCustomerTypeCodeId,
   setSalesTypeCodeId,
-} from "../features/addOEditCustomerSlice";
-import { addOEditPersonState } from "../features/addOEditPersonSlice";
+} from "../features/addOEdit/addOEditCustomerSlice";
+import { addOEditPersonState } from "../features/addOEdit/addOEditPersonSlice";
 import AddNewPerson from "./AddNewPerson";
 import AddNewAddress from "./AddNewAddress";
 import AddNewFleet from "./AddNewFleet";
@@ -64,6 +70,15 @@ import AddNewDeviceSerial from "./AddNewDeviceSerial";
 import AddNewContact from "./AddNewContact";
 import { addNewOAddExistState } from "../features/addNewOAddExistSlice";
 import { memoState } from "../features/memoSlice";
+import { addOEditContactState } from "../features/addOEdit/addOEditContactSlice";
+import { addOEditAddressState } from "../features/addOEdit/addOEditAddressSlice";
+import { addOEditFleetState } from "../features/addOEdit/addOEditFleetSlice";
+import { addOEditVehicleState } from "../features/addOEdit/addOEditVehicleSlice";
+import { SendDevice } from "../interface/deviceType";
+import { addOEditDeviceSerialState } from "../features/addOEdit/addOEditDeviceSerialSlice";
+import { SendDeviceSerial } from "../interface/deviceSerialType";
+import { addOEditDeviceState } from "../features/addOEdit/addOEditDeviceSlice";
+import { setReload } from "../features/reloadSlice";
 
 export default function Main_AddNewNViewNEdit() {
   // useState
@@ -83,24 +98,28 @@ export default function Main_AddNewNViewNEdit() {
   const addNew2OEdit = segments[2];
   const addNew2 = segments[3];
 
-  // useRef
-  const firstname = useRef<HTMLInputElement>(null);
-  const lastname = useRef<HTMLInputElement>(null);
-  const title = useRef<HTMLSelectElement>(null);
-  const nickname = useRef<HTMLInputElement>(null);
-  const role = useRef<HTMLSelectElement>(null);
-  const description = useRef<HTMLInputElement>(null);
-
   // Redux
   const dispatch = useDispatch();
   const displayData: DisplayData = useSelector(displayState);
   const popUpAddExist = useSelector(popUpAddExistState);
+  const addNewOAddExist = useSelector(addNewOAddExistState);
   const addOEditCustomer: SendCustomer = useSelector(addOEditCustomerState);
   const addOEditPerson: SendPerson = useSelector(addOEditPersonState);
-  const addNewOAddExist = useSelector(addNewOAddExistState);
+  const addOEditContact: SendContact = useSelector(addOEditContactState);
+  const addOEditAddress: SendAddress = useSelector(addOEditAddressState);
+  const addOEditFleet: SendFleet = useSelector(addOEditFleetState);
+  const addOEditVehicle: SendVehicle = useSelector(addOEditVehicleState);
+  const addOEditDevice: SendDevice = useSelector(addOEditDeviceState);
+  const addOEditDeviceSerial: SendDeviceSerial = useSelector(
+    addOEditDeviceSerialState
+  );
   const memo = useSelector(memoState);
 
   // useEffect
+  useEffect(() => {
+    sessionStorage.setItem("reload", "true");
+  });
+
   useEffect(() => {
     if (location.search) {
       getPopUpData(setAddExistData, setPopUpLoading, menu);
@@ -123,36 +142,28 @@ export default function Main_AddNewNViewNEdit() {
 
   useEffect(() => {
     if (individualData) {
+      const customerData = individualData.response.customer;
+      const personData = individualData.response.person;
+      const contactData = individualData.response.contact;
+      const addressData = individualData.response.address;
+      const fleetData = individualData.response.fleet;
+      const vehicleData = individualData.response.vehicle;
+      const deviceData = individualData.response.device;
+      const deviceSerialData = individualData.response.deviceSerial;
+      const deviceConfigData = individualData.response.deviceConfig;
+
       if (menu == "customer" && !addOEditCustomer.customer.customer_id) {
-        if (
-          "customer" in individualData.response &&
-          "person" in individualData.response &&
-          "contact" in individualData.response &&
-          "fleet" in individualData.response &&
-          "vehicle" in individualData.response &&
-          "address" in individualData.response
-        ) {
-          const customerData = individualData.response.customer;
-          const personData = individualData.response.person as PersonIterate[];
-          const contactData = individualData.response
-            .contact as ContactIterate[];
-          const addressData = individualData.response
-            .address as AddressIterate[];
-          const fleetData = individualData.response.fleet as FleetIterate[];
-          const vehicleData = individualData.response
-            .vehicle as VehicleIterate[];
-          dispatch(setCustomerId(Number(addNew1OId)));
-          dispatch(setCustomerName(customerData.customer_name));
-          dispatch(
-            setCustomerTypeCodeId(Number(customerData.customer_type_code_id))
-          );
-          dispatch(setSalesTypeCodeId(Number(customerData.sales_type_code_id)));
-          dispatch(setDisplayPersonFetch(personData));
-          dispatch(setDisplayContactFetch(contactData));
-          dispatch(setDisplayFleetFetch(fleetData));
-          dispatch(setDisplayVehicleFetch(vehicleData));
-          dispatch(setDisplayAddressFetch(addressData));
-        }
+        dispatch(setCustomerId(Number(addNew1OId)));
+        dispatch(setCustomerName(customerData.customer_name));
+        dispatch(
+          setCustomerTypeCodeId(Number(customerData.customer_type_code_id))
+        );
+        dispatch(setSalesTypeCodeId(Number(customerData.sales_type_code_id)));
+        dispatch(setDisplayPersonFetch(personData));
+        dispatch(setDisplayContactFetch(contactData));
+        dispatch(setDisplayAddressFetch(addressData));
+        dispatch(setDisplayFleetFetch(fleetData));
+        dispatch(setDisplayVehicleFetch(vehicleData));
       } else if (menu == "person" && !addOEditPerson.person.person_id) {
       }
     }
@@ -163,19 +174,6 @@ export default function Main_AddNewNViewNEdit() {
       setAddExistData();
     }
   }, [popUpAddExist]);
-
-  useEffect(() => {
-    console.log("addOEditCustomer", addOEditCustomer);
-  }, [addOEditCustomer]);
-  useEffect(() => {
-    console.log("addNewOAddExist", addNewOAddExist);
-  }, [addNewOAddExist]);
-  useEffect(() => {
-    console.log("memo", memo);
-  }, [memo]);
-  useEffect(() => {
-    console.log("displayData", displayData);
-  }, [displayData]);
 
   // เพิ่มข้อมูลใหม่เมื่อใน State ได้กรอกชื่อลูกค้า ลักษณะลูกค้า และประเภทลูกค้า แล้ว
   const handleAddNewData: () => void = () => {
@@ -278,7 +276,13 @@ export default function Main_AddNewNViewNEdit() {
           <Divider title="ข้อมูลลูกค้า" />
           {addNew2OEdit || isNaN(Number(addNew1OId)) ? (
             <ButtonLeftFrame>
-              <Link to={``}>
+              <Link
+                to={`/${menu}/${
+                  isNaN(Number(addNew1OId))
+                    ? `addnew-${menu}/addnew-customer`
+                    : `${addNew1OId}/edit/addnew-customer`
+                }`}
+              >
                 <Button name="เพิ่มใหม่" />
               </Link>
               <Button
@@ -302,15 +306,11 @@ export default function Main_AddNewNViewNEdit() {
           <Fragment>
             <Thead id="customer-thead">
               <Tr type="thead">
-                {Object.keys(displayData.customer[0]).map((columnName) => (
-                  <Th key={columnName}>{columnName}</Th>
-                ))}
-
-                {!addNew2OEdit && !isNaN(Number(addNew1OId)) ? (
-                  <></>
-                ) : (
-                  <Th>ตัวเลือก</Th>
-                )}
+                <Th
+                  type="customer"
+                  addNew1OId={addNew1OId}
+                  addNew2OEdit={addNew2OEdit}
+                />
               </Tr>
             </Thead>
             <Tbody id="customer-tbody">
@@ -348,7 +348,15 @@ export default function Main_AddNewNViewNEdit() {
           <Divider title="ข้อมูลบุคคล" />
           {addNew2OEdit || isNaN(Number(addNew1OId)) ? (
             <ButtonLeftFrame>
-              <Button name="เพิ่มใหม่" />
+              <Link
+                to={`/${menu}/${
+                  isNaN(Number(addNew1OId))
+                    ? `addnew-${menu}/addnew-person`
+                    : `${addNew1OId}/edit/addnew-person`
+                }`}
+              >
+                <Button name="เพิ่มใหม่" />
+              </Link>
               <Button
                 name="เพิ่มที่มี"
                 type="person"
@@ -370,14 +378,11 @@ export default function Main_AddNewNViewNEdit() {
           <Fragment>
             <Thead id="person-thead">
               <Tr type="thead">
-                {Object.keys(displayData.person[0]).map((columnName) => (
-                  <Th key={columnName}>{columnName}</Th>
-                ))}
-                {!addNew2OEdit && !isNaN(Number(addNew1OId)) ? (
-                  <></>
-                ) : (
-                  <Th>ตัวเลือก</Th>
-                )}
+                <Th
+                  type="person"
+                  addNew1OId={addNew1OId}
+                  addNew2OEdit={addNew2OEdit}
+                />
               </Tr>
             </Thead>
             <Tbody id="person-tbody">
@@ -386,10 +391,10 @@ export default function Main_AddNewNViewNEdit() {
                   <Td>{i + 1}</Td>
                   <Td>{data.person_id}</Td>
                   <Td>{data.fullname}</Td>
-                  <Td>{data.email}</Td>
-                  <Td>{data.mobile}</Td>
-                  <Td>{data.description}</Td>
                   <Td>{data.role}</Td>
+                  <Td>{data.mobile}</Td>
+                  <Td>{data.email}</Td>
+                  <Td>{data.description}</Td>
                   {!addNew2OEdit && !isNaN(Number(addNew1OId)) ? (
                     <></>
                   ) : (
@@ -416,11 +421,11 @@ export default function Main_AddNewNViewNEdit() {
           {addNew2OEdit || isNaN(Number(addNew1OId)) ? (
             <ButtonLeftFrame>
               <Link
-                to={
-                  addNew2OEdit == "addNew2OEdit"
-                    ? `/customer/${addNew1OId}/addNew2OEdit/add-new-contact`
-                    : `/customer/add-new-customer/add-new-contact`
-                }
+                to={`/${menu}/${
+                  isNaN(Number(addNew1OId))
+                    ? `addnew-${menu}/addnew-contact`
+                    : `${addNew1OId}/edit/addnew-contact`
+                }`}
               >
                 <Button name="เพิ่มใหม่" />
               </Link>
@@ -438,14 +443,11 @@ export default function Main_AddNewNViewNEdit() {
         <Table>
           <Thead>
             <Tr type="thead">
-              {Object.keys(displayData.contact[0]).map((columnName) => (
-                <Td key={columnName}>{columnName}</Td>
-              ))}
-              {!addNew2OEdit && !isNaN(Number(addNew1OId)) ? (
-                <></>
-              ) : (
-                <Td>ตัวเลือก</Td>
-              )}
+              <Th
+                type="contact"
+                addNew1OId={addNew1OId}
+                addNew2OEdit={addNew2OEdit}
+              />
             </Tr>
           </Thead>
           <Tbody>
@@ -479,7 +481,15 @@ export default function Main_AddNewNViewNEdit() {
           <Divider title="ข้อมูลที่อยู่" />
           {addNew2OEdit || isNaN(Number(addNew1OId)) ? (
             <ButtonLeftFrame>
-              <Button name="เพิ่มใหม่" />
+              <Link
+                to={`/${menu}/${
+                  isNaN(Number(addNew1OId))
+                    ? `addnew-${menu}/addnew-address`
+                    : `${addNew1OId}/edit/addnew-address`
+                }`}
+              >
+                <Button name="เพิ่มใหม่" />
+              </Link>
               <Button
                 name="เพิ่มที่มี"
                 type="address"
@@ -501,14 +511,11 @@ export default function Main_AddNewNViewNEdit() {
           <Fragment>
             <Thead id="address-thead">
               <Tr type="thead">
-                {Object.keys(displayData.address[0]).map((columnName) => (
-                  <Td key={columnName}>{columnName}</Td>
-                ))}
-                {!addNew2OEdit && !isNaN(Number(addNew1OId)) ? (
-                  <></>
-                ) : (
-                  <Td>ตัวเลือก</Td>
-                )}
+                <Th
+                  type="address"
+                  addNew1OId={addNew1OId}
+                  addNew2OEdit={addNew2OEdit}
+                />
               </Tr>
             </Thead>
             <Tbody id="address-tbody">
@@ -543,7 +550,15 @@ export default function Main_AddNewNViewNEdit() {
           <Divider title="ข้อมูลฟลีต" />
           {addNew2OEdit || isNaN(Number(addNew1OId)) ? (
             <ButtonLeftFrame>
-              <Button name="เพิ่มใหม่" />
+              <Link
+                to={`/${menu}/${
+                  isNaN(Number(addNew1OId))
+                    ? `addnew-${menu}/addnew-fleet`
+                    : `${addNew1OId}/edit/addnew-fleet`
+                }`}
+              >
+                <Button name="เพิ่มใหม่" />
+              </Link>
               <Button
                 name="เพิ่มที่มี"
                 type="address"
@@ -565,14 +580,11 @@ export default function Main_AddNewNViewNEdit() {
           <Fragment>
             <Thead id="address-thead">
               <Tr type="thead">
-                {Object.keys(displayData.fleet[0]).map((columnName) => (
-                  <Td key={columnName}>{columnName}</Td>
-                ))}
-                {!addNew2OEdit && !isNaN(Number(addNew1OId)) ? (
-                  <></>
-                ) : (
-                  <Td>ตัวเลือก</Td>
-                )}
+                <Th
+                  type="fleet"
+                  addNew1OId={addNew1OId}
+                  addNew2OEdit={addNew2OEdit}
+                />
               </Tr>
             </Thead>
             <Tbody id="address-tbody">
@@ -607,7 +619,15 @@ export default function Main_AddNewNViewNEdit() {
 
           {addNew2OEdit || isNaN(Number(addNew1OId)) ? (
             <ButtonLeftFrame>
-              <Button name="เพิ่มใหม่" />
+              <Link
+                to={`/${menu}/${
+                  isNaN(Number(addNew1OId))
+                    ? `addnew-${menu}/addnew-vehicle`
+                    : `${addNew1OId}/edit/addnew-vehicle`
+                }`}
+              >
+                <Button name="เพิ่มใหม่" />
+              </Link>
               <Button
                 name="เพิ่มที่มี"
                 type="address"
@@ -629,14 +649,11 @@ export default function Main_AddNewNViewNEdit() {
           <Fragment>
             <Thead id="address-thead">
               <Tr type="thead">
-                {Object.keys(displayData.vehicle[0]).map((columnName) => (
-                  <Td key={columnName}>{columnName}</Td>
-                ))}
-                {!addNew2OEdit && !isNaN(Number(addNew1OId)) ? (
-                  <></>
-                ) : (
-                  <Td>ตัวเลือก</Td>
-                )}
+                <Th
+                  type="vehicle"
+                  addNew1OId={addNew1OId}
+                  addNew2OEdit={addNew2OEdit}
+                />
               </Tr>
             </Thead>
             <Tbody id="address-tbody">

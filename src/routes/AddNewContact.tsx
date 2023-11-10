@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import Divider from "../components/Divider";
-import Input from "../components/Input";
-import Selector from "../components/Selector";
+import Divider from "../components/Table/Divider";
+import Input from "../components/Input/Input";
+import Selector from "../components/Input/Selector";
 import { MasterCode } from "../interface/mastercodeType";
 
-import ButtonRightFrame from "../components/ฺButtonRightFrame";
-import Button from "../components/Button";
+import ButtonRightFrame from "../components/Button/ฺButtonRightFrame";
+import Button from "../components/Button/Button";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import InputFrame from "../components/InputFrame";
+import InputFrame from "../components/Input/InputFrame";
 import { Contact, putPostContact } from "../interface/reduxType";
 import { v4 as uuidv4 } from "uuid";
 

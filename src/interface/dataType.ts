@@ -17,12 +17,19 @@ export type Data =
   | Device
   | DeviceSerial;
 
-export type IndividualData =
-  | IndividualCustomer
-  | IndividualPerson
-  | IndividualAddress
-  | IndividualContact
-  | IndividualVehicle
-  | IndividualFleet
-  | IndividualDevice
-  | IndividualDeviceSerial;
+export type IndividualData = IndividualCustomer &
+  IndividualPerson &
+  IndividualAddress &
+  IndividualContact &
+  IndividualVehicle &
+  IndividualFleet &
+  IndividualDevice &
+  IndividualDeviceSerial &
+  Customer &
+  Person &
+  Address &
+  Contact &
+  Vehicle &
+  Fleet &
+  Device &
+  DeviceSerial;

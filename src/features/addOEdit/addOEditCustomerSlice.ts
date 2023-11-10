@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { SendCustomer } from "../interface/customerType";
+import { SendCustomer } from "../../interface/customerType";
 
 const initialState: SendCustomer = {
   customer: {

@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
-import Headbar from "../components/Headbar";
-import Navbar from "../components/Navbar";
-import MainContent from "../components/MainContent";
+import Headbar from "../components/Layout/Headbar";
+import Navbar from "../components/Layout/Navbar";
+import MainContent from "../components/Layout/MainContent";
 
 export default function Frame() {
   return (

@@ -25,7 +25,7 @@ export function App() {
           {/* ลูกค้า */}
           <Route path="/customer" element={<Main />}></Route>
           <Route
-            path="/customer/add-new-customer"
+            path="/customer/addnew-customer"
             element={<Main_AddNewNViewNEdit />}
           ></Route>
           <Route
@@ -37,50 +37,50 @@ export function App() {
             element={<Main_AddNewNViewNEdit />}
           ></Route>
           <Route
-            path="/customer/add-new-customer/add-new-contact"
+            path="/customer/addnew-customer/addnew-contact"
             element={<AddNewContact />}
           ></Route>
           <Route
-            path="/customer/add-new-customer/add-new-vehicle"
+            path="/customer/addnew-customer/addnew-vehicle"
             element={<AddNewVehicle />}
           ></Route>
           <Route
-            path="/customer/add-new-customer/add-new-person"
+            path="/customer/addnew-customer/addnew-person"
             element={<AddNewPerson />}
           ></Route>
           <Route
-            path="/customer/add-new-customer/add-new-address"
+            path="/customer/addnew-customer/addnew-address"
             element={<AddNewAddress />}
           ></Route>
           <Route
-            path="/customer/add-new-customer/add-new-fleet"
+            path="/customer/addnew-customer/addnew-fleet"
             element={<AddNewFleet />}
           ></Route>
           <Route
-            path="/customer/:customer_id/edit/add-new-person"
+            path="/customer/:customer_id/edit/addnew-person"
             element={<AddNewPerson />}
           ></Route>
           <Route
-            path="/customer/:customer_id/edit/add-new-vehicle"
+            path="/customer/:customer_id/edit/addnew-vehicle"
             element={<AddNewVehicle />}
           ></Route>
           <Route
-            path="/customer/:customer_id/edit/add-new-contact"
+            path="/customer/:customer_id/edit/addnew-contact"
             element={<AddNewContact />}
           ></Route>
           <Route
-            path="/customer/:customer_id/edit/add-new-fleet"
+            path="/customer/:customer_id/edit/addnew-fleet"
             element={<AddNewFleet />}
           ></Route>
           <Route
-            path="/customer/:customer_id/edit/add-new-address"
+            path="/customer/:customer_id/edit/addnew-address"
             element={<AddNewAddress />}
           ></Route>
 
           {/* คน */}
           <Route path="/person" element={<Main />}></Route>
           <Route
-            path="/person/add-new-person"
+            path="/person/addnew-person"
             element={<Main_AddNewNViewNEdit />}
           ></Route>
           <Route
@@ -95,7 +95,7 @@ export function App() {
           {/* ติดต่อ */}
           <Route path="/contact" element={<Main />}></Route>
           <Route
-            path="/contact/add-new-contact"
+            path="/contact/addnew-contact"
             element={<Main_AddNewNViewNEdit />}
           ></Route>
           <Route
@@ -110,7 +110,7 @@ export function App() {
           {/* ที่อยู่ */}
           <Route path="/address" element={<Main />}></Route>
           <Route
-            path="/address/add-new-address"
+            path="/address/addnew-address"
             element={<Main_AddNewNViewNEdit />}
           ></Route>
           <Route
@@ -125,7 +125,7 @@ export function App() {
           {/* ฟลีต */}
           <Route path="/fleet" element={<Main />}></Route>
           <Route
-            path="/fleet/add-new-fleet"
+            path="/fleet/addnew-fleet"
             element={<Main_AddNewNViewNEdit />}
           ></Route>
           <Route
@@ -137,18 +137,18 @@ export function App() {
             element={<Main_AddNewNViewNEdit />}
           ></Route>
           <Route
-            path="/fleet/add-new-fleet/add-new-customer"
+            path="/fleet/addnew-fleet/addnew-customer"
             element={<AddNewCustomer />}
           ></Route>
           <Route
-            path="/fleet/add-new-fleet/add-new-customer"
+            path="/fleet/addnew-fleet/addnew-customer"
             element={<AddNewCustomer />}
           ></Route>
 
           {/* รถ */}
           <Route path="/vehicle" element={<Main />}></Route>
           <Route
-            path="/vehicle/add-new-vehicle"
+            path="/vehicle/addnew-vehicle"
             element={<Main_AddNewNViewNEdit />}
           ></Route>
           <Route
@@ -163,7 +163,7 @@ export function App() {
           {/* device */}
           <Route path="/device" element={<Main />}></Route>
           <Route
-            path="/device/add-new-device"
+            path="/device/addnew-device"
             element={<Main_AddNewNViewNEdit />}
           ></Route>
           <Route
@@ -178,7 +178,7 @@ export function App() {
           {/* device_serial */}
           <Route path="/device-serial" element={<Main />}></Route>
           <Route
-            path="/device-serial/add-new-device-serial"
+            path="/device-serial/addnew-device-serial"
             element={<Main_AddNewNViewNEdit />}
           ></Route>
           <Route

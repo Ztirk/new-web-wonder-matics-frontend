@@ -1,21 +1,21 @@
 import React, { Fragment, useState } from "react";
-import Divider from "./Divider";
-import Input from "./Input";
-import Table from "./Table";
-import FormQuery from "./FormQuery";
+import Divider from "../Table/Divider";
+import Input from "../Input/Input";
+import Table from "../Table/Table";
+import FormQuery from "../FormQuery";
 import { useLocation } from "react-router-dom";
-import ButtonRightFrame from "./ฺButtonRightFrame";
-import Button from "./Button";
-import Thead from "./Thead";
-import Tbody from "./Tbody";
-import Th from "./Th";
-import Tr from "./Tr";
-import Td from "./Td";
-import PopUpLoading from "./PopUpLoading";
+import ButtonRightFrame from "../Button/ฺButtonRightFrame";
+import Button from "../Button/Button";
+import Thead from "../Table/Thead";
+import Tbody from "../Table/Tbody";
+import Th from "../Table/Th";
+import Tr from "../Table/Tr";
+import Td from "../Table/Td";
+import PopUpLoading from "../Etc/PopUpLoading";
 import { useDispatch, useSelector } from "react-redux";
 
-import { AddExistPopUp } from "../interface/addExistPopUpType";
-import { popUpAddExistState } from "../features/popUpAddExistSlice";
+import { AddExistPopUp } from "../../interface/addExistPopUpType";
+import { popUpAddExistState } from "../../features/popUpAddExistSlice";
 
 interface Props {
   popUpData: AddExistPopUp;
@@ -31,13 +31,9 @@ export default function AddExistPopup({ popUpData, popUpLoading }: Props) {
   const dispatch = useDispatch();
   const popUpAddExist = useSelector(popUpAddExistState);
 
-  const handleSelectedPerson = () => {
-    
-  };
+  const handleSelectedPerson = () => {};
 
-  const handleSelectedAddress = () => {
-   
-  };
+  const handleSelectedAddress = () => {};
 
   return (
     <Fragment>

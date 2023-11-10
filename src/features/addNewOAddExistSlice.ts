@@ -31,7 +31,7 @@ const addNewOAddExistSlice = createSlice({
     setCustomerExist(state, action: PayloadAction<number>) {
       state.customerExist.push(action.payload);
     },
-    setPersonNew(state, action: PayloadAction<SendPerson>) {
+    setPersonNew(state, action: PayloadAction<SendPerson & SendContact>) {
       state.personNew.push(action.payload);
     },
     setPersonExist(state, action: PayloadAction<number>) {
@@ -61,7 +61,19 @@ const addNewOAddExistSlice = createSlice({
   },
 });
 
-export const {} = addNewOAddExistSlice.actions;
+export const {
+  setAddressExist,
+  setAddressNew,
+  setContactNew,
+  setCustomerExist,
+  setCustomerNew,
+  setFleetExist,
+  setFleetNew,
+  setPersonExist,
+  setPersonNew,
+  setVehicleExist,
+  setVehicleNew,
+} = addNewOAddExistSlice.actions;
 
 export const addNewOAddExistState = (state) => state.addNewOAddExist;
 

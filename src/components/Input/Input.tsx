@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import Button from "./Button";
+import Button from "../Button/Button";
 import { key } from "localforage";
 
 interface Props {
@@ -12,6 +12,7 @@ interface Props {
   refObject: React.RefObject<HTMLInputElement>;
   disabled: boolean;
   onClick: () => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export default function Input({
@@ -24,6 +25,7 @@ export default function Input({
   refObject,
   disabled,
   onClick,
+  onChange,
 }: Props) {
   return (
     <Fragment>
@@ -51,6 +53,7 @@ export default function Input({
             defaultValue={defaultValue == undefined ? "" : defaultValue}
             ref={refObject}
             onKeyDown={(e) => (e.key == "Enter" ? onClick() : null)}
+            onChange={onChange}
             // onKeyDown={handleEnter}
           />
 

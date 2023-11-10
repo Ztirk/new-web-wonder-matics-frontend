@@ -1,12 +1,16 @@
 import { Fragment, useEffect, useState } from "react";
-import Selector from "../components/Selector";
-import Divider from "../components/Divider";
-import Input from "../components/Input";
-import InputFrame from "../components/InputFrame";
+import Selector from "../components/Input/Selector";
+import Divider from "../components/Table/Divider";
+import Input from "../components/Input/Input";
+import InputFrame from "../components/Input/InputFrame";
 import { MasterCode } from "../interface/mastercodeType";
 import { useSelector } from "react-redux";
-import { addOEditCustomerState } from "../features/addOEditCustomerSlice";
+import {
+  addOEditCustomerState,
+  setCustomerName,
+} from "../features/addOEdit/addOEditCustomerSlice";
 import { getSelector } from "../api/getSelector";
+import { useDispatch } from "react-redux";
 
 interface Props {
   addNew2OEdit?: string;
@@ -16,6 +20,9 @@ interface Props {
 export default function AddNewCustomer({ addNew2OEdit, addNew1OId }: Props) {
   const addOEditCustomer = useSelector(addOEditCustomerState);
   const [selectorData, setSelectorData] = useState<MasterCode>();
+
+  // Redux
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getSelector(setSelectorData, "customer");
@@ -32,6 +39,9 @@ export default function AddNewCustomer({ addNew2OEdit, addNew1OId }: Props) {
           type="regular"
           name="ชื่อลูกค้า"
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            dispatch(setCustomerName(e.currentTarget.value))
+          }
         />
         <Selector
           label="ลักษณะลูกค้า*"

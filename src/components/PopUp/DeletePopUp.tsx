@@ -1,8 +1,8 @@
 import { Fragment } from "react";
 import { ToggleDelete } from "../interface/componentType";
-import ButtonRightFrame from "./ฺButtonRightFrame";
-import Button from "./Button";
-import Divider from "./Divider";
+import ButtonRightFrame from "../Button/ฺButtonRightFrame";
+import Button from "../Button/Button";
+import Divider from "../Table/Divider";
 
 interface Props {
   defaultToggleDelete: () => void;

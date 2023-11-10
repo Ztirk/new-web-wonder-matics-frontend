@@ -1,8 +1,8 @@
 import React, { useEffect, useState, Fragment, useRef } from "react";
-import Table from "../components/Table";
-import Input from "../components/Input";
-import Button from "../components/Button";
-import Pagination from "../components/Pagination";
+import Table from "../components/Table/Table";
+import Input from "../components/Input/Input";
+import Button from "../components/Button/Button";
+import Pagination from "../components/Table/Pagination";
 import {
   Link,
   useLocation,
@@ -13,66 +13,51 @@ import { Data } from "../interface/dataType";
 import { ToggleDelete } from "../interface/componentType";
 import { getData } from "../api/getData";
 import FormQuery from "../components/FormQuery";
-import Tr from "../components/Tr";
-import Td from "../components/Td";
-import Option from "../components/Option";
-import Th from "../components/Th";
-import Thead from "../components/Thead";
-import Tbody from "../components/Tbody";
-import DeletePopUp from "../components/DeletePopUp";
-import InputNAddNewFrame from "../components/Input&AddNewFrame";
-import Loading from "../components/Loading";
+import Tr from "../components/Table/Tr";
+import Td from "../components/Table/Td";
+import Option from "../components/Table/Option";
+import Th from "../components/Table/Th";
+import Thead from "../components/Table/Thead";
+import Tbody from "../components/Table/Tbody";
+import DeletePopUp from "../components/PopUp/DeletePopUp";
+import InputNAddNewFrame from "../components/Input/Input&AddNewFrame";
+import Loading from "../components/Etc/Loading";
 import { deleteData } from "../api/deleteData";
-import { useDispatch } from "react-redux";
-import { setDisplayDefaultFetch } from "../features/displaySlice";
-import { setAddOEditCustomerDefault } from "../features/addOEditCustomerSlice";
 
 export default function Main() {
-  // เก็บข้อมูลหน้าหลัก
+  // useState
   const [data, setData] = useState<Data>();
-
-  // ค่าเริ่มต้นสำหรับปุ่มลบ
+  const [loading, setLoading] = useState<boolean>(false);
   const defaultToggleDelete = {
     active: false,
     title: "",
     name: "",
     id: "",
   };
-
-  // loading while fetching
-  const [loading, setLoading] = useState<boolean>(false);
-
-  // ปุ่มลบข้อมูล
   const [toggleDelete, setToggleDelete] =
     useState<ToggleDelete>(defaultToggleDelete);
+  // ค่าเริ่มต้นสำหรับปุ่มลบ
 
-  // แสดง url ปัจจุบัน
+  // Router
   const location = useLocation();
-
-  // path ทั้งหมด
   const segment = location.pathname
     .split("/")
     .filter((segment) => segment !== "");
-
-  // ชื่อ Menu หลัก
   const menu = segment[0];
-
-  // ค้นหา query params
   const [searchParams, setSearchParams] = useSearchParams();
-
-  // อ้างอิงปุ่ม ช่อง input ค้นหาชื่อลูกค้า
-  const filter = useRef<HTMLInputElement>(null);
-
   const navigate = useNavigate();
 
-  const dispatch = useDispatch();
+  // useRef
+  const filter = useRef<HTMLInputElement>(null);
 
+  // useEffect
   useEffect(() => {
-    dispatch(setAddOEditCustomerDefault());
-    dispatch(setDisplayDefaultFetch());
-  }, []);
+    if (sessionStorage.getItem("reload") == "true") {
+      sessionStorage.removeItem("reload");
+      window.location.reload();
+    }
+  });
 
-  // เมื่อมีการเปลี่ยน path จะทำงาน
   useEffect(() => {
     setLoading(true);
     getData(setData, menu).then(() => {
@@ -171,7 +156,7 @@ export default function Main() {
             refObject={filter}
           />
           <InputNAddNewFrame>
-            <Link to={`/${menu}/add-new-${menu}`}>
+            <Link to={`/${menu}/addnew-${menu}`}>
               <Button name="เพิ่มใหม่" />
             </Link>
           </InputNAddNewFrame>
@@ -182,55 +167,28 @@ export default function Main() {
                   <Tr type="thead">
                     {"customer" in data.response &&
                     data.response.customer[0] ? (
-                      Object.keys(data.response.customer[0]).map(
-                        (columnName) => (
-                          <Th key={columnName}>
-                            {columnName == "customer_name"
-                              ? "ชื่อลูกค้า"
-                              : columnName == "telephone"
-                              ? "โทรศัพท์"
-                              : columnName == "email"
-                              ? "อีเมล์"
-                              : columnName}
-                          </Th>
-                        )
-                      )
+                      <Th type="customer" />
                     ) : "person" in data.response && data.response.person[0] ? (
-                      Object.keys(data.response.person[0]).map((columnName) => (
-                        <Th key={columnName}>{columnName}</Th>
-                      ))
+                      <Th type="person" />
                     ) : "contact" in data.response &&
                       data.response.contact[0] ? (
-                      Object.keys(data.response.contact[0]).map(
-                        (columnName) => <Th key={columnName}>{columnName}</Th>
-                      )
+                      <Th type="contact" />
                     ) : "address" in data.response &&
                       data.response.address[0] ? (
-                      Object.keys(data.response.address[0]).map(
-                        (columnName) => <Th key={columnName}>{columnName}</Th>
-                      )
+                      <Th type="address" />
                     ) : "fleet" in data.response && data.response.fleet[0] ? (
-                      Object.keys(data.response.fleet[0]).map((columnName) => (
-                        <Th key={columnName}>{columnName}</Th>
-                      ))
+                      <Th type="fleet" />
                     ) : "vehicle" in data.response &&
                       data.response.vehicle[0] ? (
-                      Object.keys(data.response.vehicle[0]).map(
-                        (columnName) => <Th key={columnName}>{columnName}</Th>
-                      )
+                      <Th type="vehicle" />
                     ) : "device" in data.response && data.response.device[0] ? (
-                      Object.keys(data.response.device[0]).map((columnName) => (
-                        <Th key={columnName}>{columnName}</Th>
-                      ))
+                      <Th type="device" />
                     ) : "deviceSerial" in data.response &&
                       data.response.deviceSerial[0] ? (
-                      Object.keys(data.response.deviceSerial[0]).map(
-                        (columnName) => <Th key={columnName}>{columnName}</Th>
-                      )
+                      <Th type="deviceSerial" />
                     ) : (
                       <></>
                     )}
-                    <Th>ตัวเลือก</Th>
                   </Tr>
                 </Thead>
                 <Tbody>

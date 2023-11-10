@@ -1,4 +1,4 @@
-import logo from "../assets/BBB (1).png";
+import logo from "../../assets/BBB (1).png";
 
 export default function Headbar() {
   return (

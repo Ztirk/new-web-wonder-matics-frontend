@@ -1,5 +1,14 @@
 import { ApiStatus } from "./apiStatus";
 
+export interface SendDeviceSerial {
+  deviceSerial: {
+    device_serial_id: number;
+    imei_serial: string;
+    dvr_id: string;
+    device_type_code_id: number | null;
+  };
+}
+
 export interface DeviceSerialIterate {
   RowNum: number;
   device_serial_id: number;
@@ -8,14 +17,16 @@ export interface DeviceSerialIterate {
   create_date: string;
 }
 
-export interface DeviceSerialDisplay {
-  deviceSerial: DeviceSerialIterate[] | [];
+export interface StoringIndividualDeviceSerial {
+  device_serial_id: number;
+  serial_id: number;
+  imei_serial: number;
+  box_type: string;
+  create_date: string;
 }
 
-export interface SendDeviceSerial {
-  deviceSerial: {
-    device_serial_id: number;
-  };
+export interface DeviceSerialDisplay {
+  deviceSerial: DeviceSerialIterate[] | [];
 }
 
 export interface DeviceSerial extends ApiStatus {
@@ -25,15 +36,7 @@ export interface DeviceSerial extends ApiStatus {
 }
 
 export interface IndividualDeviceSerial extends ApiStatus {
-  response:
-    | {
-        deviceSerial: {
-          device_serial_id: number;
-          serial_id: number;
-          imei_serial: number;
-          box_type: string;
-          create_date: string;
-        };
-      }
-    | DeviceSerial;
+  response: {
+    deviceSerial: StoringIndividualDeviceSerial;
+  };
 }

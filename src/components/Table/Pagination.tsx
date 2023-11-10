@@ -1,5 +1,5 @@
 import { useLocation, useSearchParams } from "react-router-dom";
-import Input from "./Input";
+import Input from "../Input/Input";
 import { useEffect } from "react";
 
 interface Props {
