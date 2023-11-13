@@ -1,7 +1,7 @@
 import { ApiStatus } from "./apiStatus";
 export interface SendFleet {
   fleet: {
-    fleet_id: number;
+    fleet_id: number | string;
     fleet_name: string;
     parent_fleet_id: number | null;
   };

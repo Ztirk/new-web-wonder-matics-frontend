@@ -2,7 +2,7 @@ import { ApiStatus } from "./apiStatus";
 
 export interface SendCustomer {
   customer: {
-    customer_id: number;
+    customer_id: number | string;
     customer_name: string;
     customer_type_code_id: number | null;
     sales_type_code_id: number | null;

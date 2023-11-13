@@ -31,7 +31,8 @@ export interface AddNewOAddExist {
   customerExist: number[];
   addressNew: SendAddress[];
   addressExist: number[];
-  contact: SendContact[];
+  contactNew: SendContact[];
+  contactExist: number[];
   personNew: SendPerson[];
   personExist: number[];
   vehicleNew: SendVehicle[];
@@ -61,6 +62,7 @@ export interface Memo {
   vehicle_id: number[];
   device_id: number[];
   device_serial_id: number[];
+  contact_id: number[];
 }
 
 export interface EditedCustomer {

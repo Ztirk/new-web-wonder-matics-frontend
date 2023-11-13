@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Delete, DisplayData } from "../interface/reduxType";
+import { Delete } from "../interface/reduxType";
 
 const initialState: Delete = {
   customerDelete: [],
@@ -7,6 +7,7 @@ const initialState: Delete = {
   addressDelete: [],
   vehicleDelete: [],
   fleetDelete: [],
+  contactDelete: [],
 };
 
 const deleteSlice = createSlice({
@@ -28,10 +29,20 @@ const deleteSlice = createSlice({
     setFleetDelete(state, action: PayloadAction<number>) {
       state.fleetDelete.push(action.payload);
     },
+    setContactDelete(state, action: PayloadAction<number>) {
+      state.contactDelete.push(action.payload);
+    },
   },
 });
 
-export const {} = deleteSlice.actions;
+export const {
+  setAddressDelete,
+  setCustomerDelete,
+  setFleetDelete,
+  setPersonDelete,
+  setVehicleDelete,
+  setContactDelete,
+} = deleteSlice.actions;
 
 export const deleteState = (state) => state.delete;
 

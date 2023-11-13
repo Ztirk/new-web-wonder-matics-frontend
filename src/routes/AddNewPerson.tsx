@@ -60,11 +60,19 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
     const title_code_id = personData.title_code_id;
     const title_type = selectorData?.response[0].find(
       (data) => data.code_id == title_code_id
-    );
+    )?.value;
     const description = personData.description.trim();
     const role = personData.role;
     const roleDelete = personData.roleDelete;
-    const displayRole = "eiuei";
+    const displayRole = selectorData?.response[1]
+      .reduce((acc, data) => {
+        if (addOEditPerson.person.role.includes(data.code_id)) {
+          return acc + ", " + data.value;
+        }
+        return acc;
+      }, "")
+      .slice(2);
+
     const mobile = {
       contact_code_id: 2,
       value: personData.mobile,
@@ -93,7 +101,7 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
     const displayPersonData: PersonIterate = {
       person_id: person_id,
       RowNum: null,
-      fullname: firstname + " " + lastname,
+      fullname: title_type + " " + firstname + " " + lastname,
       email: email.value,
       mobile: mobile.value,
       description: description,
@@ -131,11 +139,7 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
           placeholder="ชื่อ"
           type="regular"
           name="ชื่อ"
-          disabled={
-            addNew2OEdit !== "addNew2OEdit" && !isNaN(Number(addNew1OId))
-              ? true
-              : false
-          }
+          disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setFirstName(e.currentTarget.value));
           }}
@@ -144,11 +148,7 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
           label="นามสกุล*"
           placeholder="นามสกุล"
           type="regular"
-          disabled={
-            addNew2OEdit !== "addNew2OEdit" && !isNaN(Number(addNew1OId))
-              ? true
-              : false
-          }
+          disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setLastName(e.currentTarget.value));
           }}
@@ -156,22 +156,14 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
         <Selector
           label="คำนำหน้า*"
           type="selector"
-          disabled={
-            addNew2OEdit !== "addNew2OEdit" && !isNaN(Number(addNew1OId))
-              ? true
-              : false
-          }
+          disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           selectorData={selectorData?.response[0]}
         />
         <Input
           label="ชื่อเล่น"
           placeholder="ชื่อเล่น"
           type="regular"
-          disabled={
-            addNew2OEdit !== "addNew2OEdit" && !isNaN(Number(addNew1OId))
-              ? true
-              : false
-          }
+          disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setNickName(e.currentTarget.value));
           }}
@@ -179,22 +171,14 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
         <Selector
           label="ตำแหน่ง*"
           type="multi-selector"
-          disabled={
-            addNew2OEdit !== "addNew2OEdit" && !isNaN(Number(addNew1OId))
-              ? true
-              : false
-          }
+          disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           selectorData={selectorData?.response[1]}
         />
         <Input
           label="รายละเอียด"
           placeholder="รายละเอียด"
           type="regular"
-          disabled={
-            addNew2OEdit !== "addNew2OEdit" && !isNaN(Number(addNew1OId))
-              ? true
-              : false
-          }
+          disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setDescription(e.currentTarget.value));
           }}
@@ -206,9 +190,7 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
               placeholder="มือถือ"
               type="regular"
               disabled={
-                addNew2OEdit !== "addNew2OEdit" && !isNaN(Number(addNew1OId))
-                  ? true
-                  : false
+                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
               }
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 dispatch(setMobile(e.currentTarget.value));
@@ -219,9 +201,7 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
               placeholder="อีเมล์"
               type="regular"
               disabled={
-                addNew2OEdit !== "addNew2OEdit" && !isNaN(Number(addNew1OId))
-                  ? true
-                  : false
+                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
               }
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 dispatch(setEmail(e.currentTarget.value));
@@ -232,9 +212,7 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
               placeholder="ไลน์"
               type="regular"
               disabled={
-                addNew2OEdit !== "addNew2OEdit" && !isNaN(Number(addNew1OId))
-                  ? true
-                  : false
+                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
               }
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 dispatch(setLine(e.currentTarget.value));

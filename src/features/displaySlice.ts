@@ -31,7 +31,8 @@ const displaySlice = createSlice({
       state.person.push(action.payload);
     },
 
-    setDisplayPersonDelete(state, action: PayloadAction<number>) {
+    setDisplayPersonDelete(state, action: PayloadAction<number | string>) {
+      console.log(action.payload);
       state.person = state.person.filter(
         (data) => data.person_id !== action.payload
       );
@@ -40,11 +41,12 @@ const displaySlice = createSlice({
     setDisplayContactFetch(state, action: PayloadAction<ContactIterate[]>) {
       state.contact = action.payload;
     },
+
     setDisplayContactInteract(state, action: PayloadAction<ContactIterate>) {
       state.contact.push(action.payload);
     },
 
-    setDisplayContactDelete(state, action: PayloadAction<number>) {
+    setDisplayContactDelete(state, action: PayloadAction<number | string>) {
       state.contact = state.contact.filter(
         (data) => data.contact_id !== action.payload
       );
@@ -58,8 +60,10 @@ const displaySlice = createSlice({
       state.address.push(action.payload);
     },
 
-    setDisplayAddressDelete(state, action: PayloadAction<number>) {
-      state.address.filter((data) => data.address_id !== action.payload);
+    setDisplayAddressDelete(state, action: PayloadAction<number | string>) {
+      state.address = state.address.filter(
+        (data) => data.address_id !== action.payload
+      );
     },
 
     setDisplayCustomerFetch(state, action: PayloadAction<CustomerIterate[]>) {
@@ -70,7 +74,7 @@ const displaySlice = createSlice({
       state.customer.push(action.payload);
     },
 
-    setDisplayCustomerDelete(state, action: PayloadAction<number>) {
+    setDisplayCustomerDelete(state, action: PayloadAction<number | string>) {
       state.customer = state.customer.filter(
         (data) => data.customer_id !== action.payload
       );
@@ -84,7 +88,7 @@ const displaySlice = createSlice({
       state.fleet.push(action.payload);
     },
 
-    setDisplayFleetDelete(state, action: PayloadAction<number>) {
+    setDisplayFleetDelete(state, action: PayloadAction<number | string>) {
       state.fleet = state.fleet.filter(
         (data) => data.fleet_id !== action.payload
       );
@@ -97,7 +101,7 @@ const displaySlice = createSlice({
       state.vehicle.push(action.payload);
     },
 
-    setDisplayVehicleDelete(state, action: PayloadAction<number>) {
+    setDisplayVehicleDelete(state, action: PayloadAction<number | string>) {
       state.vehicle = state.vehicle.filter(
         (data) => data.vehicle_id !== action.payload
       );
@@ -111,7 +115,7 @@ const displaySlice = createSlice({
       state.device.push(action.payload);
     },
 
-    setDisplayDeviceDelete(state, action: PayloadAction<number>) {
+    setDisplayDeviceDelete(state, action: PayloadAction<number | string>) {
       state.device = state.device.filter(
         (data) => data.device_id !== action.payload
       );

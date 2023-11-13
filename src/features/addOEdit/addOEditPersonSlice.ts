@@ -39,8 +39,18 @@ const addOEditPersonSlice = createSlice({
     setRoleDelete(state, action: PayloadAction<number>) {
       state.person.roleDelete.push(action.payload);
     },
+    removeRoleDelete(state, action: PayloadAction<number>) {
+      state.person.roleDelete = state.person.roleDelete.filter(
+        (id) => id !== action.payload
+      );
+    },
     setRole(state, action: PayloadAction<number>) {
       state.person.role.push(action.payload);
+    },
+    removeRole(state, action: PayloadAction<number>) {
+      state.person.role = state.person.role.filter(
+        (id) => id !== action.payload
+      );
     },
     setEmail(state, action: PayloadAction<string>) {
       state.person.email = action.payload;
@@ -81,6 +91,8 @@ export const {
   setLine,
   setMobile,
   serDefaultAddOEditPerson,
+  removeRole,
+  removeRoleDelete,
 } = addOEditPersonSlice.actions;
 
 export const addOEditPersonState = (state) => state.addOEditPerson;

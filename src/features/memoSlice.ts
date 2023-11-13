@@ -13,6 +13,7 @@ const initialState: Memo = {
   device_serial_id: [],
   fleet_id: [],
   vehicle_id: [],
+  contact_id: [],
 };
 
 const memoSlice = createSlice({
@@ -52,6 +53,9 @@ const memoSlice = createSlice({
     memoVehicleId(state, action: PayloadAction<number>) {
       state.vehicle_id.push(action.payload);
     },
+    memoContactId(state, action: PayloadAction<number>) {
+      state.contact_id.push(action.payload);
+    },
   },
 });
 
@@ -67,6 +71,7 @@ export const {
   memoRoleCodeId,
   memoRoleId,
   memoVehicleId,
+  memoContactId,
 } = memoSlice.actions;
 
 export const memoState = (state) => state.memo;

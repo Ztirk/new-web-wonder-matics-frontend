@@ -3,7 +3,7 @@ import Td from "./Td";
 import { Link } from "react-router-dom";
 
 interface Props {
-  type: "full" | "edit";
+  full: true;
   onView: string;
   onEdit: string;
   id: string;
@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default function Option({
-  type,
+  full,
   onView,
   onEdit,
   id,
@@ -26,7 +26,7 @@ export default function Option({
     <Td>
       <nav>
         <ul className="flex gap-3">
-          {type == "full" ? (
+          {full ? (
             <>
               <Link to={onView}>
                 <i className="fa-regular fa-eye"></i>
@@ -35,8 +35,6 @@ export default function Option({
                 <i className="fa-regular fa-pen-to-square"></i>
               </Link>
             </>
-          ) : type == "edit" ? (
-            <Fragment></Fragment>
           ) : (
             <></>
           )}

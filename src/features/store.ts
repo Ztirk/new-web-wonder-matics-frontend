@@ -12,14 +12,14 @@ import addOEditContactSlice from "./addOEdit/addOEditContactSlice";
 import addOEditFleetSlice from "./addOEdit/addOEditFleetSlice";
 import addOEditDeviceSerialSlice from "./addOEdit/addOEditDeviceSerialSlice";
 import addOEditDeviceSlice from "./addOEdit/addOEditDeviceSlice";
+import deleteSlice from "./deleteSlice";
 
 export default configureStore({
   reducer: {
-    createBy: createBySlice,
     popUpAddExist: popUpAddExistSlice,
-    display: displaySlice,
+    createBy: createBySlice,
     updateBy: updateBySlice,
-    addNewOAddExist: addNewOAddExistSlice,
+    display: displaySlice,
     memo: memoSlice,
     addOEditCustomer: addOEditCustomerSlice,
     addOEditPerson: addOEditPersonSlice,
@@ -28,5 +28,7 @@ export default configureStore({
     addOEditFleet: addOEditFleetSlice,
     addOEditDevice: addOEditDeviceSlice,
     addOEditDeviceSerial: addOEditDeviceSerialSlice,
+    addNewOAddExist: addNewOAddExistSlice,
+    delete: deleteSlice,
   },
 });

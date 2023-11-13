@@ -2,7 +2,7 @@ import { ApiStatus } from "./apiStatus";
 
 export interface SendPerson {
   person: {
-    person_id: number;
+    person_id: number | string;
     firstname: string;
     lastname: string;
     nickname: string;

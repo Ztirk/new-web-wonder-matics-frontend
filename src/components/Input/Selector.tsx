@@ -21,6 +21,10 @@ import { addOEditDeviceState } from "../../features/addOEdit/addOEditDeviceSlice
 import { addOEditFleetState } from "../../features/addOEdit/addOEditFleetSlice";
 import {
   addOEditPersonState,
+  removeRole,
+  removeRoleDelete,
+  setRole,
+  setRoleDelete,
   setTitleCodeId,
 } from "../../features/addOEdit/addOEditPersonSlice";
 import { addOEditVehicleState } from "../../features/addOEdit/addOEditVehicleSlice";
@@ -33,12 +37,13 @@ import { SendPerson } from "../../interface/personType";
 import { SendVehicle } from "../../interface/vehicleType";
 import { Memo } from "../../interface/reduxType";
 import { memoState } from "../../features/memoSlice";
+import { useLocation } from "react-router-dom";
 
 interface Props {
   selectorData?: Selector[];
   label: string;
   disabled: boolean;
-  type: string;
+  type: "selector" | "multi-selector" | "search-selector";
 }
 
 export default function Selector({
@@ -50,6 +55,14 @@ export default function Selector({
   // useState
   const [toggleSearchSelector, setToggleSearchSelector] =
     useState<boolean>(false);
+
+  // Router
+  const location = useLocation();
+  const segments = location.pathname.split("/").splice(1);
+  const menu = segments[0];
+  const addNew1OId = segments[1];
+  const addNew2OEdit = segments[2];
+  const addNew2 = segments[3];
 
   // Redux
   const dispatch = useDispatch();
@@ -109,13 +122,62 @@ export default function Selector({
     }
   };
 
-  const handleShowMultiSelector: () => React.ReactNode = () => {};
+  const handleShowMultiSelector: () => React.ReactNode = () => {
+    let selectedData: Selector[] | [] = [];
+    if (selectorData) {
+      const category = selectorData[0].category;
+      const mcClass = selectorData[0].class;
+      if (category == "role" && mcClass == null) {
+        selectedData = selectorData.filter((id) =>
+          addOEditPerson.person.role.includes(id.code_id)
+        );
+      }
+    }
+    return (
+      <>
+        {selectedData.length > 0 ? (
+          <ul className="flex flex-row truncate gap-2">
+            {selectedData.map((data) => (
+              <li className="input-n-selector__border p-1">{data.value}</li>
+            ))}
+          </ul>
+        ) : (
+          <></>
+        )}
+      </>
+    );
+  };
+
   const handleCheckMultiSelector: (
     e: React.MouseEvent<HTMLInputElement>
   ) => void = (e) => {
     const checked = e.currentTarget.checked;
-    if (checked) {
-    } else if (!checked) {
+    const id = Number(e.currentTarget.id);
+
+    if (selectorData) {
+      const category = selectorData[0].category;
+      const mcClass = selectorData[0].class;
+      if (category == "role" && mcClass == null) {
+        if (checked) {
+          if (
+            !memo.role_id.includes(id) &&
+            !addOEditPerson.person.role.includes(id)
+          ) {
+            dispatch(setRole(id));
+          } else if (addOEditPerson.person.roleDelete.includes(id)) {
+            dispatch(removeRoleDelete(id));
+          }
+        } else if (!checked) {
+          if (
+            memo.role_id.includes(id) &&
+            !addOEditPerson.person.roleDelete.includes(id)
+          ) {
+            dispatch(setRoleDelete(id));
+          } else if (addOEditPerson.person.role.includes(id)) {
+            dispatch(removeRole(id));
+          }
+        }
+      }
     }
   };
 
@@ -143,12 +205,24 @@ export default function Selector({
           onClick={disabled ? undefined : handleToggleSearchSelector}
         >
           <span className="w-[200px] overflow-hidden">
-            {handleShowSelector()}
+            {type == "selector"
+              ? handleShowSelector()
+              : type == "multi-selector"
+              ? handleShowMultiSelector()
+              : undefined}
           </span>
-          {handleShowSelector() ? (
-            <i className="fa-solid fa-x" onClick={handleClickSelector} />
+
+          {/* ปุ่มกากบาท */}
+          {disabled ? (
+            <></>
           ) : (
-            <i className="fa-solid fa-chevron-down" />
+            <>
+              {handleShowSelector() ? (
+                <i className="fa-solid fa-x" onClick={handleClickSelector} />
+              ) : (
+                <i className="fa-solid fa-chevron-down" />
+              )}
+            </>
           )}
         </div>
         {/* selector dropdown */}
@@ -187,16 +261,20 @@ export default function Selector({
                 {selectorData ? (
                   selectorData.map((data) => (
                     <li
-                      className={`grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md`}
+                      className={`px-3 items-center h-[50px] hover:rounded-md`}
                     >
                       <input
                         type="checkbox"
-                        className="h-[20px] w-[20px] mx-3"
+                        className="h-[20px] w-[20px] mx-3 sr-only"
                         id={data.code_id.toString()}
                         onClick={handleCheckMultiSelector}
                       />
                       <label
-                        className="h-full flex items-center"
+                        className={`px-1 h-full flex items-center hover:bg-[#007FA4]/30 ${
+                          addOEditPerson.person.role.includes(data.code_id)
+                            ? "bg-[#007FA4]/30 rounded-md"
+                            : ""
+                        }`}
                         htmlFor={data.code_id.toString()}
                       >
                         {data.value}

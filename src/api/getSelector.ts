@@ -1,8 +1,8 @@
 import axios from "axios";
-import { CustomerMasterCodeType } from "../interface/dataType";
+import { MasterCode } from "../interface/mastercodeType";
 
 export async function getSelector(
-  setSelectorData: React.Dispatch<React.SetStateAction<CustomerMasterCodeType>>,
+  setSelectorData: React.Dispatch<React.SetStateAction<MasterCode>>,
   menu: string
 ): Promise<void> {
   try {
@@ -25,6 +25,20 @@ export async function getSelector(
         `${
           import.meta.env.VITE_ERP_BASE_URL
         }/master_code?category=address&class=null&category=address&class=person&category=address&class=customer`
+      );
+      setSelectorData(res.data);
+    } else if (menu == "contact") {
+      const res = await axios.get(
+        `${
+          import.meta.env.VITE_ERP_BASE_URL
+        }/master_code?category=contact&class=null`
+      );
+      setSelectorData(res.data);
+    } else if (menu == "vehicle") {
+      const res = await axios.get(
+        `${
+          import.meta.env.VITE_ERP_BASE_URL
+        }/master_code?category=vehicle&class=type&category=vehicle&class=registration_type&category=vehicle&class=registration_province`
       );
       setSelectorData(res.data);
     }

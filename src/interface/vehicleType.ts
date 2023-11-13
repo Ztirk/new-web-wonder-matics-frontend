@@ -1,7 +1,7 @@
 import { ApiStatus } from "./apiStatus";
 export interface SendVehicle {
   vehicle: {
-    vehicle_id: number;
+    vehicle_id: number | string;
     frame_no: string;
     license_plate: string;
     vehicle_model_id: number | null;

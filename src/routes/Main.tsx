@@ -202,7 +202,7 @@ export default function Main() {
                         <Td>{data.telephone}</Td>
                         <Td>{data.email}</Td>
                         <Option
-                          type="full"
+                          full
                           onEdit={`/customer/${data.customer_id}/edit`}
                           onView={`/customer/${data.customer_id}`}
                           id={data.customer_id}
@@ -224,7 +224,7 @@ export default function Main() {
                         <Td>{data.description}</Td>
                         <Td>{data.role}</Td>
                         <Option
-                          type="full"
+                          full
                           onEdit={`/person/${data.person_id}/edit`}
                           onView={`/person/${data.person_id}`}
                           id={data.person_id}
@@ -244,7 +244,7 @@ export default function Main() {
                         <Td>{data.contact_type}</Td>
                         <Td>{data.owner_name}</Td>
                         <Option
-                          type="full"
+                          full
                           onEdit={`/contact/${data.contact_id}/edit`}
                           onView={`/contact/${data.contact_id}`}
                           id={data.contact_id}
@@ -263,7 +263,7 @@ export default function Main() {
                         <Td>{data.location}</Td>
                         <Td>{data.address_type}</Td>
                         <Option
-                          type="full"
+                          full
                           onEdit={`/address/${data.address_id}/edit`}
                           onView={`/address/${data.address_id}`}
                           id={data.address_id}
@@ -282,7 +282,7 @@ export default function Main() {
                         <Td>{data.fleet_name}</Td>
                         <Td>{data.vehicle_count}</Td>
                         <Option
-                          type="full"
+                          full
                           onEdit={`/fleet/${data.fleet_id}/edit`}
                           onView={`/fleet/${data.fleet_id}`}
                           id={data.fleet_id}
@@ -305,7 +305,7 @@ export default function Main() {
                         <Td>{data.model_type}</Td>
 
                         <Option
-                          type="full"
+                          full
                           onEdit={`/vehicle/${data.vehicle_id}/edit`}
                           onView={`/vehicle/${data.vehicle_id}`}
                           id={data.vehicle_id}
@@ -328,7 +328,7 @@ export default function Main() {
                         <Td>{data.sim_type}</Td>
 
                         <Option
-                          type="full"
+                          full
                           onEdit={`/device/${data.device_id}/edit`}
                           onView={`/device/${data.device_id}`}
                           id={data.device_id}
@@ -351,7 +351,7 @@ export default function Main() {
                         <Td>{data.create_date}</Td>
 
                         <Option
-                          type="full"
+                          full
                           onEdit={`/device-serial/${data.device_serial_id}/edit`}
                           onView={`/device-serial/${data.device_serial_id}`}
                           id={data.device_serial_id}

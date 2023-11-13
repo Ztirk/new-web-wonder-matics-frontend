@@ -20,14 +20,25 @@ import Tr from "../components/Table/Tr";
 import Th from "../components/Table/Th";
 import Td from "../components/Table/Td";
 import Option from "../components/Table/Option";
-import { Address, DisplayData } from "../interface/reduxType";
+import {
+  AddNewOAddExist,
+  Address,
+  DisplayData,
+  Memo,
+} from "../interface/reduxType";
 import { popUpAddExistState } from "../features/popUpAddExistSlice";
 import {
   displayState,
+  setDisplayAddressDelete,
   setDisplayAddressFetch,
+  setDisplayContactDelete,
   setDisplayContactFetch,
+  setDisplayCustomerDelete,
+  setDisplayFleetDelete,
   setDisplayFleetFetch,
+  setDisplayPersonDelete,
   setDisplayPersonFetch,
+  setDisplayVehicleDelete,
   setDisplayVehicleFetch,
 } from "../features/displaySlice";
 import { getIndividualData } from "../api/getIndividualData";
@@ -61,6 +72,7 @@ import {
   setSalesTypeCodeId,
 } from "../features/addOEdit/addOEditCustomerSlice";
 import { addOEditPersonState } from "../features/addOEdit/addOEditPersonSlice";
+import { Delete } from "../interface/reduxType";
 import AddNewPerson from "./AddNewPerson";
 import AddNewAddress from "./AddNewAddress";
 import AddNewFleet from "./AddNewFleet";
@@ -68,8 +80,29 @@ import AddNewVehicle from "./AddNewVehicle";
 import AddNewDevice from "./AddNewDevice";
 import AddNewDeviceSerial from "./AddNewDeviceSerial";
 import AddNewContact from "./AddNewContact";
-import { addNewOAddExistState } from "../features/addNewOAddExistSlice";
-import { memoState } from "../features/memoSlice";
+import {
+  addNewOAddExistState,
+  removeAddressExist,
+  removeAddressNew,
+  removeContactExist,
+  removeContactNew,
+  removeCustomerExist,
+  removeCustomerNew,
+  removeFleetNew,
+  removePersonExist,
+  removePersonNew,
+  removeVehicleExist,
+  removeVehicleNew,
+} from "../features/addNewOAddExistSlice";
+import {
+  memoAddressId,
+  memoContactId,
+  memoFleetId,
+  memoPersonId,
+  memoRoleId,
+  memoState,
+  memoVehicleId,
+} from "../features/memoSlice";
 import { addOEditContactState } from "../features/addOEdit/addOEditContactSlice";
 import { addOEditAddressState } from "../features/addOEdit/addOEditAddressSlice";
 import { addOEditFleetState } from "../features/addOEdit/addOEditFleetSlice";
@@ -78,7 +111,15 @@ import { SendDevice } from "../interface/deviceType";
 import { addOEditDeviceSerialState } from "../features/addOEdit/addOEditDeviceSerialSlice";
 import { SendDeviceSerial } from "../interface/deviceSerialType";
 import { addOEditDeviceState } from "../features/addOEdit/addOEditDeviceSlice";
-import { setReload } from "../features/reloadSlice";
+import {
+  deleteState,
+  setAddressDelete,
+  setContactDelete,
+  setCustomerDelete,
+  setFleetDelete,
+  setPersonDelete,
+  setVehicleDelete,
+} from "../features/deleteSlice";
 
 export default function Main_AddNewNViewNEdit() {
   // useState
@@ -102,7 +143,8 @@ export default function Main_AddNewNViewNEdit() {
   const dispatch = useDispatch();
   const displayData: DisplayData = useSelector(displayState);
   const popUpAddExist = useSelector(popUpAddExistState);
-  const addNewOAddExist = useSelector(addNewOAddExistState);
+  const addNewOAddExist: AddNewOAddExist = useSelector(addNewOAddExistState);
+  const deleted: Delete = useSelector(deleteState);
   const addOEditCustomer: SendCustomer = useSelector(addOEditCustomerState);
   const addOEditPerson: SendPerson = useSelector(addOEditPersonState);
   const addOEditContact: SendContact = useSelector(addOEditContactState);
@@ -113,7 +155,7 @@ export default function Main_AddNewNViewNEdit() {
   const addOEditDeviceSerial: SendDeviceSerial = useSelector(
     addOEditDeviceSerialState
   );
-  const memo = useSelector(memoState);
+  const memo: Memo = useSelector(memoState);
 
   // useEffect
   useEffect(() => {
@@ -164,6 +206,25 @@ export default function Main_AddNewNViewNEdit() {
         dispatch(setDisplayAddressFetch(addressData));
         dispatch(setDisplayFleetFetch(fleetData));
         dispatch(setDisplayVehicleFetch(vehicleData));
+        for (const obj of personData) {
+          dispatch(memoPersonId(obj.person_id));
+        }
+
+        for (const obj of contactData) {
+          dispatch(memoContactId(obj.contact_id));
+        }
+
+        for (const obj of addressData) {
+          dispatch(memoAddressId(obj.address_id));
+        }
+
+        for (const obj of fleetData) {
+          dispatch(memoFleetId(obj.fleet_id));
+        }
+
+        for (const obj of vehicleData) {
+          dispatch(memoVehicleId(obj.vehicle_id));
+        }
       } else if (menu == "person" && !addOEditPerson.person.person_id) {
       }
     }
@@ -199,44 +260,122 @@ export default function Main_AddNewNViewNEdit() {
     }
   };
 
-  const handleDeletePerson: (e: React.MouseEvent<HTMLLIElement>) => void = (
-    e
-  ) => {
-    const person_id = e.currentTarget.id;
+  const handleDelete: (
+    e: React.MouseEvent<HTMLLIElement>,
+    type: string
+  ) => void = (e, type) => {
+    const id = isNaN(Number(e.currentTarget.id))
+      ? e.currentTarget.id
+      : Number(e.currentTarget.id);
 
-    // dispatch(setAddNewPersonDeleteInCustomer(person_id));
+    if (type == "customer") {
+      if (typeof id == "number") {
+        if (
+          memo.customer_id.includes(id) &&
+          !deleted.customerDelete.includes(id)
+        ) {
+          dispatch(setCustomerDelete(Number(id)));
+        } else if (addNewOAddExist.customerExist.includes(id)) {
+          dispatch(removeCustomerExist(Number(id)));
+        }
+      } else if (typeof id == "string") {
+        for (const obj of addNewOAddExist.customerNew) {
+          if (obj.customer.customer_id == id) {
+            dispatch(removeCustomerNew(id));
+          }
+        }
+      }
 
-    e.currentTarget.parentElement?.parentElement?.parentElement?.parentElement.remove();
-  };
+      dispatch(setDisplayCustomerDelete(id));
+    } else if (type == "person") {
+      if (typeof id == "number") {
+        if (memo.person_id.includes(id) && !deleted.personDelete.includes(id)) {
+          dispatch(setPersonDelete(Number(id)));
+        } else if (addNewOAddExist.personExist.includes(id)) {
+          dispatch(removePersonExist(Number(id)));
+        }
+      } else if (typeof id == "string") {
+        for (const obj of addNewOAddExist.personNew) {
+          if (obj.person.person_id == id) {
+            dispatch(removePersonNew(id));
+          }
+        }
+      }
 
-  const handleDeleteContact: (e: React.MouseEvent<HTMLLIElement>) => void = (
-    e
-  ) => {
-    const contact_id = e.currentTarget.id;
+      dispatch(setDisplayPersonDelete(id));
+    } else if (type == "contact") {
+      if (typeof id == "number") {
+        if (
+          memo.contact_id.includes(id) &&
+          !deleted.contactDelete.includes(id)
+        ) {
+          dispatch(setContactDelete(Number(id)));
+        } else if (addNewOAddExist.contactExist.includes(id)) {
+          dispatch(removeContactExist(Number(id)));
+        }
+      } else if (typeof id == "string") {
+        for (const obj of addNewOAddExist.contactNew) {
+          if (obj.contact.contact_id == id) {
+            dispatch(removeContactNew(id));
+          }
+        }
+      }
+      dispatch(setDisplayContactDelete(id));
+    } else if (type == "address") {
+      if (typeof id == "number") {
+        if (
+          memo.address_id.includes(id) &&
+          !deleted.addressDelete.includes(id)
+        ) {
+          dispatch(setAddressDelete(Number(id)));
+        } else if (addNewOAddExist.addressExist.includes(id)) {
+          dispatch(removeAddressExist(Number(id)));
+        }
+      } else if (typeof id == "string") {
+        for (const obj of addNewOAddExist.addressNew) {
+          if (obj.address.address_id == id) {
+            dispatch(removeAddressNew(id));
+          }
+        }
+      }
 
-    // dispatch(setAddNewContactDeleteInCustomer(contact_id));
+      dispatch(setDisplayAddressDelete(id));
+    } else if (type == "fleet") {
+      if (typeof id == "number") {
+        if (memo.fleet_id.includes(id) && !deleted.fleetDelete.includes(id)) {
+          dispatch(setFleetDelete(Number(id)));
+        } else if (addNewOAddExist.fleetExist.includes(id)) {
+          dispatch(removeContactExist(Number(id)));
+        }
+      } else if (typeof id == "string") {
+        for (const obj of addNewOAddExist.fleetNew) {
+          if (obj.fleet.fleet_id == id) {
+            dispatch(removeFleetNew(id));
+          }
+        }
+      }
 
-    e.currentTarget.parentElement?.parentElement?.parentElement?.parentElement.remove();
-  };
+      dispatch(setDisplayFleetDelete(id));
+    } else if (type == "vehicle") {
+      if (typeof id == "number") {
+        if (
+          memo.vehicle_id.includes(id) &&
+          !deleted.vehicleDelete.includes(id)
+        ) {
+          dispatch(setVehicleDelete(Number(id)));
+        } else if (addNewOAddExist.vehicleExist.includes(id)) {
+          dispatch(removeVehicleExist(Number(id)));
+        }
+      } else if (typeof id == "string") {
+        for (const obj of addNewOAddExist.vehicleNew) {
+          if (obj.vehicle.vehicle_id == id) {
+            dispatch(removeVehicleNew(id));
+          }
+        }
+      }
 
-  const handleDeleteAddress: (e: React.MouseEvent<HTMLLIElement>) => void = (
-    e
-  ) => {
-    const address_id = e.currentTarget.id;
-
-    // dispatch(setAddNewAddressDeleteInCustomer(address_id));
-
-    e.currentTarget.parentElement?.parentElement?.parentElement?.parentElement.remove();
-  };
-
-  const handleDeleteVehicle: (e: React.MouseEvent<HTMLLIElement>) => void = (
-    e
-  ) => {
-    const person_id = e.currentTarget.id;
-
-    // dispatch(setAddNewVehiclDeleteInCustomer(person_id));
-
-    e.currentTarget.parentElement?.parentElement?.parentElement?.parentElement.remove();
+      dispatch(setDisplayVehicleDelete(id));
+    }
   };
 
   return (
@@ -325,9 +464,8 @@ export default function Main_AddNewNViewNEdit() {
                     <></>
                   ) : (
                     <Option
-                      type="addNew2OEdit"
                       id={data.customer_id}
-                      onDelete={handleDeletePerson}
+                      onDelete={(e) => handleDelete(e, "customer")}
                     />
                   )}
                 </Tr>
@@ -399,9 +537,8 @@ export default function Main_AddNewNViewNEdit() {
                     <></>
                   ) : (
                     <Option
-                      type="addNew2OEdit"
-                      id={data.person_id}
-                      onDelete={handleDeletePerson}
+                      id={data.person_id.toString()}
+                      onDelete={(e) => handleDelete(e, "person")}
                     ></Option>
                   )}
                 </Tr>
@@ -462,9 +599,8 @@ export default function Main_AddNewNViewNEdit() {
                   <></>
                 ) : (
                   <Option
-                    type="addNew2OEdit"
-                    id={data.uuid}
-                    onDelete={handleDeleteContact}
+                    id={data.contact_id.toString()}
+                    onDelete={(e) => handleDelete(e, "contact")}
                   ></Option>
                 )}
               </Tr>
@@ -475,7 +611,7 @@ export default function Main_AddNewNViewNEdit() {
         <></>
       )}
 
-      {/* ที่อยู่ */}
+      {/* address */}
       {menu == "customer" ? (
         <Fragment>
           <Divider title="ข้อมูลที่อยู่" />
@@ -529,9 +665,8 @@ export default function Main_AddNewNViewNEdit() {
                     <></>
                   ) : (
                     <Option
-                      type="addNew2OEdit"
-                      id={data.address_id}
-                      onDelete={handleDeleteAddress}
+                      id={data.address_id.toString()}
+                      onDelete={(e) => handleDelete(e, "address")}
                     ></Option>
                   )}
                 </Tr>
@@ -598,9 +733,8 @@ export default function Main_AddNewNViewNEdit() {
                     <></>
                   ) : (
                     <Option
-                      type="addNew2OEdit"
-                      id={data.fleet_id}
-                      onDelete={handleDeleteAddress}
+                      id={data.fleet_id.toString()}
+                      onDelete={(e) => handleDelete(e, "fleet")}
                     ></Option>
                   )}
                 </Tr>
@@ -669,9 +803,8 @@ export default function Main_AddNewNViewNEdit() {
                     <></>
                   ) : (
                     <Option
-                      type="addNew2OEdit"
-                      id={data.address_id}
-                      onDelete={handleDeleteAddress}
+                      id={data.vehicle_id.toString()}
+                      onDelete={(e) => handleDelete(e, "vehicle")}
                     ></Option>
                   )}
                 </Tr>
