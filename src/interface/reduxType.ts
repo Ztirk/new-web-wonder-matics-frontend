@@ -1,11 +1,11 @@
-import { AddressDisplay, SendAddress } from "./addressType";
-import { ContactDisplay, SendContact } from "./contactType";
+import { AddressDisplay, SendAddress, SendAddressShape } from "./addressType";
+import { ContactDisplay, SendContact, SendContactShape } from "./contactType";
 import { CustomerDisplay, SendCustomer } from "./customerType";
 import { DeviceSerialDisplay } from "./deviceSerialType";
 import { DeviceDisplay } from "./deviceType";
-import { FleetDisplay, SendFleet } from "./fleetType";
+import { FleetDisplay, SendFleet, SendFleetShape } from "./fleetType";
 import { PersonDisplay, SendPerson } from "./personType";
-import { SendVehicle, VehicleDisplay } from "./vehicleType";
+import { SendVehicle, SendVehicleShape, VehicleDisplay } from "./vehicleType";
 
 export interface setContact {
   contact_code_id: number;
@@ -29,15 +29,15 @@ export type DisplayData = CustomerDisplay &
 export interface AddNewOAddExist {
   customerNew: SendCustomer[];
   customerExist: number[];
-  addressNew: SendAddress[];
+  addressNew: SendAddressShape[];
   addressExist: number[];
-  contactNew: SendContact[];
+  contactNew: SendContactShape[];
   contactExist: number[];
   personNew: SendPerson[];
   personExist: number[];
-  vehicleNew: SendVehicle[];
+  vehicleNew: SendVehicleShape[];
   vehicleExist: number[];
-  fleetNew: SendFleet[];
+  fleetNew: SendFleetShape[];
   fleetExist: number[];
 }
 

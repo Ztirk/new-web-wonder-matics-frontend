@@ -26,7 +26,18 @@ const initialState: SendDevice = {
 const addOEditDeviceSlice = createSlice({
   name: "addOEditDevice",
   initialState,
-  reducers: {},
+  reducers: {
+    setDevice(state, actions: PayloadAction<number>) {},
+    setDeviceSerialId(state, actions: PayloadAction<number>) {},
+    setVehId(state, actions: PayloadAction<number>) {},
+    setConfigName(state, actions: PayloadAction<number>) {},
+    setGatewayPort(state, actions: PayloadAction<number>) {},
+    setMobileNumber(state, actions: PayloadAction<number>) {},
+    setNetwork(state, actions: PayloadAction<number>) {},
+    setPassword(state, actions: PayloadAction<number>) {},
+    setSimSerial(state, actions: PayloadAction<number>) {},
+    
+  },
 });
 
 export const {} = addOEditDeviceSlice.actions;

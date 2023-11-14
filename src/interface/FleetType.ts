@@ -1,10 +1,13 @@
 import { ApiStatus } from "./apiStatus";
+
+export interface SendFleetShape {
+  fleet_id: number | string;
+  fleet_name: string;
+  parent_fleet_id: number | null;
+}
+
 export interface SendFleet {
-  fleet: {
-    fleet_id: number | string;
-    fleet_name: string;
-    parent_fleet_id: number | null;
-  };
+  fleet: SendFleetShape;
 }
 export interface FleetIterate {
   RowNum: number;

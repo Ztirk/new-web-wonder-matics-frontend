@@ -19,7 +19,6 @@ import {
   setNickName,
 } from "../features/addOEdit/addOEditPersonSlice";
 import { PersonIterate, SendPerson } from "../interface/personType";
-import ButtonLeftFrame from "../components/Button/ButtonLeftFrame";
 import Button from "../components/Button/Button";
 import ButtonRightFrame from "../components/Button/ฺButtonRightFrame";
 import { v4 as uuidv4 } from "uuid";
@@ -29,14 +28,14 @@ import { setPersonNew } from "../features/addNewOAddExistSlice";
 import { Contact, ContactInMain, SendContact } from "../interface/contactType";
 
 interface Props {
-  addNew1OId: string | number;
+  addNew1OId: string;
   addNew2OEdit: string;
 }
 
 export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
   // useState
   const [selectorData, setSelectorData] = useState<MasterCode>();
-
+  
   // Router
   const location = useLocation();
   const segments = location.pathname.split("/").splice(1);
@@ -105,7 +104,7 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
       email: email.value,
       mobile: mobile.value,
       description: description,
-      role: displayRole,
+      role: displayRole ? displayRole : "",
     };
 
     const sendPersonData: SendPerson & ContactInMain = {

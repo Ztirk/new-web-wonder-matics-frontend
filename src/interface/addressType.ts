@@ -1,19 +1,21 @@
 import { ApiStatus } from "./apiStatus";
+
+export interface SendAddressShape {
+  address_id: number | string;
+  name: string;
+  house_no: string;
+  village_no: string;
+  alley: string;
+  road: string;
+  sub_district: string;
+  district: string;
+  province: string;
+  postal_code: string;
+  address_type: number[];
+  address_typeDelete: number[];
+}
 export interface SendAddress {
-  address: {
-    address_id: number | string;
-    name: string;
-    house_no: string;
-    village_no: string;
-    alley: string;
-    road: string;
-    sub_district: string;
-    district: string;
-    province: string;
-    postal_code: string;
-    address_type: number[];
-    address_typeDelete: number[];
-  };
+  address: SendAddressShape;
 }
 export interface AddressIterate {
   RowNum: number;

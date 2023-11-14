@@ -1,8 +1,11 @@
 import axios from "axios";
 import { MasterCode } from "../interface/mastercodeType";
+import { FleetIterate } from "../interface/fleetType";
 
 export async function getSelector(
-  setSelectorData: React.Dispatch<React.SetStateAction<MasterCode>>,
+  setSelectorData: React.Dispatch<
+    React.SetStateAction<MasterCode | FleetIterate | undefined>
+  >,
   menu: string
 ): Promise<void> {
   try {

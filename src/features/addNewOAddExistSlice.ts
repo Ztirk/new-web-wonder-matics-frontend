@@ -2,10 +2,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AddNewOAddExist } from "../interface/reduxType";
 import { SendPerson } from "../interface/personType";
 import { SendCustomer } from "../interface/customerType";
-import { SendAddress } from "../interface/addressType";
-import { SendVehicle } from "../interface/vehicleType";
-import { SendFleet } from "../interface/fleetType";
-import { SendContact } from "../interface/contactType";
+import { SendAddress, SendAddressShape } from "../interface/addressType";
+import { SendVehicle, SendVehicleShape } from "../interface/vehicleType";
+import { SendFleet, SendFleetShape } from "../interface/fleetType";
+import { SendContact, SendContactShape } from "../interface/contactType";
 
 const initialState: AddNewOAddExist = {
   customerNew: [],
@@ -58,12 +58,12 @@ const addNewOAddExistSlice = createSlice({
         (id) => id !== action.payload
       );
     },
-    setAddressNew(state, action: PayloadAction<SendAddress>) {
+    setAddressNew(state, action: PayloadAction<SendAddressShape>) {
       state.addressNew.push(action.payload);
     },
     removeAddressNew(state, action: PayloadAction<string>) {
       state.addressNew = state.addressNew.filter(
-        (data) => data.address.address_id !== action.payload
+        (data) => data.address_id !== action.payload
       );
     },
     setAddressExist(state, action: PayloadAction<number>) {
@@ -74,12 +74,12 @@ const addNewOAddExistSlice = createSlice({
         (id) => id !== action.payload
       );
     },
-    setVehicleNew(state, action: PayloadAction<SendVehicle>) {
+    setVehicleNew(state, action: PayloadAction<SendVehicleShape>) {
       state.vehicleNew.push(action.payload);
     },
     removeVehicleNew(state, action: PayloadAction<string>) {
       state.vehicleNew = state.vehicleNew.filter(
-        (data) => data.vehicle.vehicle_id !== action.payload
+        (data) => data.vehicle_id !== action.payload
       );
     },
     setVehicleExist(state, action: PayloadAction<number>) {
@@ -90,12 +90,12 @@ const addNewOAddExistSlice = createSlice({
         (id) => id !== action.payload
       );
     },
-    setFleetNew(state, action: PayloadAction<SendFleet>) {
+    setFleetNew(state, action: PayloadAction<SendFleetShape>) {
       state.fleetNew.push(action.payload);
     },
     removeFleetNew(state, action: PayloadAction<string>) {
       state.fleetNew = state.fleetNew.filter(
-        (data) => data.fleet.fleet_id !== action.payload
+        (data) => data.fleet_id !== action.payload
       );
     },
     setFleetExist(state, action: PayloadAction<number>) {
@@ -104,12 +104,12 @@ const addNewOAddExistSlice = createSlice({
     removeFleetExist(state, action: PayloadAction<number>) {
       state.fleetExist = state.fleetExist.filter((id) => id !== action.payload);
     },
-    setContactNew(state, action: PayloadAction<SendContact>) {
+    setContactNew(state, action: PayloadAction<SendContactShape>) {
       state.contactNew.push(action.payload);
     },
     removeContactNew(state, action: PayloadAction<string>) {
       state.contactNew = state.contactNew.filter(
-        (data) => data.contact.contact_id !== action.payload
+        (data) => data.contact_id !== action.payload
       );
     },
     setContactExist(state, action: PayloadAction<number>) {

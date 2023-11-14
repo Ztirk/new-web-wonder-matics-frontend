@@ -22,10 +22,17 @@ const addOEditContactSlice = createSlice({
     setValue(state, action: PayloadAction<string>) {
       state.contact.value = action.payload;
     },
+    setDefaultContact(state) {
+      state.contact = {
+        contact_id: 0,
+        contact_code_id: null,
+        value: "",
+      };
+    },
   },
 });
 
-export const { setContactCodeId, setContactId, setValue } =
+export const { setContactCodeId, setContactId, setValue, setDefaultContact } =
   addOEditContactSlice.actions;
 
 export const addOEditContactState = (state) => state.addOEditContact;

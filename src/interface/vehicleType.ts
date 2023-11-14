@@ -1,18 +1,20 @@
 import { ApiStatus } from "./apiStatus";
+
+export interface SendVehicleShape {
+  vehicle_id: number | string;
+  frame_no: string;
+  license_plate: string;
+  vehicle_model_id: number | null;
+  registration_province_code_id: number | null;
+  registration_type_code_id: number | null;
+  driving_license_type_code_id: number | null;
+  number_of_axles: number;
+  number_of_wheels: number;
+  number_of_tires: number;
+  vehicle_type_code_id: number | null;
+}
 export interface SendVehicle {
-  vehicle: {
-    vehicle_id: number | string;
-    frame_no: string;
-    license_plate: string;
-    vehicle_model_id: number | null;
-    registration_province_code_id: number | null;
-    registration_type_code_id: number | null;
-    driving_license_type_code_id: number | null;
-    number_of_axles: number;
-    number_of_wheels: number;
-    number_of_tires: number;
-    vehicle_type_code_id: number | null;
-  };
+  vehicle: SendVehicleShape;
 }
 export interface VehicleIterate {
   RowNum: number;

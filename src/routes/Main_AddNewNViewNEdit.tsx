@@ -592,8 +592,8 @@ export default function Main_AddNewNViewNEdit() {
               <Tr type="tbody" key={data.contact_id}>
                 <Td>{i + 1}</Td>
                 <Td>{data.contact_id}</Td>
-                <Td>{data.value}</Td>
                 <Td>{data.contact_type}</Td>
+                <Td>{data.value}</Td>
                 <Td>{data.owner_name}</Td>
                 {!addNew2OEdit && !isNaN(Number(addNew1OId)) ? (
                   <></>

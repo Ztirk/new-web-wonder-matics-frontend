@@ -1,21 +1,16 @@
 import { ApiStatus } from "./apiStatus";
 
-export interface SendContactInMain {
-  contact: {
-    contact_code_id: number | null;
-    value: string;
-  }[];
+export interface SendContactShape {
+  contact_id: number | string;
+  contact_code_id: number | null;
+  value: string;
 }
 
 export interface SendContact {
-  contact: {
-    contact_id: number | string;
-    contact_code_id: number | null;
-    value: string;
-  };
+  contact: SendContactShape;
 }
 export interface ContactIterate {
-  RowNum: number;
+  RowNum: number | null;
   contact_id: number;
   contact_type: string;
   value: string;

@@ -43,6 +43,7 @@ const displaySlice = createSlice({
     },
 
     setDisplayContactInteract(state, action: PayloadAction<ContactIterate>) {
+      console.log(action.payload)
       state.contact.push(action.payload);
     },
 

@@ -1,10 +1,5 @@
-import { Fragment, useEffect, useState } from "react";
-import {
-  Selector,
-  Selector,
-  Selector,
-  Selector,
-} from "../../interface/mastercodeType";
+import React, { Fragment, useEffect, useRef, useState } from "react";
+import { Selector } from "../../interface/mastercodeType";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import {
@@ -14,11 +9,23 @@ import {
 } from "../../features/addOEdit/addOEditCustomerSlice";
 import { SendCustomer } from "../../interface/customerType";
 import { setDisplayCustomerInteract } from "../../features/displaySlice";
-import { addOEditAddressState } from "../../features/addOEdit/addOEditAddressSlice";
-import { addOEditContactState } from "../../features/addOEdit/addOEditContactSlice";
+import {
+  addOEditAddressState,
+  removeAddressType,
+  removeAddressTypeDelete,
+  setAddressType,
+  setAddressTypeDelete,
+} from "../../features/addOEdit/addOEditAddressSlice";
+import {
+  addOEditContactState,
+  setContactCodeId,
+} from "../../features/addOEdit/addOEditContactSlice";
 import { addOEditDeviceSerialState } from "../../features/addOEdit/addOEditDeviceSerialSlice";
 import { addOEditDeviceState } from "../../features/addOEdit/addOEditDeviceSlice";
-import { addOEditFleetState } from "../../features/addOEdit/addOEditFleetSlice";
+import {
+  addOEditFleetState,
+  setParentFleetId,
+} from "../../features/addOEdit/addOEditFleetSlice";
 import {
   addOEditPersonState,
   removeRole,
@@ -27,12 +34,17 @@ import {
   setRoleDelete,
   setTitleCodeId,
 } from "../../features/addOEdit/addOEditPersonSlice";
-import { addOEditVehicleState } from "../../features/addOEdit/addOEditVehicleSlice";
+import {
+  addOEditVehicleState,
+  setRegistrationProvinceCodeId,
+  setRegistrationTypeCodeId,
+  setVehicleTypeCodeId,
+} from "../../features/addOEdit/addOEditVehicleSlice";
 import { SendAddress } from "../../interface/addressType";
 import { SendContact } from "../../interface/contactType";
 import { SendDeviceSerial } from "../../interface/deviceSerialType";
 import { SendDevice } from "../../interface/deviceType";
-import { SendFleet } from "../../interface/fleetType";
+import { Fleet, FleetIterate, SendFleet } from "../../interface/fleetType";
 import { SendPerson } from "../../interface/personType";
 import { SendVehicle } from "../../interface/vehicleType";
 import { Memo } from "../../interface/reduxType";
@@ -41,9 +53,11 @@ import { useLocation } from "react-router-dom";
 
 interface Props {
   selectorData?: Selector[];
+  fleetSelector?: Fleet;
   label: string;
   disabled: boolean;
   type: "selector" | "multi-selector" | "search-selector";
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export default function Selector({
@@ -51,18 +65,19 @@ export default function Selector({
   label,
   disabled,
   type,
+  onChange,
+  fleetSelector,
 }: Props) {
   // useState
   const [toggleSearchSelector, setToggleSearchSelector] =
     useState<boolean>(false);
 
+  const [searchString, setSearchString] = useState<string>("");
+
   // Router
   const location = useLocation();
   const segments = location.pathname.split("/").splice(1);
   const menu = segments[0];
-  const addNew1OId = segments[1];
-  const addNew2OEdit = segments[2];
-  const addNew2 = segments[3];
 
   // Redux
   const dispatch = useDispatch();
@@ -83,8 +98,8 @@ export default function Selector({
   };
 
   const handleShowSelector: () => string | undefined = () => {
-    let selectedData: Selector | undefined;
     if (selectorData) {
+      let selectedData: Selector | undefined;
       const category = selectorData[0].category;
       const mcClass = selectorData[0].class;
       if (category == "customer" && mcClass == "customer_type") {
@@ -100,16 +115,41 @@ export default function Selector({
         selectedData = selectorData.find(
           (data) => data.code_id == addOEditPerson.person.title_code_id
         );
+      } else if (category == "contact" && mcClass == null) {
+        selectedData = selectorData.find(
+          (data) => data.code_id == addOEditContact.contact.contact_code_id
+        );
+      } else if (category == "vehicle" && mcClass == "type") {
+        selectedData = selectorData.find(
+          (data) => data.code_id == addOEditVehicle.vehicle.vehicle_type_code_id
+        );
+      } else if (category == "vehicle" && mcClass == "registration_type") {
+        selectedData = selectorData.find(
+          (data) =>
+            data.code_id == addOEditVehicle.vehicle.registration_type_code_id
+        );
+      } else if (category == "vehicle" && mcClass == "registration_province") {
+        selectedData = selectorData.find(
+          (data) =>
+            data.code_id ==
+            addOEditVehicle.vehicle.registration_province_code_id
+        );
       }
+      return selectedData ? selectedData.value : undefined;
+    } else if (fleetSelector) {
+      const selectedData: FleetIterate | undefined =
+        fleetSelector.response.fleet.find(
+          (data) => data.fleet_id == addOEditFleet.fleet.parent_fleet_id
+        );
+      return selectedData ? selectedData.fleet_name : undefined;
     }
-    return selectedData ? selectedData.value : undefined;
   };
 
   const handleClickSelector: (e: React.MouseEvent<HTMLLIElement>) => void = (
     e
   ) => {
-    const code_id = Number(e.currentTarget.id);
     if (selectorData) {
+      const code_id = Number(e.currentTarget.id);
       const category = selectorData[0].category;
       const mcClass = selectorData[0].class;
       if (category == "customer" && mcClass == "customer_type") {
@@ -118,27 +158,53 @@ export default function Selector({
         dispatch(setSalesTypeCodeId(code_id));
       } else if (category == "person" && mcClass == "title") {
         dispatch(setTitleCodeId(code_id));
+      } else if (category == "contact" && mcClass == null) {
+        dispatch(setContactCodeId(code_id));
+      } else if (category == "vehicle" && mcClass == "type") {
+        dispatch(setVehicleTypeCodeId(code_id));
+      } else if (category == "vehicle" && mcClass == "registration_type") {
+        dispatch(setRegistrationTypeCodeId(code_id));
+      } else if (category == "vehicle" && mcClass == "registration_province") {
+        dispatch(setRegistrationProvinceCodeId(code_id));
       }
+    } else if (fleetSelector) {
+      const fleet_id = Number(e.currentTarget.id);
+      dispatch(setParentFleetId(fleet_id));
     }
+
+    handleToggleSearchSelector();
   };
 
   const handleShowMultiSelector: () => React.ReactNode = () => {
     let selectedData: Selector[] | [] = [];
+
     if (selectorData) {
-      const category = selectorData[0].category;
-      const mcClass = selectorData[0].class;
-      if (category == "role" && mcClass == null) {
-        selectedData = selectorData.filter((id) =>
-          addOEditPerson.person.role.includes(id.code_id)
-        );
+      if (selectorData) {
+        const category = selectorData[0].category;
+        const mcClass = selectorData[0].class;
+        if (category == "role" && mcClass == null) {
+          selectedData = selectorData.filter((id) =>
+            addOEditPerson.person.role.includes(id.code_id)
+          );
+        } else if (
+          category == "address" &&
+          (mcClass == null || mcClass == "customer" || mcClass == "person")
+        ) {
+          selectedData = selectorData.filter((id) =>
+            addOEditAddress.address.address_type.includes(id.code_id)
+          );
+        }
       }
     }
+
     return (
       <>
         {selectedData.length > 0 ? (
           <ul className="flex flex-row truncate gap-2">
             {selectedData.map((data) => (
-              <li className="input-n-selector__border p-1">{data.value}</li>
+              <li className="input-n-selector__border p-1" key={data.code_id}>
+                {data.value}
+              </li>
             ))}
           </ul>
         ) : (
@@ -175,6 +241,29 @@ export default function Selector({
             dispatch(setRoleDelete(id));
           } else if (addOEditPerson.person.role.includes(id)) {
             dispatch(removeRole(id));
+          }
+        }
+      } else if (
+        category == "address" &&
+        (mcClass == null || mcClass == "customer" || mcClass == "person")
+      ) {
+        if (checked) {
+          if (
+            !memo.address_type_id.includes(id) &&
+            !addOEditAddress.address.address_type.includes(id)
+          ) {
+            dispatch(setAddressType(id));
+          } else if (addOEditAddress.address.address_typeDelete.includes(id)) {
+            dispatch(removeAddressTypeDelete(id));
+          }
+        } else if (!checked) {
+          if (
+            memo.address_type_id.includes(id) &&
+            !addOEditAddress.address.address_type.includes(id)
+          ) {
+            dispatch(setAddressTypeDelete(id));
+          } else if (addOEditAddress.address.address_type.includes(id)) {
+            dispatch(removeAddressType(id));
           }
         }
       }
@@ -231,90 +320,94 @@ export default function Selector({
             toggleSearchSelector ? "" : "hidden"
           }`}
         >
+          <div className="input-n-selector__border p-2 m-1 grid grid-cols-[auto_1fr] gap-3">
+            <label htmlFor="">
+              <i className="fa-solid fa-magnifying-glass" />
+            </label>
+
+            <input
+              className="w-full"
+              placeholder="ค้นหาชื่อฟลีต"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setSearchString(e.currentTarget.value);
+              }}
+            />
+          </div>
           {/* selector */}
-          {type == "selector" ? (
-            <ul onClick={handleToggleSearchSelector}>
-              {selectorData ? (
-                selectorData.map((data) => (
-                  <li
-                    className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md`}
-                    id={data.code_id.toString()}
-                    onClick={handleClickSelector}
-                    key={data.code_id}
-                  >
-                    {data.value}
-                  </li>
-                ))
-              ) : (
-                <></>
-              )}
-            </ul>
-          ) : type == "multi-selector" ? (
-            <>
-              <div className="input-n-selector__border p-2 m-1 grid grid-cols-[auto_1fr] gap-3">
-                <label htmlFor="">
-                  <i className="fa-solid fa-magnifying-glass" />
-                </label>
-                <input className="w-full" placeholder="ค้นหาชื่อฟลีต" />
-              </div>
-              <ul>
+          <ul>
+            {type == "selector" ? (
+              <>
                 {selectorData ? (
                   selectorData.map((data) => (
-                    <li
-                      className={`px-3 items-center h-[50px] hover:rounded-md`}
-                    >
-                      <input
-                        type="checkbox"
-                        className="h-[20px] w-[20px] mx-3 sr-only"
-                        id={data.code_id.toString()}
-                        onClick={handleCheckMultiSelector}
-                      />
-                      <label
-                        className={`px-1 h-full flex items-center hover:bg-[#007FA4]/30 ${
-                          addOEditPerson.person.role.includes(data.code_id)
-                            ? "bg-[#007FA4]/30 rounded-md"
-                            : ""
-                        }`}
-                        htmlFor={data.code_id.toString()}
-                      >
-                        {data.value}
-                      </label>
-                    </li>
+                    <>
+                      {data.value.match(searchString) ? (
+                        <li
+                          className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                            addOEditPerson.person.title_code_id ==
+                              data.code_id ||
+                            addOEditContact.contact.contact_code_id ==
+                              data.code_id
+                              ? "bg-[#007FA4]/30"
+                              : ""
+                          }`}
+                          id={data.code_id.toString()}
+                          onClick={handleClickSelector}
+                          key={data.code_id}
+                        >
+                          {data.value}
+                        </li>
+                      ) : (
+                        <></>
+                      )}
+                    </>
                   ))
+                ) : fleetSelector ? (
+                  <></>
                 ) : (
                   <></>
                 )}
-              </ul>
-            </>
-          ) : (
-            <></>
-          )}
-
-          {/* search selector */}
-          {type == "search-selector" ? (
-            <Fragment>
-              <div className="input-n-selector__border p-2 m-1 grid grid-cols-[auto_1fr] gap-3">
-                <label htmlFor="">
-                  <i className="fa-solid fa-magnifying-glass" />
-                </label>
-                <input className="w-full" placeholder="ค้นหาชื่อฟลีต" />
-              </div>
-              <ul>
-                <li
-                  className={` grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md`}
-                >
-                  hello 1
-                </li>
-                <li
-                  className={` grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md`}
-                >
-                  hello 2
-                </li>
-              </ul>
-            </Fragment>
-          ) : (
-            <></>
-          )}
+              </>
+            ) : type == "multi-selector" ? (
+              <>
+                {selectorData ? (
+                  selectorData.map((data) =>
+                    data.value.match(searchString) ? (
+                      <li
+                        className={`px-3 items-center h-[50px] hover:rounded-md`}
+                        key={data.code_id}
+                      >
+                        <input
+                          type="checkbox"
+                          className="h-[20px] w-[20px] mx-3 sr-only"
+                          id={data.code_id.toString()}
+                          onClick={handleCheckMultiSelector}
+                        />
+                        <label
+                          className={`px-1 h-full flex items-center hover:bg-[#007FA4]/30 ${
+                            addOEditPerson.person.role.includes(data.code_id) ||
+                            addOEditAddress.address.address_type.includes(
+                              data.code_id
+                            )
+                              ? "bg-[#007FA4]/30 rounded-md"
+                              : ""
+                          }`}
+                          htmlFor={data.code_id.toString()}
+                        >
+                          {data.value}
+                        </label>
+                      </li>
+                    ) : (
+                      <></>
+                    )
+                  )
+                ) : (
+                  <></>
+                )}
+              </>
+            ) : (
+              <></>
+            )}
+          </ul>
         </div>
       </div>
     </Fragment>
