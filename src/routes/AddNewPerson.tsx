@@ -9,7 +9,6 @@ import { MasterCode } from "../interface/mastercodeType";
 import { useSelector } from "react-redux";
 import {
   addOEditPersonState,
-  serDefaultAddOEditPerson,
   setDescription,
   setEmail,
   setFirstName,
@@ -35,7 +34,7 @@ interface Props {
 export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
   // useState
   const [selectorData, setSelectorData] = useState<MasterCode>();
-  
+
   // Router
   const location = useLocation();
   const segments = location.pathname.split("/").splice(1);
@@ -126,7 +125,6 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
 
     dispatch(setPersonNew(sendPersonData));
     dispatch(setDisplayPersonInteract(displayPersonData));
-    dispatch(serDefaultAddOEditPerson());
   };
 
   return (

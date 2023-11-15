@@ -1,5 +1,25 @@
 import { ApiStatus } from "./apiStatus";
 
+export interface ProvinceSelector extends ApiStatus {
+  response: {
+    provinces: { province_th: string }[];
+  };
+}
+export interface DistrictSelector extends ApiStatus {
+  response: {
+    districts: { district_th: string }[];
+  };
+}
+export interface SubDistrictSelector extends ApiStatus {
+  response: {
+    sub_districts: {
+      address_model_id: number;
+      sub_district_th: string;
+      postal_code: string;
+    }[];
+  };
+}
+
 export interface SendAddressShape {
   address_id: number | string;
   name: string;
@@ -18,7 +38,7 @@ export interface SendAddress {
   address: SendAddressShape;
 }
 export interface AddressIterate {
-  RowNum: number;
+  RowNum: number | null;
   address_id: number;
   location: string;
   address_type: string;

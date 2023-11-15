@@ -10,7 +10,7 @@ export interface SendFleet {
   fleet: SendFleetShape;
 }
 export interface FleetIterate {
-  RowNum: number;
+  RowNum: number | null;
   fleet_id: number;
   fleet_name: string;
   vehicle_count: number;

@@ -74,7 +74,6 @@ export default function AddNewContact({ addNew2OEdit, addNew1OId }: Props) {
 
     dispatch(setContactNew(newContact));
     dispatch(setDisplayContactInteract(displayContact));
-    dispatch(setDefaultContact());
   };
 
   return (
@@ -83,12 +82,12 @@ export default function AddNewContact({ addNew2OEdit, addNew1OId }: Props) {
       <InputFrame>
         <Selector
           selectorData={selectorData?.response[0]}
-          label={"ประเภทการติดต่อ"}
+          label={"ประเภทการติดต่อ*"}
           type="selector"
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
         />
         <Input
-          label={"รายละเอียดการติดต่อ"}
+          label={"รายละเอียดการติดต่อ*"}
           type={"regular"}
           id="รายละเอียดการติดต่อ"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

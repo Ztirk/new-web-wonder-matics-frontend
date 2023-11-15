@@ -1,5 +1,17 @@
 import { ApiStatus } from "./apiStatus";
 
+export interface BrandSelector extends ApiStatus {
+  response: {
+    brands: { brand: string }[];
+  };
+}
+
+export interface ModelSelector extends ApiStatus {
+  response: {
+    models: { vehicle_model_id: number; model: string }[];
+  };
+}
+
 export interface SendVehicleShape {
   vehicle_id: number | string;
   frame_no: string;
@@ -12,6 +24,8 @@ export interface SendVehicleShape {
   number_of_wheels: number;
   number_of_tires: number;
   vehicle_type_code_id: number | null;
+  brand_name: string;
+  model_name: string;
 }
 export interface SendVehicle {
   vehicle: SendVehicleShape;

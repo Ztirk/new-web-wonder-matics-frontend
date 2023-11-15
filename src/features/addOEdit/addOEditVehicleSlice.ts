@@ -32,7 +32,7 @@ const addOEditVehicleSlice = createSlice({
     setFrameNo(state, actions: PayloadAction<string>) {
       state.vehicle.frame_no = actions.payload;
     },
-    setLicensePalte(state, actions: PayloadAction<string>) {
+    setLicensePlate(state, actions: PayloadAction<string>) {
       state.vehicle.license_plate = actions.payload;
     },
     setNumberOfAxles(state, actions: PayloadAction<number>) {
@@ -56,7 +56,7 @@ const addOEditVehicleSlice = createSlice({
     setVehicleTypeCodeId(state, actions: PayloadAction<number>) {
       state.vehicle.vehicle_type_code_id = actions.payload;
     },
-    setDefault(state) {
+    setDefaultVehicle(state) {
       state.vehicle = {
         vehicle_id: 0,
         driving_license_type_code_id: null,
@@ -77,7 +77,7 @@ const addOEditVehicleSlice = createSlice({
 export const {
   setDrivingLicenseTypeCodeId,
   setFrameNo,
-  setLicensePalte,
+  setLicensePlate,
   setNumberOfAxles,
   setNumberOfTires,
   setNumberOfWheels,
@@ -86,7 +86,7 @@ export const {
   setVehicleId,
   setVehicleModelId,
   setVehicleTypeCodeId,
-  setDefault,
+  setDefaultVehicle,
 } = addOEditVehicleSlice.actions;
 
 export const addOEditVehicleState = (state) => state.addOEditVehicle;

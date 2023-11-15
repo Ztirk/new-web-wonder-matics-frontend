@@ -8,13 +8,15 @@ import {
   setSalesTypeCodeId,
 } from "../../features/addOEdit/addOEditCustomerSlice";
 import { SendCustomer } from "../../interface/customerType";
-import { setDisplayCustomerInteract } from "../../features/displaySlice";
 import {
   addOEditAddressState,
   removeAddressType,
   removeAddressTypeDelete,
   setAddressType,
   setAddressTypeDelete,
+  setDistrict,
+  setProvince,
+  setSubDistrict,
 } from "../../features/addOEdit/addOEditAddressSlice";
 import {
   addOEditContactState,
@@ -36,11 +38,18 @@ import {
 } from "../../features/addOEdit/addOEditPersonSlice";
 import {
   addOEditVehicleState,
+  setDrivingLicenseTypeCodeId,
   setRegistrationProvinceCodeId,
   setRegistrationTypeCodeId,
   setVehicleTypeCodeId,
 } from "../../features/addOEdit/addOEditVehicleSlice";
-import { SendAddress } from "../../interface/addressType";
+import {
+  DistrictSelector,
+  PickedAddress,
+  ProvinceSelector,
+  SendAddress,
+  SubDistrictSelector,
+} from "../../interface/addressType";
 import { SendContact } from "../../interface/contactType";
 import { SendDeviceSerial } from "../../interface/deviceSerialType";
 import { SendDevice } from "../../interface/deviceType";
@@ -54,10 +63,15 @@ import { useLocation } from "react-router-dom";
 interface Props {
   selectorData?: Selector[];
   fleetSelector?: Fleet;
+  provinceSelector?: ProvinceSelector;
+  districtSelector?: DistrictSelector;
+  subDistrictSelector?: SubDistrictSelector;
   label: string;
   disabled: boolean;
   type: "selector" | "multi-selector" | "search-selector";
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setPickedAddress?: React.Dispatch<React.SetStateAction<PickedAddress>>;
+  pickedAddress?: PickedAddress;
+  defaultValue?: string;
 }
 
 export default function Selector({
@@ -65,8 +79,13 @@ export default function Selector({
   label,
   disabled,
   type,
-  onChange,
+  setPickedAddress,
   fleetSelector,
+  provinceSelector,
+  districtSelector,
+  subDistrictSelector,
+  pickedAddress,
+  defaultValue,
 }: Props) {
   // useState
   const [toggleSearchSelector, setToggleSearchSelector] =
@@ -134,6 +153,11 @@ export default function Selector({
             data.code_id ==
             addOEditVehicle.vehicle.registration_province_code_id
         );
+      } else if (category == "vehicle" && mcClass == "driving_license") {
+        selectedData = selectorData.find(
+          (data) =>
+            data.code_id == addOEditVehicle.vehicle.driving_license_type_code_id
+        );
       }
       return selectedData ? selectedData.value : undefined;
     } else if (fleetSelector) {
@@ -142,6 +166,30 @@ export default function Selector({
           (data) => data.fleet_id == addOEditFleet.fleet.parent_fleet_id
         );
       return selectedData ? selectedData.fleet_name : undefined;
+    } else if (provinceSelector) {
+      const selectedData:
+        | ProvinceSelector["response"]["provinces"][0]
+        | undefined = provinceSelector.response.provinces.find(
+        (data) => data.province_th == addOEditAddress.address.province
+      );
+
+      return selectedData ? selectedData.province_th : undefined;
+    } else if (districtSelector) {
+      const selectedData:
+        | DistrictSelector["response"]["districts"][0]
+        | undefined = districtSelector.response.districts.find(
+        (data) => data.district_th == addOEditAddress.address.district
+      );
+
+      return selectedData ? selectedData.district_th : undefined;
+    } else if (subDistrictSelector) {
+      const selectedData:
+        | SubDistrictSelector["response"]["sub_districts"][0]
+        | undefined = subDistrictSelector.response.sub_districts.find(
+        (data) => data.sub_district_th == addOEditAddress.address.sub_district
+      );
+
+      return selectedData ? selectedData.sub_district_th : undefined;
     }
   };
 
@@ -166,10 +214,21 @@ export default function Selector({
         dispatch(setRegistrationTypeCodeId(code_id));
       } else if (category == "vehicle" && mcClass == "registration_province") {
         dispatch(setRegistrationProvinceCodeId(code_id));
+      } else if (category == "vehicle" && mcClass == "driving_license") {
+        dispatch(setDrivingLicenseTypeCodeId(code_id));
       }
     } else if (fleetSelector) {
       const fleet_id = Number(e.currentTarget.id);
       dispatch(setParentFleetId(fleet_id));
+    } else if (provinceSelector) {
+      const province = e.currentTarget.id;
+      dispatch(setProvince(province));
+    } else if (districtSelector) {
+      const district = e.currentTarget.id;
+      dispatch(setDistrict(district));
+    } else if (subDistrictSelector) {
+      const subDistrict = e.currentTarget.id;
+      dispatch(setSubDistrict(subDistrict));
     }
 
     handleToggleSearchSelector();
@@ -294,7 +353,9 @@ export default function Selector({
           onClick={disabled ? undefined : handleToggleSearchSelector}
         >
           <span className="w-[200px] overflow-hidden">
-            {type == "selector"
+            {defaultValue
+              ? defaultValue
+              : type == "selector"
               ? handleShowSelector()
               : type == "multi-selector"
               ? handleShowMultiSelector()
@@ -334,7 +395,7 @@ export default function Selector({
             />
           </div>
           {/* selector */}
-          <ul>
+          <ul className="h-96 overflow-y-sc overflow-x-hidden">
             {type == "selector" ? (
               <>
                 {selectorData ? (
@@ -362,7 +423,90 @@ export default function Selector({
                     </>
                   ))
                 ) : fleetSelector ? (
-                  <></>
+                  <>
+                    {fleetSelector.response.fleet.map((data) =>
+                      data.fleet_name.match(searchString) ? (
+                        <li
+                          key={data.fleet_id}
+                          className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                            addOEditFleet.fleet.fleet_id == data.fleet_id
+                              ? "bg-[#007FA4]/30"
+                              : ""
+                          }`}
+                          id={data.fleet_id.toString()}
+                          onClick={handleClickSelector}
+                        >
+                          {data.fleet_name}
+                        </li>
+                      ) : (
+                        <></>
+                      )
+                    )}
+                  </>
+                ) : provinceSelector ? (
+                  <>
+                    {provinceSelector.response.provinces.map((data) =>
+                      data.province_th.match(searchString) ? (
+                        <li
+                          key={data.province_th}
+                          className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                            addOEditAddress.address.province == data.province_th
+                              ? "bg-[#007FA4]/30"
+                              : ""
+                          }`}
+                          id={data.province_th}
+                          onClick={handleClickSelector}
+                        >
+                          {data.province_th}
+                        </li>
+                      ) : (
+                        <></>
+                      )
+                    )}
+                  </>
+                ) : districtSelector ? (
+                  <>
+                    {districtSelector.response.districts.map((data) =>
+                      data.district_th.match(searchString) ? (
+                        <li
+                          key={data.district_th}
+                          className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                            addOEditAddress.address.district == data.district_th
+                              ? "bg-[#007FA4]/30"
+                              : ""
+                          }`}
+                          id={data.district_th}
+                          onClick={handleClickSelector}
+                        >
+                          {data.district_th}
+                        </li>
+                      ) : (
+                        <></>
+                      )
+                    )}
+                  </>
+                ) : subDistrictSelector ? (
+                  <>
+                    {subDistrictSelector.response.sub_districts.map((data) =>
+                      data.sub_district_th.match(searchString) ? (
+                        <li
+                          key={data.sub_district_th}
+                          className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                            addOEditAddress.address.sub_district ==
+                            data.sub_district_th
+                              ? "bg-[#007FA4]/30"
+                              : ""
+                          }`}
+                          id={data.sub_district_th}
+                          onClick={handleClickSelector}
+                        >
+                          {data.sub_district_th}
+                        </li>
+                      ) : (
+                        <></>
+                      )
+                    )}
+                  </>
                 ) : (
                   <></>
                 )}

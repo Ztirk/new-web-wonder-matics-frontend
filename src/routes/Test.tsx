@@ -1,14 +1,10 @@
 import { Fragment, useEffect, useRef, useState } from "react";
+import { Customer } from "../interface/test";
 
 export default function Test() {
-  const test = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const elem = document.getElementById('')
-    console.log(elem)
+  const customerData: Customer["test"]["customer"] = {
+    
   };
 
-  return (
-    <div>
-      
-    </div>
-  );
+  return <div>{customerData.customer_id}</div>;
 }

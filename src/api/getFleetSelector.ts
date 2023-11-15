@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Fleet } from "../interface/fleetType";
 
-export default async function getFleet(
+export default async function getFleetSelector(
   setFleetSelector: React.Dispatch<React.SetStateAction<Fleet | undefined>>
 ) {
   try {

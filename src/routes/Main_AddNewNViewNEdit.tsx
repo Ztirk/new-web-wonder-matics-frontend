@@ -71,7 +71,10 @@ import {
   setCustomerTypeCodeId,
   setSalesTypeCodeId,
 } from "../features/addOEdit/addOEditCustomerSlice";
-import { addOEditPersonState } from "../features/addOEdit/addOEditPersonSlice";
+import {
+  addOEditPersonState,
+  setDefaultPerson,
+} from "../features/addOEdit/addOEditPersonSlice";
 import { Delete } from "../interface/reduxType";
 import AddNewPerson from "./AddNewPerson";
 import AddNewAddress from "./AddNewAddress";
@@ -103,10 +106,22 @@ import {
   memoState,
   memoVehicleId,
 } from "../features/memoSlice";
-import { addOEditContactState } from "../features/addOEdit/addOEditContactSlice";
-import { addOEditAddressState } from "../features/addOEdit/addOEditAddressSlice";
-import { addOEditFleetState } from "../features/addOEdit/addOEditFleetSlice";
-import { addOEditVehicleState } from "../features/addOEdit/addOEditVehicleSlice";
+import {
+  addOEditContactState,
+  setDefaultContact,
+} from "../features/addOEdit/addOEditContactSlice";
+import {
+  addOEditAddressState,
+  setDefaultAddress,
+} from "../features/addOEdit/addOEditAddressSlice";
+import {
+  addOEditFleetState,
+  setDefaultFleet,
+} from "../features/addOEdit/addOEditFleetSlice";
+import {
+  addOEditVehicleState,
+  setDefaultVehicle,
+} from "../features/addOEdit/addOEditVehicleSlice";
 import { SendDevice } from "../interface/deviceType";
 import { addOEditDeviceSerialState } from "../features/addOEdit/addOEditDeviceSerialSlice";
 import { SendDeviceSerial } from "../interface/deviceSerialType";
@@ -179,7 +194,14 @@ export default function Main_AddNewNViewNEdit() {
       );
     }
 
-    getSelector(setSelectorData, menu);
+    if (menu == "customer") {
+      dispatch(setDefaultAddress());
+      dispatch(setDefaultContact());
+      dispatch(setDefaultFleet());
+      dispatch(setDefaultPerson());
+      dispatch(setDefaultVehicle());
+    } else if (menu == "person") {
+    }
   }, [location]);
 
   useEffect(() => {
@@ -315,7 +337,7 @@ export default function Main_AddNewNViewNEdit() {
         }
       } else if (typeof id == "string") {
         for (const obj of addNewOAddExist.contactNew) {
-          if (obj.contact.contact_id == id) {
+          if (obj.contact_id == id) {
             dispatch(removeContactNew(id));
           }
         }
@@ -333,7 +355,7 @@ export default function Main_AddNewNViewNEdit() {
         }
       } else if (typeof id == "string") {
         for (const obj of addNewOAddExist.addressNew) {
-          if (obj.address.address_id == id) {
+          if (obj.address_id == id) {
             dispatch(removeAddressNew(id));
           }
         }
@@ -349,7 +371,7 @@ export default function Main_AddNewNViewNEdit() {
         }
       } else if (typeof id == "string") {
         for (const obj of addNewOAddExist.fleetNew) {
-          if (obj.fleet.fleet_id == id) {
+          if (obj.fleet_id == id) {
             dispatch(removeFleetNew(id));
           }
         }
@@ -368,7 +390,7 @@ export default function Main_AddNewNViewNEdit() {
         }
       } else if (typeof id == "string") {
         for (const obj of addNewOAddExist.vehicleNew) {
-          if (obj.vehicle.vehicle_id == id) {
+          if (obj.vehicle_id == id) {
             dispatch(removeVehicleNew(id));
           }
         }

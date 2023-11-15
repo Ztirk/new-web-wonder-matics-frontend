@@ -13,6 +13,7 @@ import addOEditFleetSlice from "./addOEdit/addOEditFleetSlice";
 import addOEditDeviceSerialSlice from "./addOEdit/addOEditDeviceSerialSlice";
 import addOEditDeviceSlice from "./addOEdit/addOEditDeviceSlice";
 import deleteSlice from "./deleteSlice";
+import addOEditVehicleState from "./addOEdit/addOEditVehicleSlice";
 
 export default configureStore({
   reducer: {
@@ -25,6 +26,7 @@ export default configureStore({
     addOEditPerson: addOEditPersonSlice,
     addOEditAddress: addOEditAddressSlice,
     addOEditContact: addOEditContactSlice,
+    addOEditVehicle: addOEditVehicleState,
     addOEditFleet: addOEditFleetSlice,
     addOEditDevice: addOEditDeviceSlice,
     addOEditDeviceSerial: addOEditDeviceSerialSlice,

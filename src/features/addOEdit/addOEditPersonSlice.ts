@@ -61,7 +61,7 @@ const addOEditPersonSlice = createSlice({
     setLine(state, action: PayloadAction<string>) {
       state.person.line = action.payload;
     },
-    serDefaultAddOEditPerson(state) {
+    setDefaultPerson(state) {
       state.person = {
         person_id: 0,
         firstname: "",
@@ -90,7 +90,7 @@ export const {
   setEmail,
   setLine,
   setMobile,
-  serDefaultAddOEditPerson,
+  setDefaultPerson,
   removeRole,
   removeRoleDelete,
 } = addOEditPersonSlice.actions;

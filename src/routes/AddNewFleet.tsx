@@ -1,19 +1,26 @@
 import { useEffect, Fragment, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
-import { getSelector } from "../api/getSelector";
 import Input from "../components/Input/Input";
 import InputFrame from "../components/Input/InputFrame";
 import Divider from "../components/Table/Divider";
-import { addOEditAddressState } from "../features/addOEdit/addOEditAddressSlice";
-import { SendAddress } from "../interface/addressType";
-import { MasterCode } from "../interface/mastercodeType";
-import { addOEditFleetState } from "../features/addOEdit/addOEditFleetSlice";
+import {
+  addOEditFleetState,
+  setFleetName,
+} from "../features/addOEdit/addOEditFleetSlice";
 import Selector from "../components/Input/Selector";
 import Button from "../components/Button/Button";
 import ButtonRightFrame from "../components/Button/ฺButtonRightFrame";
-import { Fleet, SendFleet } from "../interface/fleetType";
-import getFleet from "../api/getFleet";
+import {
+  Fleet,
+  FleetIterate,
+  SendFleet,
+  SendFleetShape,
+} from "../interface/fleetType";
+import getFleetSelector from "../api/getFleetSelector";
+import { v4 as uuidv4 } from "uuid";
+import { setFleetNew } from "../features/addNewOAddExistSlice";
+import { setDisplayFleetInteract } from "../features/displaySlice";
 
 interface Props {
   addNew1OId: string;
@@ -33,10 +40,31 @@ export default function AddNewFleet({ addNew1OId, addNew2OEdit }: Props) {
 
   // useEffect
   useEffect(() => {
-    getFleet(setFleetSelector);
+    getFleetSelector(setFleetSelector);
   }, []);
 
-  const handleClickSave = () => {};
+  const handleClickSave = () => {
+    const fleetData = addOEditFleet.fleet;
+    const fleetId = uuidv4();
+    const fleetName = fleetData.fleet_name;
+    const parentFleetId = fleetData.parent_fleet_id;
+
+    const newFleet: SendFleetShape = {
+      fleet_id: fleetId,
+      fleet_name: fleetName,
+      parent_fleet_id: parentFleetId,
+    };
+
+    const displayFleet: FleetIterate = {
+      fleet_id: fleetId,
+      fleet_name: fleetName,
+      RowNum: null,
+      vehicle_count: 0,
+    };
+
+    dispatch(setFleetNew(newFleet));
+    dispatch(setDisplayFleetInteract(displayFleet));
+  };
   return (
     <Fragment>
       {/* ฟลีต */}
@@ -47,10 +75,13 @@ export default function AddNewFleet({ addNew1OId, addNew2OEdit }: Props) {
           placeholder="ชื่อฟลีต"
           type="regular"
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            dispatch(setFleetName(e.currentTarget.value));
+          }}
         />
         <Selector
           label="ชื่อหัวฟลีต"
-          type="search-selector"
+          type="selector"
           fleetSelector={fleetSelector}
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
         />
