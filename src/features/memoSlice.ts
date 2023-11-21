@@ -4,10 +4,8 @@ import { Memo } from "../interface/reduxType";
 const initialState: Memo = {
   customer_id: [],
   person_id: [],
-  role_id: [],
   role_code_id: [],
   address_id: [],
-  address_type_id: [],
   address_type_code_id: [],
   device_id: [],
   device_serial_id: [],
@@ -27,7 +25,7 @@ const memoSlice = createSlice({
       state.person_id.push(action.payload);
     },
     memoRoleId(state, action: PayloadAction<number>) {
-      state.role_id.push(action.payload);
+      state.role_code_id.push(action.payload);
     },
     memoRoleCodeId(state, action: PayloadAction<number>) {
       state.role_code_id.push(action.payload);
@@ -36,7 +34,7 @@ const memoSlice = createSlice({
       state.address_id.push(action.payload);
     },
     memoAddressTypeId(state, action: PayloadAction<number>) {
-      state.address_type_id.push(action.payload);
+      state.address_type_code_id.push(action.payload);
     },
     memoAddressTypeCodeId(state, action: PayloadAction<number>) {
       state.address_type_code_id.push(action.payload);

@@ -8,6 +8,8 @@ export default async function getFleetSelector(
     const res = await axios.get(`${import.meta.env.VITE_ERP_BASE_URL}/fleet`);
     setFleetSelector(res.data);
   } catch (err) {
-    console.log(err);
+    if (axios.isAxiosError(err)) {
+      console.log(err.response?.data);
+    }
   }
 }

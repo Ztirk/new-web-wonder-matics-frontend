@@ -9,17 +9,26 @@ interface Props {
     | "address"
     | "fleet"
     | "device"
-    | "deviceSerial";
+    | "deviceSerial"
+    | "card"
+    | "document";
   sub?: true;
   addNew2OEdit?: string;
   addNew1OId?: string;
+  noOption: true;
 }
 
-export default function Th({ type, sub, addNew1OId, addNew2OEdit }: Props) {
+export default function Th({
+  type,
+  sub,
+  addNew1OId,
+  addNew2OEdit,
+  noOption,
+}: Props) {
   return (
     <>
       <ThClass>No</ThClass>
-      <ThClass>data_id</ThClass>
+      {/* <ThClass>data-id</ThClass> */}
       {type == "customer" ? (
         <>
           {sub ? (
@@ -87,13 +96,25 @@ export default function Th({ type, sub, addNew1OId, addNew2OEdit }: Props) {
           <ThClass>ประเภทกล่อง</ThClass>
           <ThClass>วันที่เพิ่ม</ThClass>
         </>
+      ) : type == "card" ? (
+        <>
+          <ThClass>ประเภทบัตร</ThClass>
+          <ThClass>รายละเอียดบัตร</ThClass>
+          <ThClass>เจ้าของ</ThClass>
+        </>
+      ) : type == "document" ? (
+        <>
+          <ThClass>ประเภทเอกสาร</ThClass>
+          <ThClass>ชื่อเอกสาร</ThClass>
+          <ThClass>เจ้าของ</ThClass>
+        </>
       ) : (
         <></>
       )}
       {!addNew2OEdit && !isNaN(Number(addNew1OId)) ? (
         <></>
       ) : (
-        <ThClass>ตัวเลือก</ThClass>
+        <>{!noOption ? <ThClass>ตัวเลือก</ThClass> : <></>}</>
       )}
     </>
   );

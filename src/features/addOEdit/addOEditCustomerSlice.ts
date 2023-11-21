@@ -34,7 +34,7 @@ const addOEditCustomerSlice = createSlice({
         : null;
     },
 
-    setAddOEditCustomerDefault: (state) => {
+    setDefaultCustomer: (state) => {
       state.customer = {
         customer_id: 0,
         customer_name: "",
@@ -50,7 +50,7 @@ export const {
   setCustomerName,
   setCustomerTypeCodeId,
   setSalesTypeCodeId,
-  setAddOEditCustomerDefault,
+  setDefaultCustomer,
 } = addOEditCustomerSlice.actions;
 
 export const addOEditCustomerState = (state) => state.addOEditCustomer;

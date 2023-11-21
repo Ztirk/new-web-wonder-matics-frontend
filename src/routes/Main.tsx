@@ -10,7 +10,7 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import { Data } from "../interface/dataType";
-import { ToggleDelete } from "../interface/componentType";
+import { ToggleDelete, ToggleProps } from "../interface/componentType";
 import { getData } from "../api/getData";
 import FormQuery from "../components/FormQuery";
 import Tr from "../components/Table/Tr";
@@ -19,24 +19,23 @@ import Option from "../components/Table/Option";
 import Th from "../components/Table/Th";
 import Thead from "../components/Table/Thead";
 import Tbody from "../components/Table/Tbody";
-import DeletePopUp from "../components/PopUp/DeletePopUp";
+import togglePopup from "../components/PopUp/togglePopup";
 import InputNAddNewFrame from "../components/Input/Input&AddNewFrame";
 import Loading from "../components/Etc/Loading";
 import { deleteData } from "../api/deleteData";
+import TogglePopup from "../components/PopUp/togglePopup";
+import { useSelector } from "react-redux";
+import {
+  setTogglePropsDefault,
+  setTogglePropsState,
+  togglePropsPopUpState,
+} from "../features/togglePropsPopUpSlice";
+import { useDispatch } from "react-redux";
 
 export default function Main() {
   // useState
   const [data, setData] = useState<Data>();
   const [loading, setLoading] = useState<boolean>(false);
-  const defaultToggleDelete = {
-    active: false,
-    title: "",
-    name: "",
-    id: "",
-  };
-  const [toggleDelete, setToggleDelete] =
-    useState<ToggleDelete>(defaultToggleDelete);
-  // ค่าเริ่มต้นสำหรับปุ่มลบ
 
   // Router
   const location = useLocation();
@@ -50,6 +49,9 @@ export default function Main() {
   // useRef
   const filter = useRef<HTMLInputElement>(null);
 
+  // Redux
+  const dispatch = useDispatch();
+  const toggleProps = useSelector(togglePropsPopUpState);
   // useEffect
   useEffect(() => {
     if (sessionStorage.getItem("reload") == "true") {
@@ -71,20 +73,27 @@ export default function Main() {
   ) => void = (e) => {
     const title = e.currentTarget.title;
     const dataName = e.currentTarget.getAttribute("data-name");
-    const id = e.currentTarget.id;
+    const id = Number(e.currentTarget.id);
 
-    setToggleDelete({ active: true, title: title, name: dataName, id: id });
+    console.log(title);
+    console.log(dataName);
+    console.log(id);
+
+    dispatch(
+      setTogglePropsState({
+        active: true,
+        title: title,
+        name: dataName ?? "",
+        id: id,
+        type: "delete",
+      })
+    );
   };
 
   // ยืนยันการลบข้อมูล
   const handleDeleteConfirm: () => void = () => {
-    deleteData(toggleDelete.id, menu);
-    handleDeleteCancel();
-  };
-
-  // ล้าง toggleDelete state
-  const handleDeleteCancel = () => {
-    setToggleDelete(defaultToggleDelete);
+    deleteData(Number(toggleProps.id), menu);
+    dispatch(setTogglePropsDefault());
   };
 
   // เมื่อกดเลขหน้าตรง Pagi
@@ -141,11 +150,7 @@ export default function Main() {
     <Fragment>
       {!loading ? (
         <Fragment>
-          <DeletePopUp
-            handleCancel={handleDeleteCancel}
-            handleConfirm={handleDeleteConfirm}
-            toggleDelete={toggleDelete}
-          />
+          <TogglePopup handleConfirm={handleDeleteConfirm} />
 
           <Input
             label="ชื่อลูกค้า"
@@ -156,7 +161,7 @@ export default function Main() {
             refObject={filter}
           />
           <InputNAddNewFrame>
-            <Link to={`/${menu}/addnew-${menu}`}>
+            <Link to={`/${menu}/add-new-${menu}`}>
               <Button name="เพิ่มใหม่" />
             </Link>
           </InputNAddNewFrame>
@@ -165,39 +170,39 @@ export default function Main() {
               <Fragment>
                 <Thead>
                   <Tr type="thead">
-                    {"customer" in data.response &&
-                    data.response.customer[0] ? (
+                    {data.response.customer && data.response.customer[0] ? (
                       <Th type="customer" />
-                    ) : "person" in data.response && data.response.person[0] ? (
+                    ) : data.response.person && data.response.person[0] ? (
                       <Th type="person" />
-                    ) : "contact" in data.response &&
-                      data.response.contact[0] ? (
+                    ) : data.response.contact && data.response.contact[0] ? (
                       <Th type="contact" />
-                    ) : "address" in data.response &&
-                      data.response.address[0] ? (
+                    ) : data.response.address && data.response.address[0] ? (
                       <Th type="address" />
-                    ) : "fleet" in data.response && data.response.fleet[0] ? (
+                    ) : data.response.fleet && data.response.fleet[0] ? (
                       <Th type="fleet" />
-                    ) : "vehicle" in data.response &&
-                      data.response.vehicle[0] ? (
+                    ) : data.response.vehicle && data.response.vehicle[0] ? (
                       <Th type="vehicle" />
-                    ) : "device" in data.response && data.response.device[0] ? (
+                    ) : data.response.device && data.response.device[0] ? (
                       <Th type="device" />
-                    ) : "deviceSerial" in data.response &&
+                    ) : data.response.deviceSerial &&
                       data.response.deviceSerial[0] ? (
                       <Th type="deviceSerial" />
+                    ) : data.response.card && data.response.card[0] ? (
+                      <Th type="card" />
+                    ) : data.response.document && data.response.document[0] ? (
+                      <Th type="document" />
                     ) : (
                       <></>
                     )}
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {"customer" in data.response && data.response.customer ? (
+                  {data.response.customer ? (
                     data.response.customer.map((data) => (
                       <Tr type="tbody" key={data.customer_id}>
                         {/* ลูกค้า */}
                         <Td>{data.RowNum}</Td>
-                        <Td>{data.customer_id}</Td>
+                        {/* <Td>{data.customer_id}</Td> */}
                         <Td>{data.customer_name}</Td>
                         <Td>{data.telephone}</Td>
                         <Td>{data.email}</Td>
@@ -212,17 +217,17 @@ export default function Main() {
                         ></Option>
                       </Tr>
                     ))
-                  ) : "person" in data.response && data.response.person ? (
+                  ) : data.response.person && data.response.person ? (
                     data.response.person.map((data) => (
                       <Tr type="tbody" key={data.person_id}>
                         {/* คน */}
                         <Td>{data.RowNum}</Td>
-                        <Td>{data.person_id}</Td>
+                        {/* <Td>{data.person_id}</Td> */}
                         <Td>{data.fullname}</Td>
+                        <Td>{data.role}</Td>
                         <Td>{data.mobile}</Td>
                         <Td>{data.email}</Td>
                         <Td>{data.description}</Td>
-                        <Td>{data.role}</Td>
                         <Option
                           full
                           onEdit={`/person/${data.person_id}/edit`}
@@ -234,12 +239,12 @@ export default function Main() {
                         ></Option>
                       </Tr>
                     ))
-                  ) : "contact" in data.response && data.response.contact ? (
+                  ) : data.response.contact && data.response.contact ? (
                     data.response.contact.map((data) => (
                       <Tr type="tbody" key={data.contact_id}>
                         {/* ติดต่อ */}
                         <Td>{data.RowNum}</Td>
-                        <Td>{data.contact_id}</Td>
+                        {/* <Td>{data.contact_id}</Td> */}
                         <Td>{data.value}</Td>
                         <Td>{data.contact_type}</Td>
                         <Td>{data.owner_name}</Td>
@@ -254,12 +259,12 @@ export default function Main() {
                         ></Option>
                       </Tr>
                     ))
-                  ) : "address" in data.response && data.response.address ? (
+                  ) : data.response.address && data.response.address ? (
                     data.response.address.map((data) => (
                       <Tr type="tbody" key={data.address_id}>
                         {/* ที่อยู๋ */}
                         <Td>{data.RowNum}</Td>
-                        <Td>{data.address_id}</Td>
+                        {/* <Td>{data.address_id}</Td> */}
                         <Td>{data.location}</Td>
                         <Td>{data.address_type}</Td>
                         <Option
@@ -273,12 +278,12 @@ export default function Main() {
                         ></Option>
                       </Tr>
                     ))
-                  ) : "fleet" in data.response && data.response.fleet ? (
+                  ) : data.response.fleet && data.response.fleet ? (
                     data.response.fleet.map((data) => (
                       <Tr type="tbody" key={data.fleet_id}>
                         {/* ฟลีต */}
                         <Td>{data.RowNum}</Td>
-                        <Td>{data.fleet_id}</Td>
+                        {/* <Td>{data.fleet_id}</Td> */}
                         <Td>{data.fleet_name}</Td>
                         <Td>{data.vehicle_count}</Td>
                         <Option
@@ -292,13 +297,13 @@ export default function Main() {
                         ></Option>
                       </Tr>
                     ))
-                  ) : "vehicle" in data.response && data.response.vehicle ? (
+                  ) : data.response.vehicle && data.response.vehicle ? (
                     data.response.vehicle.map((data) => (
                       <Tr type="tbody" key={data.vehicle_id}>
                         {/* รถ */}
 
                         <Td>{data.RowNum}</Td>
-                        <Td>{data.vehicle_id}</Td>
+                        {/* <Td>{data.vehicle_id}</Td> */}
                         <Td>{data.license_plate}</Td>
                         <Td>{data.frame_no}</Td>
                         <Td>{data.vehicle_type}</Td>
@@ -315,13 +320,13 @@ export default function Main() {
                         ></Option>
                       </Tr>
                     ))
-                  ) : "device" in data.response && data.response.device ? (
+                  ) : data.response.device && data.response.device ? (
                     data.response.device.map((data) => (
                       <Tr type="tbody" key={data.device_id}>
                         {/* รถ */}
 
                         <Td>{data.RowNum}</Td>
-                        <Td>{data.device_id}</Td>
+                        {/* <Td>{data.device_id}</Td> */}
                         <Td>{data.veh_id}</Td>
                         <Td>{data.device_serial_id}</Td>
                         <Td>{data.box_type}</Td>
@@ -338,14 +343,13 @@ export default function Main() {
                         ></Option>
                       </Tr>
                     ))
-                  ) : "deviceSerial" in data.response &&
-                    data.response.deviceSerial ? (
+                  ) : data.response.deviceSerial ? (
                     data.response.deviceSerial.map((data) => (
                       <Tr type="tbody" key={data.device_serial_id}>
                         {/* รถ */}
 
                         <Td>{data.RowNum}</Td>
-                        <Td>{data.device_serial_id}</Td>
+                        {/* <Td>{data.device_serial_id}</Td> */}
                         <Td>{data.serial_id}</Td>
                         <Td>{data.device_type}</Td>
                         <Td>{data.create_date}</Td>
@@ -357,6 +361,50 @@ export default function Main() {
                           id={data.device_serial_id}
                           title="ลูกค้า"
                           dataName={data.device_serial_id}
+                          onDelete={handleToggleDeleteShowUp}
+                        ></Option>
+                      </Tr>
+                    ))
+                  ) : data.response.card ? (
+                    data.response.card.map((data) => (
+                      <Tr type="tbody" key={data.card_id}>
+                        {/* บัตร */}
+
+                        <Td>{data.RowNum}</Td>
+                        {/* <Td>{data.card_id}</Td> */}
+                        <Td>{data.card_type}</Td>
+                        <Td>{data.value}</Td>
+                        <Td>{data.owner_name}</Td>
+
+                        <Option
+                          full
+                          onEdit={`/card/${data.card_id}/edit`}
+                          onView={`/card/${data.card_id}`}
+                          id={data.card_id}
+                          title="ลูกค้า"
+                          dataName={data.card_id}
+                          onDelete={handleToggleDeleteShowUp}
+                        ></Option>
+                      </Tr>
+                    ))
+                  ) : data.response.document ? (
+                    data.response.document.map((data) => (
+                      <Tr type="tbody" key={data.document_id}>
+                        {/* เอกสาร */}
+
+                        <Td>{data.RowNum}</Td>
+                        {/* <Td>{data.document_id}</Td> */}
+                        <Td>{data.document_type}</Td>
+                        <Td>{data.document_name}</Td>
+                        <Td>{data.owner_name}</Td>
+
+                        <Option
+                          full
+                          onEdit={`/document/${data.document_id}/edit`}
+                          onView={`/document/${data.document_id}`}
+                          id={data.document_id}
+                          title="ลูกค้า"
+                          dataName={data.document_id}
                           onDelete={handleToggleDeleteShowUp}
                         ></Option>
                       </Tr>

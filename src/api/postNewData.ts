@@ -9,7 +9,7 @@ export async function postNewData(addNewData: AddNewData) {
       addNewData,
       {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       }
     );
@@ -19,6 +19,8 @@ export async function postNewData(addNewData: AddNewData) {
       window.location.href = "/customer";
     }
   } catch (err) {
-    console.log(err);
+    if (axios.isAxiosError(err)) {
+      console.log(err.response?.data);
+    }
   }
 }

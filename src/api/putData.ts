@@ -1,23 +1,25 @@
 import axios from "axios";
-import { EditedData } from "../interface/dataType";
 
-export async function putEditedData(data: EditedData, id: string) {
+export async function putEditedData(data, id: number) {
   try {
     const res = await axios.put(
       `${import.meta.env.VITE_ERP_BASE_URL}/customer/${id}`,
       data,
       {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       }
     );
-    console.log(res.data);
 
-    if (res.status == 201) {
+    if (res.status == 200) {
       window.location.href = "/customer";
+    } else {
+      console.log(res);
     }
   } catch (err) {
-    console.log(err);
+    if (axios.isAxiosError(err)) {
+      console.log(err.response?.data);
+    }
   }
 }

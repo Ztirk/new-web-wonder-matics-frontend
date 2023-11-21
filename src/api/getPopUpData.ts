@@ -1,36 +1,25 @@
 import axios from "axios";
+import { Data } from "../interface/dataType";
 
 export async function getPopUpData(
-  setIndividualDataData: React.Dispatch<React.SetStateAction<IndividualData>>,
+  setIndividualDataData: React.Dispatch<React.SetStateAction<Data | undefined>>,
   setPopUpLoading: React.Dispatch<React.SetStateAction<boolean>>,
-  menu: string
+  menu: string,
+  search: string
 ) {
-  const url = new URL(window.location.href);
-  const personFilter = url.searchParams.get("personFilter");
-  const addressFilter = url.searchParams.get("addressFilter");
-  const customerFilter = url.searchParams.get("customerFilter");
-  let filter = `${
-    personFilter
-      ? personFilter
-      : addressFilter
-      ? addressFilter
-      : customerFilter
-      ? customerFilter
-      : ""
-  }`;
-
   try {
     setPopUpLoading(true);
-
     const res = await axios.get(
-      `${import.meta.env.VITE_ERP_BASE_URL}/${menu}?filter=${filter}`,
+      `${import.meta.env.VITE_ERP_BASE_URL}/${menu}?filter=${search}`,
       {
         method: "GET",
       }
     );
     setIndividualDataData(res.data);
   } catch (err) {
-    console.log(err);
+    if (axios.isAxiosError(err)) {
+      console.log(err.response?.data);
+    }
   } finally {
     setPopUpLoading(false);
   }

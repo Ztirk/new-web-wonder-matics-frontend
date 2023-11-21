@@ -26,7 +26,13 @@ import {
   DisplayData,
   Memo,
 } from "../interface/reduxType";
-import { popUpAddExistState } from "../features/popUpAddExistSlice";
+import {
+  popUpAddExistState,
+  setPopUpAddExistAddress,
+  setPopUpAddExistFleet,
+  setPopUpAddExistPerson,
+  setPopUpAddExistVehicle,
+} from "../features/popUpAddExistSlice";
 import {
   displayState,
   setDisplayAddressDelete,
@@ -34,6 +40,8 @@ import {
   setDisplayContactDelete,
   setDisplayContactFetch,
   setDisplayCustomerDelete,
+  setDisplayCustomerFetch,
+  setDisplayDocumentFetch,
   setDisplayFleetDelete,
   setDisplayFleetFetch,
   setDisplayPersonDelete,
@@ -69,11 +77,19 @@ import {
   setCustomerId,
   setCustomerName,
   setCustomerTypeCodeId,
+  setDefaultCustomer,
   setSalesTypeCodeId,
 } from "../features/addOEdit/addOEditCustomerSlice";
 import {
   addOEditPersonState,
   setDefaultPerson,
+  setDescription,
+  setFirstName,
+  setLastName,
+  setNickName,
+  setPersonId,
+  setRole,
+  setTitleCodeId,
 } from "../features/addOEdit/addOEditPersonSlice";
 import { Delete } from "../interface/reduxType";
 import AddNewPerson from "./AddNewPerson";
@@ -99,10 +115,9 @@ import {
 } from "../features/addNewOAddExistSlice";
 import {
   memoAddressId,
-  memoContactId,
+  memoCustomerId,
   memoFleetId,
   memoPersonId,
-  memoRoleId,
   memoState,
   memoVehicleId,
 } from "../features/memoSlice";
@@ -117,13 +132,23 @@ import {
 import {
   addOEditFleetState,
   setDefaultFleet,
+  setFleetId,
+  setFleetName,
+  setParentFleetId,
 } from "../features/addOEdit/addOEditFleetSlice";
 import {
   addOEditVehicleState,
   setDefaultVehicle,
+  setFrameNo,
+  setLicensePlate,
+  setVehicleId,
+  setVehicleModelId,
 } from "../features/addOEdit/addOEditVehicleSlice";
 import { SendDevice } from "../interface/deviceType";
-import { addOEditDeviceSerialState } from "../features/addOEdit/addOEditDeviceSerialSlice";
+import {
+  addOEditDeviceSerialState,
+  setDefaultDeviceSerial,
+} from "../features/addOEdit/addOEditDeviceSerialSlice";
 import { SendDeviceSerial } from "../interface/deviceSerialType";
 import { addOEditDeviceState } from "../features/addOEdit/addOEditDeviceSlice";
 import {
@@ -135,14 +160,45 @@ import {
   setPersonDelete,
   setVehicleDelete,
 } from "../features/deleteSlice";
+import { updateByState } from "../features/updateBySlice";
+import { actionByState, createByState } from "../features/actionBySlice";
+import { putEditedData } from "../api/putData";
+import AddNewDocument from "./AddNewDocument";
+import AddNewCard from "./AddNewCard";
+import { SendCard } from "../interface/cardType";
+import {
+  addOEditCardState,
+  setDefaultCard,
+} from "../features/addOEdit/addOEditCardSlice";
+import { SendDocument } from "../interface/documentType";
+import {
+  addOEditDocumentState,
+  setDefaultDocument,
+} from "../features/addOEdit/addOEditDocumentSlice";
+import { filesState } from "../features/fileSlice";
+import { ToggleProps } from "../interface/componentType";
+import TogglePopup from "../components/PopUp/togglePopup";
+import ErrorPopUp from "../components/PopUp/errorPopUp";
+import {
+  setTogglePropsDefault,
+  setTogglePropsState,
+} from "../features/togglePropsPopUpSlice";
+import { setErrorPopUpState } from "../features/errorPopUpSlice";
+import { getFile } from "../api/getFile";
 
 export default function Main_AddNewNViewNEdit() {
   // useState
   const [popUpLoading, setPopUpLoading] = useState<boolean>(false);
   const [selectorData, setSelectorData] = useState<MasterCode>();
-  const [addExistData, setAddExistData] = useState<Data>();
   const [individualData, setIndividualData] = useState<IndividualData>();
   const [loading, setLoading] = useState<boolean>(false);
+  const defaultToggleSave = {
+    active: false,
+    name: "",
+    title: "",
+    id: 0,
+  };
+  const [toggleSave, setToggleSave] = useState<ToggleProps>(defaultToggleSave);
 
   // Router
   const location = useLocation();
@@ -170,7 +226,11 @@ export default function Main_AddNewNViewNEdit() {
   const addOEditDeviceSerial: SendDeviceSerial = useSelector(
     addOEditDeviceSerialState
   );
+  const addOEditCard: SendCard = useSelector(addOEditCardState);
+  const addOEditDocument: SendDocument = useSelector(addOEditDocumentState);
+  const files: FormData = useSelector(filesState);
   const memo: Memo = useSelector(memoState);
+  const actionBy = useSelector(actionByState);
 
   // useEffect
   useEffect(() => {
@@ -178,10 +238,6 @@ export default function Main_AddNewNViewNEdit() {
   });
 
   useEffect(() => {
-    if (location.search) {
-      getPopUpData(setAddExistData, setPopUpLoading, menu);
-    }
-
     if (!isNaN(Number(addNew1OId))) {
       setLoading(true);
       getIndividualData(addNew1OId, setIndividualData, menu).then(
@@ -194,13 +250,40 @@ export default function Main_AddNewNViewNEdit() {
       );
     }
 
-    if (menu == "customer") {
-      dispatch(setDefaultAddress());
-      dispatch(setDefaultContact());
-      dispatch(setDefaultFleet());
+    if (menu !== "customer") {
+      dispatch(setDefaultCustomer());
+    }
+
+    if (menu !== "person") {
       dispatch(setDefaultPerson());
+    }
+
+    if (menu !== "fleet") {
+      dispatch(setDefaultFleet());
+    }
+
+    if (menu !== "contact") {
+      dispatch(setDefaultContact());
+    }
+
+    if (menu !== "vehicle") {
       dispatch(setDefaultVehicle());
-    } else if (menu == "person") {
+    }
+
+    if (menu !== "address") {
+      dispatch(setDefaultAddress());
+    }
+
+    if (menu !== "device-serial") {
+      dispatch(setDefaultDeviceSerial());
+    }
+
+    if (menu !== "document") {
+      dispatch(setDefaultDocument());
+    }
+
+    if (menu !== "card") {
+      dispatch(setDefaultCard());
     }
   }, [location]);
 
@@ -212,73 +295,170 @@ export default function Main_AddNewNViewNEdit() {
       const addressData = individualData.response.address;
       const fleetData = individualData.response.fleet;
       const vehicleData = individualData.response.vehicle;
+      const vehicleConfigData = individualData.response.vehicleConfig;
+      const vehiclePermitData = individualData.response.vehiclePermit;
+      const documentData = individualData.response.document;
+      const cardData = individualData.response.card;
       const deviceData = individualData.response.device;
-      const deviceSerialData = individualData.response.deviceSerial;
       const deviceConfigData = individualData.response.deviceConfig;
+      const deviceSerialData = individualData.response.deviceSerial;
 
       if (menu == "customer" && !addOEditCustomer.customer.customer_id) {
-        dispatch(setCustomerId(Number(addNew1OId)));
+        dispatch(setCustomerId(customerData.customer_id));
         dispatch(setCustomerName(customerData.customer_name));
-        dispatch(
-          setCustomerTypeCodeId(Number(customerData.customer_type_code_id))
-        );
-        dispatch(setSalesTypeCodeId(Number(customerData.sales_type_code_id)));
+        dispatch(setCustomerTypeCodeId(customerData.customer_type_code_id));
+        dispatch(setSalesTypeCodeId(customerData.sales_type_code_id));
+
         dispatch(setDisplayPersonFetch(personData));
-        dispatch(setDisplayContactFetch(contactData));
-        dispatch(setDisplayAddressFetch(addressData));
-        dispatch(setDisplayFleetFetch(fleetData));
-        dispatch(setDisplayVehicleFetch(vehicleData));
         for (const obj of personData) {
           dispatch(memoPersonId(obj.person_id));
         }
-
-        for (const obj of contactData) {
-          dispatch(memoContactId(obj.contact_id));
-        }
-
+        dispatch(setDisplayContactFetch(contactData));
+        dispatch(setDisplayAddressFetch(addressData));
         for (const obj of addressData) {
           dispatch(memoAddressId(obj.address_id));
         }
-
+        dispatch(setDisplayFleetFetch(fleetData));
         for (const obj of fleetData) {
           dispatch(memoFleetId(obj.fleet_id));
         }
-
+        dispatch(setDisplayVehicleFetch(vehicleData));
         for (const obj of vehicleData) {
           dispatch(memoVehicleId(obj.vehicle_id));
         }
+        dispatch(setDisplayDocumentFetch(documentData));
       } else if (menu == "person" && !addOEditPerson.person.person_id) {
+        dispatch(setPersonId(personData.person_id));
+        dispatch(setFirstName(personData.firstname));
+        dispatch(setLastName(personData.lastname));
+        dispatch(setNickName(personData.nickname));
+        dispatch(setDescription(personData.description));
+        dispatch(setTitleCodeId(personData.title_code_id));
+
+        for (const obj of personData.role) {
+          dispatch(setRole(obj.role_code_id));
+        }
+
+        dispatch(setDisplayCustomerFetch(customerData));
+        for (const obj of customerData) {
+          dispatch(memoCustomerId(obj.customer_id));
+        }
+
+        dispatch(setDisplayContactFetch(contactData));
+        dispatch(setDisplayAddressFetch(addressData));
+      } else if (menu == "fleet" && !addOEditFleet.fleet.fleet_id) {
+        dispatch(setFleetId(fleetData.fleet_id));
+        dispatch(setFleetName(fleetData.fleet_name));
+        dispatch(setParentFleetId(fleetData.parent_fleet_id));
+
+        dispatch(setDisplayCustomerFetch(customerData));
+        for (const obj of customerData) {
+          dispatch(memoCustomerId(obj.customer_id));
+        }
+        dispatch(setDisplayPersonFetch(personData));
+        for (const obj of personData) {
+          dispatch(memoPersonId(obj.person_id));
+        }
+        dispatch(setDisplayVehicleFetch(vehicleData));
+        for (const obj of vehicleData) {
+          dispatch(memoVehicleId(obj.vehicle_id));
+        }
+      } else if (menu == "vehicle" && !addOEditVehicle.vehicle.vehicle_id) {
+        dispatch(setVehicleId(vehicleData.vehicle_id));
+        dispatch(setFrameNo(vehicleData.frame_no));
+        dispatch(setLicensePlate(vehicleData.license_plate));
+      } else if (menu == "address" && !addOEditAddress.address.address_id) {
+      } else if (menu == "contact" && !addOEditContact.contact.contact_id) {
+      } else if (menu == "document" && !addOEditDocument.document.document_id) {
+      } else if (menu == "card " && !addOEditCard.card.card_id) {
+      } else if (menu == "device" && !addOEditDevice.device.device_id) {
+      } else if (
+        menu == "device-serial" &&
+        !addOEditDeviceSerial.deviceSerial.device_serial_id
+      ) {
       }
     }
   }, [individualData]);
 
-  useEffect(() => {
-    if (!popUpAddExist.backdrop) {
-      setAddExistData();
-    }
-  }, [popUpAddExist]);
 
   // เพิ่มข้อมูลใหม่เมื่อใน State ได้กรอกชื่อลูกค้า ลักษณะลูกค้า และประเภทลูกค้า แล้ว
   const handleAddNewData: () => void = () => {
-    const customer_name = document.querySelector("input")?.value;
-    const customer_type_code_id =
-      document.querySelectorAll("select")[0].options[
-        document.querySelectorAll("select")[0].selectedIndex
-      ].id;
-    const sales_type_code_id =
-      document.querySelectorAll("select")[1].options[
-        document.querySelectorAll("select")[1].selectedIndex
-      ].id;
-    const customer = {
-      customer_name: customer_name,
-      customer_type_code_id: customer_type_code_id,
-      sales_type_code_id: sales_type_code_id,
-    };
+    const customerData = addOEditCustomer.customer;
+    const personData = addOEditPerson.person;
+    const contactData = addOEditContact.contact;
+    const fleetData = addOEditFleet.fleet;
+    const addressData = addOEditAddress.address;
+    const cardData = addOEditCard.card;
+    const documentData = addOEditDocument.document;
+    const vehicleData = addOEditVehicle.vehicle;
+    const deviceData = addOEditDevice.device;
+    const deviceSerialData = addOEditDeviceSerial.deviceSerial;
 
-    if (!customer_name || !customer_type_code_id || !sales_type_code_id) {
-      alert("Fill In The Blank");
+    const form = new FormData();
+    for (const obj of files.getAll("files")) {
+      form.append("files", obj);
+    }
+    const sendData =
+      menu == "customer"
+        ? { ...addOEditCustomer }
+        : menu == "person"
+        ? { ...addOEditPerson }
+        : menu == "contact"
+        ? { ...addOEditContact }
+        : menu == "address"
+        ? { ...addOEditAddress }
+        : menu == "fleet"
+        ? { ...addOEditFleet }
+        : menu == "vehicle"
+        ? { ...addOEditVehicle }
+        : menu == "device"
+        ? { ...addOEditDevice }
+        : menu == "device-serial"
+        ? { ...addOEditDeviceSerial }
+        : menu == "document"
+        ? { ...addOEditDocument }
+        : menu == "card"
+        ? { ...addOEditCard }
+        : {};
+    if (addNew2OEdit == "edit") {
+      form.append(
+        "jsonData",
+        JSON.stringify({
+          ...actionBy,
+          ...addNewOAddExist,
+          ...deleted,
+          ...sendData,
+        })
+      );
+
+      if (menu == "customer") {
+        if (
+          !customerData.customer_name ||
+          !customerData.customer_type_code_id ||
+          !customerData.sales_type_code_id
+        ) {
+          dispatch(setTogglePropsDefault());
+          dispatch(
+            setErrorPopUpState({
+              active: true,
+              message: "กรุณากรอกข้อมูลให้ครบถ้วนก่อนบันทึก",
+            })
+          );
+        } else {
+          putEditedData(form, Number(addNew1OId));
+        }
+      }
     } else {
-      // dispatch(setAddNewCustomer(customer));
+      form.append(
+        "jsonData",
+        JSON.stringify({
+          ...actionBy,
+          ...addNewOAddExist,
+          ...sendData,
+        })
+      );
+
+      postNewData(form);
     }
   };
 
@@ -400,12 +580,54 @@ export default function Main_AddNewNViewNEdit() {
     }
   };
 
+  const handleSave = () => {
+    let name;
+    let title;
+
+    const customerData = addOEditCustomer.customer;
+    const personData = addOEditPerson.person;
+    const contactData = addOEditContact.contact;
+    const fleetData = addOEditFleet.fleet;
+    const addressData = addOEditAddress.address;
+    const cardData = addOEditCard.card;
+    const documentData = addOEditDocument.document;
+    const vehicleData = addOEditVehicle.vehicle;
+    const deviceData = addOEditDevice.device;
+    const deviceSerialData = addOEditDeviceSerial.deviceSerial;
+
+    if (customerData.customer_name) {
+      name = customerData.customer_name;
+      title = "ลูกค้า";
+    } else if (
+      personData.firstname ||
+      personData.lastname ||
+      personData.nickname
+    ) {
+      name = personData.firstname;
+      title = "บุคคล";
+    } else if (contactData.value) {
+      name = contactData.value;
+      title = "การติดต่อ";
+    } else {
+      name = "";
+      title = "";
+    }
+
+    dispatch(
+      setTogglePropsState({
+        active: true,
+        name: name,
+        title: title,
+        type: addNew2OEdit ? "change" : "save",
+        id: 0,
+      })
+    );
+  };
+
   return (
     <>
-      <AddExistPopup
-        popUpData={addExistData !== undefined ? addExistData : undefined}
-        popUpLoading={popUpLoading}
-      />
+      <AddExistPopup popUpLoading={popUpLoading} />
+      <ErrorPopUp />
 
       {menu == "customer" ? (
         <AddNewCustomer addNew2OEdit={addNew2OEdit} addNew1OId={addNew1OId} />
@@ -426,6 +648,10 @@ export default function Main_AddNewNViewNEdit() {
         />
       ) : menu == "contact" ? (
         <AddNewContact addNew2OEdit={addNew2OEdit} addNew1OId={addNew1OId} />
+      ) : menu == "document" ? (
+        <AddNewDocument addNew2OEdit={addNew2OEdit} addNew1OId={addNew1OId} />
+      ) : menu == "card" ? (
+        <AddNewCard addNew2OEdit={addNew2OEdit} addNew1OId={addNew1OId} />
       ) : (
         <></>
       )}
@@ -440,8 +666,8 @@ export default function Main_AddNewNViewNEdit() {
               <Link
                 to={`/${menu}/${
                   isNaN(Number(addNew1OId))
-                    ? `addnew-${menu}/addnew-customer`
-                    : `${addNew1OId}/edit/addnew-customer`
+                    ? `add-new-${menu}/add-new-customer`
+                    : `${addNew1OId}/edit/add-new-customer`
                 }`}
               >
                 <Button name="เพิ่มใหม่" />
@@ -478,7 +704,7 @@ export default function Main_AddNewNViewNEdit() {
               {displayData.customer.map((data) => (
                 <Tr type="tbody" key={data.customer_id}>
                   <Td>{data.RowNum}</Td>
-                  <Td>{data.customer_id}</Td>
+                  {/* <Td>{data.customer_id}</Td> */}
                   <Td>{data.customer_name}</Td>
                   <Td>{data.telephone}</Td>
                   <Td>{data.email}</Td>
@@ -511,8 +737,8 @@ export default function Main_AddNewNViewNEdit() {
               <Link
                 to={`/${menu}/${
                   isNaN(Number(addNew1OId))
-                    ? `addnew-${menu}/addnew-person`
-                    : `${addNew1OId}/edit/addnew-person`
+                    ? `add-new-${menu}/add-new-person`
+                    : `${addNew1OId}/edit/add-new-person`
                 }`}
               >
                 <Button name="เพิ่มใหม่" />
@@ -521,7 +747,7 @@ export default function Main_AddNewNViewNEdit() {
                 name="เพิ่มที่มี"
                 type="person"
                 onClick={() => {
-                  // dispatch(setPopUpAddExistPerson());
+                  dispatch(setPopUpAddExistPerson());
                 }}
               />
             </ButtonLeftFrame>
@@ -546,10 +772,10 @@ export default function Main_AddNewNViewNEdit() {
               </Tr>
             </Thead>
             <Tbody id="person-tbody">
-              {displayData.person.map((data: PersonIterate, i) => (
+              {displayData.person.map((data, i) => (
                 <Tr type="tbody" key={data.person_id}>
                   <Td>{i + 1}</Td>
-                  <Td>{data.person_id}</Td>
+                  {/* <Td>{data.person_id}</Td> */}
                   <Td>{data.fullname}</Td>
                   <Td>{data.role}</Td>
                   <Td>{data.mobile}</Td>
@@ -574,7 +800,7 @@ export default function Main_AddNewNViewNEdit() {
 
       {/* ติดต่อ */}
 
-      {menu == "customer" ? (
+      {menu == "customer" || menu == "person" ? (
         <Fragment>
           <Divider title="ข้อมูลผู้ติดต่อ" />
           {addNew2OEdit || isNaN(Number(addNew1OId)) ? (
@@ -582,13 +808,13 @@ export default function Main_AddNewNViewNEdit() {
               <Link
                 to={`/${menu}/${
                   isNaN(Number(addNew1OId))
-                    ? `addnew-${menu}/addnew-contact`
-                    : `${addNew1OId}/edit/addnew-contact`
+                    ? `add-new-${menu}/add-new-contact`
+                    : `${addNew1OId}/edit/add-new-contact`
                 }`}
               >
                 <Button name="เพิ่มใหม่" />
               </Link>
-              <Button name="เพิ่มที่มี" />
+              <Button name="เพิ่มที่มี" disabled />
             </ButtonLeftFrame>
           ) : (
             <></>
@@ -613,7 +839,7 @@ export default function Main_AddNewNViewNEdit() {
             {displayData.contact.map((data, i) => (
               <Tr type="tbody" key={data.contact_id}>
                 <Td>{i + 1}</Td>
-                <Td>{data.contact_id}</Td>
+                {/* <Td>{data.contact_id}</Td> */}
                 <Td>{data.contact_type}</Td>
                 <Td>{data.value}</Td>
                 <Td>{data.owner_name}</Td>
@@ -633,8 +859,133 @@ export default function Main_AddNewNViewNEdit() {
         <></>
       )}
 
-      {/* address */}
-      {menu == "customer" ? (
+      {/* บัตร */}
+
+      {menu == "person" ? (
+        <Fragment>
+          <Divider title="ข้อมูลบัตร" />
+          {addNew2OEdit || isNaN(Number(addNew1OId)) ? (
+            <ButtonLeftFrame>
+              <Link
+                to={`/${menu}/${
+                  isNaN(Number(addNew1OId))
+                    ? `add-new-${menu}/add-new-card`
+                    : `${addNew1OId}/edit/add-new-card`
+                }`}
+              >
+                <Button name="เพิ่มใหม่" />
+              </Link>
+              <Button name="เพิ่มที่มี" disabled />
+            </ButtonLeftFrame>
+          ) : (
+            <></>
+          )}
+        </Fragment>
+      ) : (
+        <></>
+      )}
+
+      {displayData.card.length ? (
+        <Table>
+          <Thead>
+            <Tr type="thead">
+              <Th
+                type="card"
+                addNew1OId={addNew1OId}
+                addNew2OEdit={addNew2OEdit}
+              />
+            </Tr>
+          </Thead>
+          <Tbody>
+            {displayData.card.map((data, i) => (
+              <Tr type="tbody" key={data.card_id}>
+                <Td>{i + 1}</Td>
+                {/* <Td>{data.contact_id}</Td> */}
+                <Td>{data.card_type}</Td>
+                <Td>{data.value}</Td>
+                <Td>{data.owner_name}</Td>
+                {!addNew2OEdit && !isNaN(Number(addNew1OId)) ? (
+                  <></>
+                ) : (
+                  <Option
+                    id={data.card_id.toString()}
+                    onDelete={(e) => handleDelete(e, "card")}
+                  ></Option>
+                )}
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      ) : (
+        <></>
+      )}
+
+      {/* เอกสาร */}
+
+      {menu == "customer" || menu == "person" ? (
+        <Fragment>
+          <Divider title="ข้อมูลเอกสาร" />
+          {addNew2OEdit || isNaN(Number(addNew1OId)) ? (
+            <ButtonLeftFrame>
+              <Link
+                to={`/${menu}/${
+                  isNaN(Number(addNew1OId))
+                    ? `add-new-${menu}/add-new-document`
+                    : `${addNew1OId}/edit/add-new-document`
+                }`}
+              >
+                <Button name="เพิ่มใหม่" />
+              </Link>
+              <Button name="เพิ่มที่มี" disabled />
+            </ButtonLeftFrame>
+          ) : (
+            <></>
+          )}
+        </Fragment>
+      ) : (
+        <></>
+      )}
+
+      {displayData.document.length ? (
+        <Table>
+          <Thead>
+            <Tr type="thead">
+              <Th
+                type="document"
+                addNew1OId={addNew1OId}
+                addNew2OEdit={addNew2OEdit}
+              />
+            </Tr>
+          </Thead>
+          <Tbody>
+            {displayData.document.map((data, i) => (
+              <Tr type="tbody" key={data.document_id}>
+                <Td>{i + 1}</Td>
+                {/* <Td>{data.contact_id}</Td> */}
+                <Td>{data.document_type}</Td>
+                <Td onClick={getFile} id={data.document_id}>
+                  {data.document_name}
+                </Td>
+                <Td>{data.owner_name}</Td>
+                {!addNew2OEdit && !isNaN(Number(addNew1OId)) ? (
+                  <></>
+                ) : (
+                  <Option
+                    id={data.document_id.toString()}
+                    onDelete={(e) => handleDelete(e, "document")}
+                  ></Option>
+                )}
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      ) : (
+        <></>
+      )}
+
+      {/* ที่อยู่ */}
+
+      {menu == "customer" || menu == "person" ? (
         <Fragment>
           <Divider title="ข้อมูลที่อยู่" />
           {addNew2OEdit || isNaN(Number(addNew1OId)) ? (
@@ -642,8 +993,8 @@ export default function Main_AddNewNViewNEdit() {
               <Link
                 to={`/${menu}/${
                   isNaN(Number(addNew1OId))
-                    ? `addnew-${menu}/addnew-address`
-                    : `${addNew1OId}/edit/addnew-address`
+                    ? `add-new-${menu}/add-new-address`
+                    : `${addNew1OId}/edit/add-new-address`
                 }`}
               >
                 <Button name="เพิ่มใหม่" />
@@ -652,7 +1003,7 @@ export default function Main_AddNewNViewNEdit() {
                 name="เพิ่มที่มี"
                 type="address"
                 onClick={() => {
-                  // dispatch(setPopUpAddExistAddress());
+                  dispatch(setPopUpAddExistAddress());
                 }}
               />
             </ButtonLeftFrame>
@@ -676,11 +1027,11 @@ export default function Main_AddNewNViewNEdit() {
                 />
               </Tr>
             </Thead>
-            <Tbody id="address-tbody">
+            <Tbody>
               {displayData.address.map((data, i) => (
                 <Tr type="tbody" key={data.address_id}>
                   <Td>{i + 1}</Td>
-                  <Td>{data.address_id}</Td>
+                  {/* <Td>{data.address_id}</Td> */}
                   <Td>{data.location}</Td>
                   <Td>{data.address_type}</Td>
                   {!addNew2OEdit && !isNaN(Number(addNew1OId)) ? (
@@ -710,8 +1061,8 @@ export default function Main_AddNewNViewNEdit() {
               <Link
                 to={`/${menu}/${
                   isNaN(Number(addNew1OId))
-                    ? `addnew-${menu}/addnew-fleet`
-                    : `${addNew1OId}/edit/addnew-fleet`
+                    ? `add-new-${menu}/add-new-fleet`
+                    : `${addNew1OId}/edit/add-new-fleet`
                 }`}
               >
                 <Button name="เพิ่มใหม่" />
@@ -720,7 +1071,7 @@ export default function Main_AddNewNViewNEdit() {
                 name="เพิ่มที่มี"
                 type="address"
                 onClick={() => {
-                  // dispatch(setPopUpAddExistAddress());
+                  dispatch(setPopUpAddExistFleet());
                 }}
               />
             </ButtonLeftFrame>
@@ -744,11 +1095,11 @@ export default function Main_AddNewNViewNEdit() {
                 />
               </Tr>
             </Thead>
-            <Tbody id="address-tbody">
+            <Tbody>
               {displayData.fleet.map((data, i) => (
                 <Tr type="tbody" key={data.fleet_id}>
                   <Td>{i + 1}</Td>
-                  <Td>{data.fleet_id}</Td>
+                  {/* <Td>{data.fleet_id}</Td> */}
                   <Td>{data.fleet_name}</Td>
                   <Td>{data.vehicle_count}</Td>
                   {!addNew2OEdit && !isNaN(Number(addNew1OId)) ? (
@@ -769,7 +1120,7 @@ export default function Main_AddNewNViewNEdit() {
       )}
       {/* ยานพาหนะ */}
 
-      {menu == "customer" || menu == "person" || menu == "fleet" ? (
+      {menu == "customer" || menu == "fleet" ? (
         <Fragment>
           <Divider title="ข้อมูลยานพาหนะ" />
 
@@ -778,8 +1129,8 @@ export default function Main_AddNewNViewNEdit() {
               <Link
                 to={`/${menu}/${
                   isNaN(Number(addNew1OId))
-                    ? `addnew-${menu}/addnew-vehicle`
-                    : `${addNew1OId}/edit/addnew-vehicle`
+                    ? `add-new-${menu}/add-new-vehicle`
+                    : `${addNew1OId}/edit/add-new-vehicle`
                 }`}
               >
                 <Button name="เพิ่มใหม่" />
@@ -788,7 +1139,7 @@ export default function Main_AddNewNViewNEdit() {
                 name="เพิ่มที่มี"
                 type="address"
                 onClick={() => {
-                  // dispatch(setPopUpAddExistAddress());
+                  dispatch(setPopUpAddExistVehicle());
                 }}
               />
             </ButtonLeftFrame>
@@ -803,7 +1154,7 @@ export default function Main_AddNewNViewNEdit() {
       {displayData.vehicle.length > 0 ? (
         <Table>
           <Fragment>
-            <Thead id="address-thead">
+            <Thead>
               <Tr type="thead">
                 <Th
                   type="vehicle"
@@ -812,11 +1163,11 @@ export default function Main_AddNewNViewNEdit() {
                 />
               </Tr>
             </Thead>
-            <Tbody id="address-tbody">
+            <Tbody>
               {displayData.vehicle.map((data, i) => (
                 <Tr type="tbody" key={data.vehicle_id}>
                   <Td>{i + 1}</Td>
-                  <Td>{data.vehicle_id}</Td>
+                  {/* <Td>{data.vehicle_id}</Td> */}
                   <Td>{data.license_plate}</Td>
                   <Td>{data.frame_no}</Td>
                   <Td>{data.vehicle_type}</Td>
@@ -839,11 +1190,16 @@ export default function Main_AddNewNViewNEdit() {
       )}
 
       <ButtonRightFrame>
-        <Button name="บันทึก" onClick={handleAddNewData} type="submit" />
-        <Link to={".."} relative="path">
+        {!addNew2OEdit && !isNaN(Number(addNew1OId)) ? (
+          <></>
+        ) : (
+          <Button name="บันทึก" onClick={handleSave} type="submit" />
+        )}
+        <Link to={`/${menu}`}>
           <Button name="ยกเลิก" />
         </Link>
       </ButtonRightFrame>
+      <TogglePopup handleConfirm={handleAddNewData} />
     </>
   );
 }

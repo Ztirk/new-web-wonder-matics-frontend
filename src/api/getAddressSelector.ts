@@ -19,7 +19,9 @@ export async function getProvinceSelector(
     );
     setProvinceSelector(res.data);
   } catch (err) {
-    console.log(err);
+    if (axios.isAxiosError(err)) {
+      console.log(err.response?.data);
+    }
   }
 }
 
@@ -37,7 +39,9 @@ export async function getDistrictSelector(
     );
     setDistrictSelector(res.data);
   } catch (err) {
-    console.log(err);
+    if (axios.isAxiosError(err)) {
+      console.log(err.response?.data);
+    }
   }
 }
 
@@ -55,6 +59,8 @@ export async function getSubDistrictSelector(
     );
     setSubDistrictSelector(res.data);
   } catch (err) {
-    console.log(err);
+    if (axios.isAxiosError(err)) {
+      console.log(err.response?.data);
+    }
   }
 }

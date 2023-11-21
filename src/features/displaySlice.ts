@@ -1,12 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { DisplayData } from "../interface/reduxType";
-import { PersonIterate } from "../interface/personType";
-import { ContactIterate } from "../interface/contactType";
-import { AddressIterate } from "../interface/addressType";
-import { CustomerIterate } from "../interface/customerType";
-import { FleetIterate } from "../interface/fleetType";
-import { VehicleIterate } from "../interface/vehicleType";
-import { DeviceIterate } from "../interface/deviceType";
+import { Person, PersonIterate } from "../interface/personType";
+import { Contact, ContactIterate } from "../interface/contactType";
+import { Address, AddressIterate } from "../interface/addressType";
+import { Customer, CustomerIterate } from "../interface/customerType";
+import { Fleet, FleetIterate } from "../interface/fleetType";
+import { Vehicle, VehicleIterate } from "../interface/vehicleType";
+import { Device, DeviceIterate } from "../interface/deviceType";
+import { Card } from "../interface/cardType";
+import { Document } from "../interface/documentType";
 
 const initialState: DisplayData = {
   customer: [],
@@ -17,17 +19,26 @@ const initialState: DisplayData = {
   fleet: [],
   device: [],
   deviceSerial: [],
+  card: [],
+  document: [],
+  count_data: 0,
 };
 
 const displaySlice = createSlice({
   name: "display",
   initialState,
   reducers: {
-    setDisplayPersonFetch: (state, action: PayloadAction<PersonIterate[]>) => {
+    setDisplayPersonFetch: (
+      state,
+      action: PayloadAction<Person["response"]["person"]>
+    ) => {
       state.person = action.payload;
     },
 
-    setDisplayPersonInteract(state, action: PayloadAction<PersonIterate>) {
+    setDisplayPersonInteract(
+      state,
+      action: PayloadAction<Person["response"]["person"][0]>
+    ) {
       state.person.push(action.payload);
     },
 
@@ -38,12 +49,18 @@ const displaySlice = createSlice({
       );
     },
 
-    setDisplayContactFetch(state, action: PayloadAction<ContactIterate[]>) {
+    setDisplayContactFetch(
+      state,
+      action: PayloadAction<Contact["response"]["contact"]>
+    ) {
       state.contact = action.payload;
     },
 
-    setDisplayContactInteract(state, action: PayloadAction<ContactIterate>) {
-      console.log(action.payload)
+    setDisplayContactInteract(
+      state,
+      action: PayloadAction<Contact["response"]["contact"][0]>
+    ) {
+      console.log(action.payload);
       state.contact.push(action.payload);
     },
 
@@ -53,11 +70,17 @@ const displaySlice = createSlice({
       );
     },
 
-    setDisplayAddressFetch(state, action: PayloadAction<AddressIterate[]>) {
+    setDisplayAddressFetch(
+      state,
+      action: PayloadAction<Address["response"]["address"]>
+    ) {
       state.address = action.payload;
     },
 
-    setDisplayAddressInteract(state, action: PayloadAction<AddressIterate>) {
+    setDisplayAddressInteract(
+      state,
+      action: PayloadAction<Address["response"]["address"][0]>
+    ) {
       state.address.push(action.payload);
     },
 
@@ -67,11 +90,17 @@ const displaySlice = createSlice({
       );
     },
 
-    setDisplayCustomerFetch(state, action: PayloadAction<CustomerIterate[]>) {
+    setDisplayCustomerFetch(
+      state,
+      action: PayloadAction<Customer["response"]["customer"]>
+    ) {
       state.customer = action.payload;
     },
 
-    setDisplayCustomerInteract(state, action: PayloadAction<CustomerIterate>) {
+    setDisplayCustomerInteract(
+      state,
+      action: PayloadAction<Customer["response"]["customer"][0]>
+    ) {
       state.customer.push(action.payload);
     },
 
@@ -81,11 +110,17 @@ const displaySlice = createSlice({
       );
     },
 
-    setDisplayFleetFetch(state, action: PayloadAction<FleetIterate[]>) {
+    setDisplayFleetFetch(
+      state,
+      action: PayloadAction<Fleet["response"]["fleet"]>
+    ) {
       state.fleet = action.payload;
     },
 
-    setDisplayFleetInteract(state, action: PayloadAction<FleetIterate>) {
+    setDisplayFleetInteract(
+      state,
+      action: PayloadAction<Fleet["response"]["fleet"][0]>
+    ) {
       state.fleet.push(action.payload);
     },
 
@@ -94,11 +129,17 @@ const displaySlice = createSlice({
         (data) => data.fleet_id !== action.payload
       );
     },
-    setDisplayVehicleFetch(state, action: PayloadAction<VehicleIterate[]>) {
+    setDisplayVehicleFetch(
+      state,
+      action: PayloadAction<Vehicle["response"]["vehicle"]>
+    ) {
       state.vehicle = action.payload;
     },
 
-    setDisplayVehicleInteract(state, action: PayloadAction<VehicleIterate>) {
+    setDisplayVehicleInteract(
+      state,
+      action: PayloadAction<Vehicle["response"]["vehicle"][0]>
+    ) {
       state.vehicle.push(action.payload);
     },
 
@@ -108,17 +149,56 @@ const displaySlice = createSlice({
       );
     },
 
-    setDisplayDeviceFetch(state, action: PayloadAction<DeviceIterate[]>) {
+    setDisplayDeviceFetch(
+      state,
+      action: PayloadAction<Device["response"]["device"]>
+    ) {
       state.device = action.payload;
     },
 
-    setDisplayDeviceInteract(state, action: PayloadAction<DeviceIterate>) {
+    setDisplayDeviceInteract(
+      state,
+      action: PayloadAction<Device["response"]["device"][0]>
+    ) {
       state.device.push(action.payload);
     },
 
     setDisplayDeviceDelete(state, action: PayloadAction<number | string>) {
       state.device = state.device.filter(
         (data) => data.device_id !== action.payload
+      );
+    },
+
+    setDisplayCardFetch(
+      state,
+      action: PayloadAction<Card["response"]["card"]>
+    ) {
+      state.card = action.payload;
+    },
+    setDisplayCardInteract(
+      state,
+      action: PayloadAction<Card["response"]["card"][0]>
+    ) {
+      state.card.push(action.payload);
+    },
+    setDisplayCardDelete(state, action: PayloadAction<number | string>) {
+      state.card = state.card.filter((data) => data.card_id !== action.payload);
+    },
+    setDisplayDocumentFetch(
+      state,
+      action: PayloadAction<Document["response"]["document"]>
+    ) {
+      state.document = action.payload;
+    },
+    setDisplayDocumentIntereact(
+      state,
+      action: PayloadAction<Document["response"]["document"][0]>
+    ) {
+      state.document.push(action.payload);
+    },
+    setDisplayDocumentDelete(state, action: PayloadAction<number | string>) {
+      state.document = state.document.filter(
+        (data) => data.document_id !== action.payload
       );
     },
 
@@ -131,6 +211,8 @@ const displaySlice = createSlice({
       state.fleet = [];
       state.person = [];
       state.vehicle = [];
+      state.card = [];
+      state.document = [];
     },
   },
 });
@@ -158,6 +240,12 @@ export const {
   setDisplayVehicleDelete,
   setDisplayVehicleFetch,
   setDisplayVehicleInteract,
+  setDisplayCardDelete,
+  setDisplayCardFetch,
+  setDisplayCardInteract,
+  setDisplayDocumentDelete,
+  setDisplayDocumentFetch,
+  setDisplayDocumentIntereact,
 } = displaySlice.actions;
 
 export const displayState = (state) => state.display;

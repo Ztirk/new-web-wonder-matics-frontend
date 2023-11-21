@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+const initialState: Addexist = {
   backdrop: false,
   type: "",
 };
@@ -29,6 +29,16 @@ const popUpAddExistSlice = createSlice({
       state.type = "address";
     },
 
+    setPopUpAddExistFleet(state) {
+      state.backdrop = true;
+      state.type = "fleet";
+    },
+
+    setPopUpAddExistVehicle(state) {
+      state.backdrop = true;
+      state.type = "vehicle";
+    },
+
     setPopUpAddExistDefault(state) {
       state.backdrop = false;
       state.type = "";
@@ -42,6 +52,8 @@ export const {
   setPopUpAddExistPerson,
   setPopUpAddExistDefault,
   setPopUpAddExistCustomer,
+  setPopUpAddExistFleet,
+  setPopUpAddExistVehicle,
 } = popUpAddExistSlice.actions;
 
 export const popUpAddExistState = (state) => state.popUpAddExist;

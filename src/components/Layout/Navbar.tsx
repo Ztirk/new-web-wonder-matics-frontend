@@ -14,6 +14,12 @@ export default function Navbar() {
           <Link to="/contact">
             <li>Contact</li>
           </Link>
+          <Link to="/document">
+            <li>Document</li>
+          </Link>
+          <Link to="/card">
+            <li>Card</li>
+          </Link>
           <Link to="/address">
             <li>Address</li>
           </Link>

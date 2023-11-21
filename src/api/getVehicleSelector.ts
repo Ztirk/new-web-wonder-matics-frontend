@@ -1,22 +1,44 @@
 import axios from "axios";
 import React from "react";
+import {
+  BrandSelector,
+  ModelSelector,
+  SendVehicle,
+} from "../interface/vehicleType";
 
-export async function getModelSelector(
-  setBrandSelector: React.Dispatch<React.SetStateAction<>>
+export async function getBrandSelector(
+  setBrandSelector: React.Dispatch<
+    React.SetStateAction<BrandSelector | undefined>
+  >
 ) {
   try {
-    const res = await axios.get(`${import.meta.env.VITE_ERP_BASE_URL}/vehicle/brand`);
+    const res = await axios.get(
+      `${import.meta.env.VITE_ERP_BASE_URL}/vehicle/brand`
+    );
     setBrandSelector(res.data);
   } catch (err) {
-    console.log(err);
+    if (axios.isAxiosError(err)) {
+      console.log(err.response?.data);
+    }
   }
 }
 
-export async function getBrandSelector(setModelSelector: React.Dispatch<React.SetStateAction<>>, obj) {
+export async function getModelSelector(
+  setModelSelector: React.Dispatch<
+    React.SetStateAction<ModelSelector | undefined>
+  >,
+  addOEditVehicle: SendVehicle
+) {
   try {
-    const res = await axios.get(`${import.meta.env.VITE_ERP_BASE_URL}/vehicle/model?brand=${}`)
-    setModelSelector(res.data)
+    const res = await axios.get(
+      `${import.meta.env.VITE_ERP_BASE_URL}/vehicle/model?brand=${
+        addOEditVehicle.vehicle.brand_name
+      }`
+    );
+    setModelSelector(res.data);
   } catch (err) {
-    console.log(err)
+    if (axios.isAxiosError(err)) {
+      console.log(err.response?.data);
+    }
   }
 }

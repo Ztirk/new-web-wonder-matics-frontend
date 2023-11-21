@@ -21,6 +21,9 @@ const addOEditPersonSlice = createSlice({
   name: "addOEditPerson",
   initialState,
   reducers: {
+    setPersonId(state, action: PayloadAction<number>) {
+      state.person.person_id = action.payload;
+    },
     setFirstName(state, action: PayloadAction<string>) {
       state.person.firstname = action.payload;
     },
@@ -93,6 +96,7 @@ export const {
   setDefaultPerson,
   removeRole,
   removeRoleDelete,
+  setPersonId,
 } = addOEditPersonSlice.actions;
 
 export const addOEditPersonState = (state) => state.addOEditPerson;

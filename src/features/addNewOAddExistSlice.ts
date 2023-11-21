@@ -2,9 +2,9 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AddNewOAddExist } from "../interface/reduxType";
 import { SendPerson } from "../interface/personType";
 import { SendCustomer } from "../interface/customerType";
-import { SendAddress, SendAddressShape } from "../interface/addressType";
+import { SendAddress } from "../interface/addressType";
 import { SendVehicle, SendVehicleShape } from "../interface/vehicleType";
-import { SendFleet, SendFleetShape } from "../interface/fleetType";
+import { SendFleetShape } from "../interface/fleetType";
 import { SendContact, SendContactShape } from "../interface/contactType";
 
 const initialState: AddNewOAddExist = {
@@ -20,6 +20,8 @@ const initialState: AddNewOAddExist = {
   vehicleExist: [],
   fleetNew: [],
   fleetExist: [],
+  documentCodeNew: [],
+  cardNew: [],
 };
 
 const addNewOAddExistSlice = createSlice({
@@ -58,7 +60,7 @@ const addNewOAddExistSlice = createSlice({
         (id) => id !== action.payload
       );
     },
-    setAddressNew(state, action: PayloadAction<SendAddressShape>) {
+    setAddressNew(state, action: PayloadAction<SendAddress["address"]>) {
       state.addressNew.push(action.payload);
     },
     removeAddressNew(state, action: PayloadAction<string>) {
@@ -74,7 +76,7 @@ const addNewOAddExistSlice = createSlice({
         (id) => id !== action.payload
       );
     },
-    setVehicleNew(state, action: PayloadAction<SendVehicleShape>) {
+    setVehicleNew(state, action: PayloadAction<SendVehicle["vehicle"]>) {
       state.vehicleNew.push(action.payload);
     },
     removeVehicleNew(state, action: PayloadAction<string>) {
@@ -104,7 +106,7 @@ const addNewOAddExistSlice = createSlice({
     removeFleetExist(state, action: PayloadAction<number>) {
       state.fleetExist = state.fleetExist.filter((id) => id !== action.payload);
     },
-    setContactNew(state, action: PayloadAction<SendContactShape>) {
+    setContactNew(state, action: PayloadAction<SendContact["contact"]>) {
       state.contactNew.push(action.payload);
     },
     removeContactNew(state, action: PayloadAction<string>) {
@@ -120,6 +122,12 @@ const addNewOAddExistSlice = createSlice({
         (id) => id !== action.payload
       );
     },
+    setDocumentCodeNew(state, action: PayloadAction<number>) {
+      state.documentCodeNew.push(action.payload);
+    },
+    removeDocumentCodeNew(state, action: PayloadAction<>) {},
+    setCardNew(state, action: PayloadAction<>) {},
+    removeCardNew(state, action: PayloadAction) {},
   },
 });
 
@@ -148,6 +156,10 @@ export const {
   removeVehicleNew,
   removeContactExist,
   setContactExist,
+  removeCardNew,
+  removeDocumentCodeNew,
+  setCardNew,
+  setDocumentCodeNew,
 } = addNewOAddExistSlice.actions;
 
 export const addNewOAddExistState = (state) => state.addNewOAddExist;

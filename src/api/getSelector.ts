@@ -7,43 +7,29 @@ export async function getSelector(
   menu: string
 ): Promise<void> {
   try {
-    if (menu == "customer") {
-      const res = await axios.get(
-        `${
-          import.meta.env.VITE_ERP_BASE_URL
-        }/master_code?category=customer&class=sales_type&category=customer&class=customer_type`
-      );
-      setSelectorData(res.data);
-    } else if (menu == "person") {
-      const res = await axios.get(
-        `${
-          import.meta.env.VITE_ERP_BASE_URL
-        }/master_code?category=person&class=title&category=role&class=null`
-      );
-      setSelectorData(res.data);
-    } else if (menu == "address") {
-      const res = await axios.get(
-        `${
-          import.meta.env.VITE_ERP_BASE_URL
-        }/master_code?category=address&class=null&category=address&class=person&category=address&class=customer`
-      );
-      setSelectorData(res.data);
-    } else if (menu == "contact") {
-      const res = await axios.get(
-        `${
-          import.meta.env.VITE_ERP_BASE_URL
-        }/master_code?category=contact&class=null`
-      );
-      setSelectorData(res.data);
-    } else if (menu == "vehicle") {
-      const res = await axios.get(
-        `${
-          import.meta.env.VITE_ERP_BASE_URL
-        }/master_code?category=vehicle&class=type&category=vehicle&class=registration_type&category=vehicle&class=registration_province&category=vehicle&class=driving_license`
-      );
-      setSelectorData(res.data);
-    }
+    const res = await axios.get(
+      `${import.meta.env.VITE_ERP_BASE_URL}/master_code?${
+        menu == "customer"
+          ? "category=customer&class=sales_type&category=customer&class=customer_type"
+          : menu == "person"
+          ? "category=person&class=title&category=role&class=null"
+          : menu == "address"
+          ? "category=address&class=null&category=address&class=person&category=address&class=customer"
+          : menu == "contact"
+          ? "category=contact&class=null"
+          : menu == "vehicle"
+          ? "category=vehicle&class=type&category=vehicle&class=registration_type&category=vehicle&class=registration_province&category=vehicle&class=driving_license"
+          : menu == "document"
+          ? "category=document&class=customer&category=document&class=person"
+          : menu == "card"
+          ? "category=card&class=null"
+          : ""
+      }`
+    );
+    setSelectorData(res.data);
   } catch (err) {
-    console.log(err);
+    if (axios.isAxiosError(err)) {
+      console.log(err.response?.data);
+    }
   }
 }

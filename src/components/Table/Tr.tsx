@@ -2,10 +2,10 @@ interface Props {
   children: React.ReactNode;
   type: "tbody" | "thead";
   id: string;
-  dataId: number;
+  refObject: React.RefObject<HTMLTableRowElement>;
 }
 
-export default function Tr({ children, type, id, dataId }: Props) {
+export default function Tr({ children, type, id, refObject }: Props) {
   return (
     <tr
       className={`border border-[#EAECF0] ${
@@ -16,7 +16,7 @@ export default function Tr({ children, type, id, dataId }: Props) {
           : ""
       }`}
       id={id}
-      data-id={dataId}
+      ref={refObject}
     >
       {children}
     </tr>

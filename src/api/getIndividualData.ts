@@ -14,6 +14,8 @@ export async function getIndividualData(
     );
     setDataIndividal(res.data);
   } catch (err) {
-    console.log(err);
+    if (axios.isAxiosError(err)) {
+      console.log(err.response?.data);
+    }
   }
 }

@@ -8,7 +8,7 @@ interface Props {
     | "ยืนยัน"
     | "เพิ่มใหม่";
   disabled?: boolean;
-  onClick?: () => void;
+  onClick?: () => void | React.Dispatch<React.SetStateAction<string>>;
   type: string;
 }
 

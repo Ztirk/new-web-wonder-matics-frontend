@@ -27,8 +27,8 @@ import { setPersonNew } from "../features/addNewOAddExistSlice";
 import { Contact, ContactInMain, SendContact } from "../interface/contactType";
 
 interface Props {
-  addNew1OId: string;
-  addNew2OEdit: string;
+  addNew1OId?: string;
+  addNew2OEdit?: string;
 }
 
 export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
@@ -120,7 +120,7 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
         email: email.value,
         line: line.value,
       },
-      contact: contact,
+      contactNew: contact,
     };
 
     dispatch(setPersonNew(sendPersonData));
@@ -136,6 +136,7 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
           placeholder="ชื่อ"
           type="regular"
           name="ชื่อ"
+          defaultValue={addOEditPerson.person.firstname}
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setFirstName(e.currentTarget.value));
@@ -145,6 +146,7 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
           label="นามสกุล*"
           placeholder="นามสกุล"
           type="regular"
+          defaultValue={addOEditPerson.person.lastname}
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setLastName(e.currentTarget.value));
@@ -160,6 +162,7 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
           label="ชื่อเล่น"
           placeholder="ชื่อเล่น"
           type="regular"
+          defaultValue={addOEditPerson.person.nickname}
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setNickName(e.currentTarget.value));
@@ -175,6 +178,7 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
           label="รายละเอียด"
           placeholder="รายละเอียด"
           type="regular"
+          defaultValue={addOEditPerson.person.description}
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setDescription(e.currentTarget.value));

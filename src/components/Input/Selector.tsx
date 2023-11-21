@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import { Selector } from "../../interface/mastercodeType";
+import { MasterCode, Selector } from "../../interface/mastercodeType";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import {
@@ -38,7 +38,9 @@ import {
 } from "../../features/addOEdit/addOEditPersonSlice";
 import {
   addOEditVehicleState,
+  setBrandName,
   setDrivingLicenseTypeCodeId,
+  setModelName,
   setRegistrationProvinceCodeId,
   setRegistrationTypeCodeId,
   setVehicleTypeCodeId,
@@ -55,23 +57,38 @@ import { SendDeviceSerial } from "../../interface/deviceSerialType";
 import { SendDevice } from "../../interface/deviceType";
 import { Fleet, FleetIterate, SendFleet } from "../../interface/fleetType";
 import { SendPerson } from "../../interface/personType";
-import { SendVehicle } from "../../interface/vehicleType";
+import {
+  BrandSelector,
+  ModelSelector,
+  SendVehicle,
+} from "../../interface/vehicleType";
 import { Memo } from "../../interface/reduxType";
 import { memoState } from "../../features/memoSlice";
 import { useLocation } from "react-router-dom";
+import { SendCard } from "../../interface/cardType";
+import {
+  addOEditCardState,
+  setCardCodeId,
+} from "../../features/addOEdit/addOEditCardSlice";
+import { SendDocument } from "../../interface/documentType";
+import {
+  addOEditDocumentState,
+  setDocumentCodeId,
+} from "../../features/addOEdit/addOEditDocumentSlice";
 
 interface Props {
-  selectorData?: Selector[];
+  selectorData?: MasterCode["response"][0];
   fleetSelector?: Fleet;
   provinceSelector?: ProvinceSelector;
   districtSelector?: DistrictSelector;
   subDistrictSelector?: SubDistrictSelector;
+  brandSelector?: BrandSelector;
+  modelSelector?: ModelSelector;
   label: string;
   disabled: boolean;
   type: "selector" | "multi-selector" | "search-selector";
-  setPickedAddress?: React.Dispatch<React.SetStateAction<PickedAddress>>;
-  pickedAddress?: PickedAddress;
   defaultValue?: string;
+  required: boolean;
 }
 
 export default function Selector({
@@ -79,13 +96,14 @@ export default function Selector({
   label,
   disabled,
   type,
-  setPickedAddress,
   fleetSelector,
   provinceSelector,
   districtSelector,
   subDistrictSelector,
-  pickedAddress,
   defaultValue,
+  brandSelector,
+  modelSelector,
+  required,
 }: Props) {
   // useState
   const [toggleSearchSelector, setToggleSearchSelector] =
@@ -110,6 +128,8 @@ export default function Selector({
   const addOEditDeviceSerial: SendDeviceSerial = useSelector(
     addOEditDeviceSerialState
   );
+  const addOEditCard: SendCard = useSelector(addOEditCardState);
+  const addOEditDocument: SendDocument = useSelector(addOEditDocumentState);
   const memo: Memo = useSelector(memoState);
 
   const handleToggleSearchSelector = () => {
@@ -118,7 +138,7 @@ export default function Selector({
 
   const handleShowSelector: () => string | undefined = () => {
     if (selectorData) {
-      let selectedData: Selector | undefined;
+      let selectedData: MasterCode["response"][0][0] | undefined;
       const category = selectorData[0].category;
       const mcClass = selectorData[0].class;
       if (category == "customer" && mcClass == "customer_type") {
@@ -158,6 +178,17 @@ export default function Selector({
           (data) =>
             data.code_id == addOEditVehicle.vehicle.driving_license_type_code_id
         );
+      } else if (category == "card" && mcClass == null) {
+        selectedData = selectorData.find(
+          (data) => data.code_id == addOEditCard.card.card_code_id
+        );
+      } else if (
+        category == "document" &&
+        (mcClass == "customer" || mcClass == "person")
+      ) {
+        selectedData = selectorData.find(
+          (data) => data.code_id == addOEditDocument.document.document_code_id
+        );
       }
       return selectedData ? selectedData.value : undefined;
     } else if (fleetSelector) {
@@ -190,6 +221,20 @@ export default function Selector({
       );
 
       return selectedData ? selectedData.sub_district_th : undefined;
+    } else if (brandSelector) {
+      const selectedData: BrandSelector["response"]["brands"][0] | undefined =
+        brandSelector.response.brands.find(
+          (data) => data.brand == addOEditVehicle.vehicle.brand_name
+        );
+
+      return selectedData ? selectedData.brand : undefined;
+    } else if (modelSelector) {
+      const selectedData: ModelSelector["response"]["models"][0] | undefined =
+        modelSelector.response.models.find(
+          (data) => data.model == addOEditVehicle.vehicle.model_name
+        );
+
+      return selectedData ? selectedData.model : undefined;
     }
   };
 
@@ -216,6 +261,13 @@ export default function Selector({
         dispatch(setRegistrationProvinceCodeId(code_id));
       } else if (category == "vehicle" && mcClass == "driving_license") {
         dispatch(setDrivingLicenseTypeCodeId(code_id));
+      } else if (category == "card" && mcClass == null) {
+        dispatch(setCardCodeId(code_id));
+      } else if (
+        category == "document" &&
+        (mcClass == "customer" || mcClass == "person")
+      ) {
+        dispatch(setDocumentCodeId(code_id));
       }
     } else if (fleetSelector) {
       const fleet_id = Number(e.currentTarget.id);
@@ -229,6 +281,12 @@ export default function Selector({
     } else if (subDistrictSelector) {
       const subDistrict = e.currentTarget.id;
       dispatch(setSubDistrict(subDistrict));
+    } else if (brandSelector) {
+      const brand = e.currentTarget.id;
+      dispatch(setBrandName(brand));
+    } else if (modelSelector) {
+      const model = e.currentTarget.id;
+      dispatch(setModelName(model));
     }
 
     handleToggleSearchSelector();
@@ -245,12 +303,9 @@ export default function Selector({
           selectedData = selectorData.filter((id) =>
             addOEditPerson.person.role.includes(id.code_id)
           );
-        } else if (
-          category == "address" &&
-          (mcClass == null || mcClass == "customer" || mcClass == "person")
-        ) {
+        } else if (category == "address" && mcClass == null) {
           selectedData = selectorData.filter((id) =>
-            addOEditAddress.address.address_type.includes(id.code_id)
+            addOEditAddress.address.address_type_code_id.includes(id.code_id)
           );
         }
       }
@@ -285,7 +340,7 @@ export default function Selector({
       if (category == "role" && mcClass == null) {
         if (checked) {
           if (
-            !memo.role_id.includes(id) &&
+            !memo.role_code_id.includes(id) &&
             !addOEditPerson.person.role.includes(id)
           ) {
             dispatch(setRole(id));
@@ -294,7 +349,7 @@ export default function Selector({
           }
         } else if (!checked) {
           if (
-            memo.role_id.includes(id) &&
+            memo.role_code_id.includes(id) &&
             !addOEditPerson.person.roleDelete.includes(id)
           ) {
             dispatch(setRoleDelete(id));
@@ -308,20 +363,24 @@ export default function Selector({
       ) {
         if (checked) {
           if (
-            !memo.address_type_id.includes(id) &&
-            !addOEditAddress.address.address_type.includes(id)
+            !memo.address_type_code_id.includes(id) &&
+            !addOEditAddress.address.address_type_code_id.includes(id)
           ) {
             dispatch(setAddressType(id));
-          } else if (addOEditAddress.address.address_typeDelete.includes(id)) {
+          } else if (
+            addOEditAddress.address.address_type_code_idDelete.includes(id)
+          ) {
             dispatch(removeAddressTypeDelete(id));
           }
         } else if (!checked) {
           if (
-            memo.address_type_id.includes(id) &&
-            !addOEditAddress.address.address_type.includes(id)
+            memo.address_type_code_id.includes(id) &&
+            !addOEditAddress.address.address_type_code_id.includes(id)
           ) {
             dispatch(setAddressTypeDelete(id));
-          } else if (addOEditAddress.address.address_type.includes(id)) {
+          } else if (
+            addOEditAddress.address.address_type_code_id.includes(id)
+          ) {
             dispatch(removeAddressType(id));
           }
         }
@@ -347,7 +406,11 @@ export default function Selector({
       >
         <label className="font-bold">{label}</label>
         <div
-          className={`input-n-selector__border input-n-selector__size flex items-center ${
+          className={`${
+            required
+              ? "border border-[#DC3545] rounded-md"
+              : "input-n-selector__border"
+          } input-n-selector__size flex items-center ${
             disabled ? "bg-[#EFEFEF4D]" : ""
           }`}
           onClick={disabled ? undefined : handleToggleSearchSelector}
@@ -377,7 +440,7 @@ export default function Selector({
         </div>
         {/* selector dropdown */}
         <div
-          className={`input-n-selector__border input-n-selector__shadow w-[240px] absolute top-20 z-20 bg-white ${
+          className={`input-n-selector__shadow input-n-selector__border w-[240px] absolute top-20 z-20 bg-white ${
             toggleSearchSelector ? "" : "hidden"
           }`}
         >
@@ -427,7 +490,6 @@ export default function Selector({
                     {fleetSelector.response.fleet.map((data) =>
                       data.fleet_name.match(searchString) ? (
                         <li
-                          key={data.fleet_id}
                           className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
                             addOEditFleet.fleet.fleet_id == data.fleet_id
                               ? "bg-[#007FA4]/30"
@@ -435,6 +497,7 @@ export default function Selector({
                           }`}
                           id={data.fleet_id.toString()}
                           onClick={handleClickSelector}
+                          key={data.fleet_id}
                         >
                           {data.fleet_name}
                         </li>
@@ -448,7 +511,6 @@ export default function Selector({
                     {provinceSelector.response.provinces.map((data) =>
                       data.province_th.match(searchString) ? (
                         <li
-                          key={data.province_th}
                           className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
                             addOEditAddress.address.province == data.province_th
                               ? "bg-[#007FA4]/30"
@@ -456,6 +518,7 @@ export default function Selector({
                           }`}
                           id={data.province_th}
                           onClick={handleClickSelector}
+                          key={data.province_th}
                         >
                           {data.province_th}
                         </li>
@@ -469,7 +532,6 @@ export default function Selector({
                     {districtSelector.response.districts.map((data) =>
                       data.district_th.match(searchString) ? (
                         <li
-                          key={data.district_th}
                           className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
                             addOEditAddress.address.district == data.district_th
                               ? "bg-[#007FA4]/30"
@@ -477,6 +539,7 @@ export default function Selector({
                           }`}
                           id={data.district_th}
                           onClick={handleClickSelector}
+                          key={data.district_th}
                         >
                           {data.district_th}
                         </li>
@@ -490,7 +553,6 @@ export default function Selector({
                     {subDistrictSelector.response.sub_districts.map((data) =>
                       data.sub_district_th.match(searchString) ? (
                         <li
-                          key={data.sub_district_th}
                           className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
                             addOEditAddress.address.sub_district ==
                             data.sub_district_th
@@ -499,8 +561,51 @@ export default function Selector({
                           }`}
                           id={data.sub_district_th}
                           onClick={handleClickSelector}
+                          key={data.sub_district_th}
                         >
                           {data.sub_district_th}
+                        </li>
+                      ) : (
+                        <></>
+                      )
+                    )}
+                  </>
+                ) : brandSelector ? (
+                  <>
+                    {brandSelector.response.brands.map((data) =>
+                      data.brand.match(searchString) ? (
+                        <li
+                          className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                            addOEditVehicle.vehicle.brand_name == data.brand
+                              ? "bg-[#007FA4]/30"
+                              : ""
+                          }`}
+                          id={data.brand}
+                          onClick={handleClickSelector}
+                          key={data.brand}
+                        >
+                          {data.brand}
+                        </li>
+                      ) : (
+                        <></>
+                      )
+                    )}
+                  </>
+                ) : modelSelector ? (
+                  <>
+                    {modelSelector.response.models.map((data) =>
+                      data.model.match(searchString) ? (
+                        <li
+                          className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                            addOEditVehicle.vehicle.model_name == data.model
+                              ? "bg-[#007FA4]/30"
+                              : ""
+                          }`}
+                          id={data.model}
+                          onClick={handleClickSelector}
+                          key={data.model}
+                        >
+                          {data.model}
                         </li>
                       ) : (
                         <></>
@@ -518,7 +623,6 @@ export default function Selector({
                     data.value.match(searchString) ? (
                       <li
                         className={`px-3 items-center h-[50px] hover:rounded-md`}
-                        key={data.code_id}
                       >
                         <input
                           type="checkbox"
@@ -529,13 +633,14 @@ export default function Selector({
                         <label
                           className={`px-1 h-full flex items-center hover:bg-[#007FA4]/30 ${
                             addOEditPerson.person.role.includes(data.code_id) ||
-                            addOEditAddress.address.address_type.includes(
+                            addOEditAddress.address.address_type_code_id.includes(
                               data.code_id
                             )
                               ? "bg-[#007FA4]/30 rounded-md"
                               : ""
                           }`}
                           htmlFor={data.code_id.toString()}
+                          key={data.code_id}
                         >
                           {data.value}
                         </label>

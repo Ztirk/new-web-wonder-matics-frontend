@@ -38,7 +38,6 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { setAddressNew } from "../features/addNewOAddExistSlice";
 import { setDisplayAddressInteract } from "../features/displaySlice";
-import { all } from "axios";
 
 interface Props {
   addNew1OId: string;
@@ -84,7 +83,7 @@ export default function AddNewAddress({ addNew1OId, addNew2OEdit }: Props) {
     ) {
       getSubDistrictSelector(setSubDistrictSelector, addOEditAddress);
     }
-  }, [addOEditAddress]);
+  }, [addOEditAddress.address.province, addOEditAddress.address.district]);
 
   useEffect(() => {
     dispatch(setDistrict(""));
@@ -114,8 +113,8 @@ export default function AddNewAddress({ addNew1OId, addNew2OEdit }: Props) {
   const handleClickSave = () => {
     const addressData = addOEditAddress.address;
     const addressId = uuidv4();
-    const addressType = addressData.address_type;
-    const addressTypeDelete = addressData.address_typeDelete;
+    const addressType = addressData.address_type_code_id;
+    const addressTypeDelete = addressData.address_type_code_idDelete;
     const alley = addressData.alley;
     const district = addressData.district;
     const houseNo = addressData.house_no;
@@ -128,19 +127,19 @@ export default function AddNewAddress({ addNew1OId, addNew2OEdit }: Props) {
     const displayAddressType = selectorData?.response[0]
       .concat(selectorData.response[2])
       .reduce((acc, data) => {
-        if (addOEditAddress.address.address_type.includes(data.code_id)) {
+        if (
+          addOEditAddress.address.address_type_code_id.includes(data.code_id)
+        ) {
           return acc + ", " + data.value;
         }
         return acc;
       }, "")
       .slice(2);
 
-    console.log(displayAddressType);
-
     const newAddress: SendAddressShape = {
       address_id: addressId,
-      address_type: addressType,
-      address_typeDelete: addressTypeDelete,
+      address_type_code_id: addressType,
+      address_type_code_idDelete: addressTypeDelete,
       alley: alley,
       district: district,
       house_no: houseNo,

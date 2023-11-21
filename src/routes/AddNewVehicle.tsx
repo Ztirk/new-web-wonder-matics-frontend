@@ -11,13 +11,23 @@ import {
   addOEditVehicleState,
   setFrameNo,
   setLicensePlate,
+  setModelName,
   setNumberOfAxles,
   setNumberOfTires,
   setNumberOfWheels,
+  setVehicleId,
 } from "../features/addOEdit/addOEditVehicleSlice";
-import { SendVehicle } from "../interface/vehicleType";
+import {
+  BrandSelector,
+  ModelSelector,
+  SendVehicle,
+} from "../interface/vehicleType";
 import Button from "../components/Button/Button";
 import ButtonRightFrame from "../components/Button/ฺButtonRightFrame";
+import { getBrandSelector, getModelSelector } from "../api/getVehicleSelector";
+import { v4 as uuidv4 } from "uuid";
+import { setVehicleNew } from "../features/addNewOAddExistSlice";
+import { setDisplayVehicleInteract } from "../features/displaySlice";
 
 interface Props {
   addNew1OId: string;
@@ -26,9 +36,8 @@ interface Props {
 
 export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
   const [selectorData, setSelectorData] = useState<MasterCode>();
-  const [brandSelector, setBrandSelector] = useState<>();
-  const [modelSelector, setModelSelector] = useState<>();
-  const [pickedBrandModel, setPickedBrandModel] = useState<>();
+  const [brandSelector, setBrandSelector] = useState<BrandSelector>();
+  const [modelSelector, setModelSelector] = useState<ModelSelector>();
 
   // Router
   const location = useLocation();
@@ -44,10 +53,58 @@ export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
     getSelector(setSelectorData, "vehicle");
   }, []);
 
-  const handleClickSave = () => {};
+  useEffect(() => {
+    if (
+      !addOEditVehicle.vehicle.brand_name &&
+      !addOEditVehicle.vehicle.model_name
+    ) {
+      getBrandSelector(setBrandSelector);
+    } else if (
+      addOEditVehicle.vehicle.brand_name &&
+      !addOEditVehicle.vehicle.model_name
+    ) {
+      getModelSelector(setModelSelector, addOEditVehicle);
+    }
+  }, [addOEditVehicle.vehicle.brand_name]);
 
-  useEffect(() => {}, [addOEditVehicle.vehicle.]);
-  useEffect(() => {}, []);
+  useEffect(() => {
+    dispatch(setModelName(""));
+  }, [addOEditVehicle.vehicle.brand_name]);
+
+  useEffect(() => {
+    if (
+      addOEditVehicle.vehicle.brand_name &&
+      addOEditVehicle.vehicle.model_name
+    ) {
+      if (modelSelector) {
+        for (const obj of modelSelector.response.models) {
+          if (obj.model == addOEditVehicle.vehicle.model_name) {
+            dispatch(setVehicleId(obj.vehicle_model_id));
+          }
+        }
+      }
+    }
+  }, [addOEditVehicle.vehicle.model_name]);
+
+  const handleClickSave = () => {
+    const vehicleData = addOEditVehicle.vehicle;
+
+    dispatch(setVehicleNew(vehicleData));
+    dispatch(
+      setDisplayVehicleInteract({
+        frame_no: vehicleData.frame_no,
+        license_plate: vehicleData.license_plate,
+        model_type: vehicleData.brand_name + " " + vehicleData.model_name,
+        RowNum: null,
+        vehicle_id: uuidv4(),
+        vehicle_type:
+          selectorData?.response[0].find(
+            (data) => data.code_id == vehicleData.vehicle_type_code_id
+          )?.value ?? "",
+      })
+    );
+  };
+
   return (
     <Fragment>
       {/* ยานพาหนะ */}
@@ -85,12 +142,20 @@ export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
         />
         <Selector
           label="ยี่ห้อยานยนต์*"
+          type="selector"
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
+          brandSelector={brandSelector}
         />
         <Selector
           label="รุ่นยานยนต์*"
           type="selector"
-          disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
+          disabled={
+            (!addNew2OEdit && !isNaN(Number(addNew1OId))) ||
+            !addOEditVehicle.vehicle.brand_name
+              ? true
+              : false
+          }
+          modelSelector={modelSelector}
         />
         <Selector
           label="ลักษณะในการจดทะเบียน*"

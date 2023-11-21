@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export async function deleteData(id: string, module: string) {
+export async function deleteData(id: number, module: string) {
   try {
     if (module == "device-serial") {
       module = "deviceSerial";
@@ -20,6 +20,8 @@ export async function deleteData(id: string, module: string) {
       window.location.reload();
     }
   } catch (err) {
-    console.log(err);
+    if (axios.isAxiosError(err)) {
+      console.log(err.response?.data);
+    }
   }
 }

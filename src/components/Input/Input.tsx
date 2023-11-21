@@ -4,15 +4,17 @@ import { key } from "localforage";
 
 interface Props {
   label?: string;
-  type: string;
+  type: "checkbox" | "filter" | "regular" | "file" | "date";
   placeholder?: string;
   name?: string;
   defaultValue?: string;
   id?: string;
   refObject: React.RefObject<HTMLInputElement>;
   disabled: boolean;
-  onClick: () => void;
+  onClick?: () => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setFile?: React.Dispatch<React.SetStateAction<FileList[0] | null>>;
+  required: boolean;
 }
 
 export default function Input({
@@ -26,15 +28,17 @@ export default function Input({
   disabled,
   onClick,
   onChange,
+  setFile,
+  required,
 }: Props) {
   return (
     <Fragment>
       {type !== "checkbox" ? (
         <div
-          className={`flex  ${
+          className={`flex ${
             type == "filter"
-              ? " gap-5 items-center"
-              : type == "regular"
+              ? "gap-5 items-center"
+              : type == "regular" || type == "file" || type == "date"
               ? "flex-col"
               : ""
           }`}
@@ -45,15 +49,26 @@ export default function Input({
 
           <input
             id={id}
-            className={`pl-3 border border- rounded-md h-[40px] w-[240px]`}
+            className={`px-3 border rounded-md h-[40px] w-[240px] ${
+              required ? "border-[#DC3545]" : "border"
+            }`}
             placeholder={placeholder}
             disabled={disabled}
             list="data"
             name={name}
             defaultValue={defaultValue == undefined ? "" : defaultValue}
             ref={refObject}
-            onKeyDown={(e) => (e.key == "Enter" ? onClick() : null)}
-            onChange={onChange}
+            onChange={
+              type == "file"
+                ? (e: React.ChangeEvent<HTMLInputElement>) => {
+                    if (e.currentTarget.files) {
+                      setFile(e.currentTarget.files[0]);
+                    }
+                  }
+                : onChange
+            }
+            type={type == "file" ? "file" : type == "date" ? "date" : ""}
+            onKeyDown={onClick}
             // onKeyDown={handleEnter}
           />
 

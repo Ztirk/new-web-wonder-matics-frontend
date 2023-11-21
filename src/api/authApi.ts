@@ -17,7 +17,9 @@
 //     console.log(token);
 //     console.log("Verify");
 //   } catch (err) {
-//     console.log(err);
+//     if (axios.isAxiosError(err)) {
+    //   console.log(err.response?.data);
+    // };
 //     window.location.href = "/login";
 //   }
 // }

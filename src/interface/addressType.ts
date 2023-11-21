@@ -20,56 +20,50 @@ export interface SubDistrictSelector extends ApiStatus {
   };
 }
 
-export interface SendAddressShape {
-  address_id: number | string;
-  name: string;
-  house_no: string;
-  village_no: string;
-  alley: string;
-  road: string;
-  sub_district: string;
-  district: string;
-  province: string;
-  postal_code: string;
-  address_type: number[];
-  address_typeDelete: number[];
-}
 export interface SendAddress {
-  address: SendAddressShape;
-}
-export interface AddressIterate {
-  RowNum: number | null;
-  address_id: number;
-  location: string;
-  address_type: string;
-}
-
-export interface AddressDisplay {
-  address: AddressIterate[] | [];
-}
-
-export interface StoringIndividualAddress {
-  name: string;
-  house_no: string;
-  village_no: string;
-  alley: string;
-  road: string;
-  sub_district: string;
-  district: string;
-  province: string;
-  postal_code: string;
-  address_type: [{ address_type_code_id: number; address_type: string }];
+  address: {
+    address_id: number | string;
+    name: string;
+    house_no: string;
+    village_no: string;
+    alley: string;
+    road: string;
+    sub_district: string;
+    district: string;
+    province: string;
+    postal_code: string;
+    address_type_code_id: number[];
+    address_type_code_idDelete: number[];
+  };
 }
 
 export interface Address extends ApiStatus {
   response: {
     count_data: number;
-    address: AddressIterate[] | [];
+    address:
+      | {
+          RowNum: number | null;
+          address_id: number;
+          location: string;
+          address_type: string;
+        }[]
+      | [];
   };
 }
 
 export interface IndividualAddress extends ApiStatus {
   response: {
-    address: StoringIndividualAddress;
+    address: {
+      name: string;
+      house_no: string;
+      village_no: string;
+      alley: string;
+      road: string;
+      sub_district: string;
+      district: string;
+      province: string;
+      postal_code: string;
+      address_type: [{ address_type_code_id: number; address_type: string }];
+    };
   };
 }

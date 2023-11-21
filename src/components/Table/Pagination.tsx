@@ -50,18 +50,9 @@ export default function Pagination({
     let end: number;
 
     if (ceil > 9) {
-      if (page == 1) {
+      if (page < 5) {
         start = 1;
         end = start + 8;
-      } else if (page == 2) {
-        start = 1;
-        end = start + 7;
-      } else if (page == 3) {
-        start = 1;
-        end = start + 6;
-      } else if (page == 4) {
-        start = 1;
-        end = start + 5;
       } else if (page == ceil) {
         start = page - 8;
         end = page;
