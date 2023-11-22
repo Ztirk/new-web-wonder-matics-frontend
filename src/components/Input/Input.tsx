@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 import Button from "../Button/Button";
 import { key } from "localforage";
 
@@ -13,6 +13,7 @@ interface Props {
   disabled: boolean;
   onClick?: () => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onEnter: () => void;
   setFile?: React.Dispatch<React.SetStateAction<FileList[0] | null>>;
   required: boolean;
 }
@@ -30,6 +31,7 @@ export default function Input({
   onChange,
   setFile,
   required,
+  onEnter,
 }: Props) {
   return (
     <Fragment>
@@ -61,14 +63,16 @@ export default function Input({
             onChange={
               type == "file"
                 ? (e: React.ChangeEvent<HTMLInputElement>) => {
-                    if (e.currentTarget.files) {
+                    if (e.currentTarget.files && setFile) {
                       setFile(e.currentTarget.files[0]);
                     }
                   }
                 : onChange
             }
             type={type == "file" ? "file" : type == "date" ? "date" : ""}
-            onKeyDown={onClick}
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+              if (e.key == "Enter") onEnter();
+            }}
             // onKeyDown={handleEnter}
           />
 

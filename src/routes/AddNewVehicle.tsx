@@ -1,6 +1,6 @@
 import { useEffect, Fragment, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getSelector } from "../api/getSelector";
 import Input from "../components/Input/Input";
 import InputFrame from "../components/Input/InputFrame";
@@ -28,6 +28,11 @@ import { getBrandSelector, getModelSelector } from "../api/getVehicleSelector";
 import { v4 as uuidv4 } from "uuid";
 import { setVehicleNew } from "../features/addNewOAddExistSlice";
 import { setDisplayVehicleInteract } from "../features/displaySlice";
+import { ErrorPopUpType } from "../interface/componentType";
+import {
+  errorPopUpState,
+  setErrorPopUpState,
+} from "../features/errorPopUpSlice";
 
 interface Props {
   addNew1OId: string;
@@ -43,10 +48,12 @@ export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
   const location = useLocation();
   const segments = location.pathname.split("/").splice(1);
   const menu = segments[0];
+  const navigate = useNavigate();
 
   // Redux
   const dispatch = useDispatch();
   const addOEditVehicle: SendVehicle = useSelector(addOEditVehicleState);
+  const errorPopUp: ErrorPopUpType = useSelector(errorPopUpState);
 
   // useEffect
   useEffect(() => {
@@ -89,20 +96,37 @@ export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
   const handleClickSave = () => {
     const vehicleData = addOEditVehicle.vehicle;
 
-    dispatch(setVehicleNew(vehicleData));
-    dispatch(
-      setDisplayVehicleInteract({
-        frame_no: vehicleData.frame_no,
-        license_plate: vehicleData.license_plate,
-        model_type: vehicleData.brand_name + " " + vehicleData.model_name,
-        RowNum: null,
-        vehicle_id: uuidv4(),
-        vehicle_type:
-          selectorData?.response[0].find(
-            (data) => data.code_id == vehicleData.vehicle_type_code_id
-          )?.value ?? "",
-      })
-    );
+    if (
+      !vehicleData.vehicle_type_code_id ||
+      !vehicleData.driving_license_type_code_id ||
+      !vehicleData.frame_no ||
+      !vehicleData.license_plate ||
+      !vehicleData.model_name ||
+      !vehicleData.number_of_axles ||
+      !vehicleData.number_of_tires ||
+      !vehicleData.number_of_wheels ||
+      !vehicleData.registration_province_code_id ||
+      !vehicleData.registration_type_code_id ||
+      !vehicleData.brand_name
+    ) {
+      dispatch(setErrorPopUpState({ active: true, message: "" }));
+    } else {
+      dispatch(setVehicleNew(vehicleData));
+      dispatch(
+        setDisplayVehicleInteract({
+          frame_no: vehicleData.frame_no,
+          license_plate: vehicleData.license_plate,
+          model_type: vehicleData.brand_name + " " + vehicleData.model_name,
+          RowNum: null,
+          vehicle_id: uuidv4(),
+          vehicle_type:
+            selectorData?.response[0].find(
+              (data) => data.code_id == vehicleData.vehicle_type_code_id
+            )?.value ?? "",
+        })
+      );
+      navigate("..", { relative: "path" });
+    }
   };
 
   return (
@@ -115,6 +139,9 @@ export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
           type="selector"
           selectorData={selectorData?.response[0]}
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
+          required={
+            errorPopUp.active && !addOEditVehicle.vehicle.vehicle_type_code_id
+          }
         />
         <Input
           label="ทะเบียนรถ*"
@@ -124,12 +151,17 @@ export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setLicensePlate(e.currentTarget.value));
           }}
+          required={errorPopUp.active && !addOEditVehicle.vehicle.license_plate}
         />
         <Selector
           label="หมวดจังหวัด*"
           type="selector"
           selectorData={selectorData?.response[2]}
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
+          required={
+            errorPopUp.active &&
+            !addOEditVehicle.vehicle.registration_province_code_id
+          }
         />
         <Input
           label="เลขตัวถัง*"
@@ -139,12 +171,14 @@ export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setFrameNo(e.currentTarget.value));
           }}
+          required={errorPopUp.active && !addOEditVehicle.vehicle.frame_no}
         />
         <Selector
           label="ยี่ห้อยานยนต์*"
           type="selector"
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           brandSelector={brandSelector}
+          required={errorPopUp.active && !addOEditVehicle.vehicle.brand_name}
         />
         <Selector
           label="รุ่นยานยนต์*"
@@ -156,18 +190,27 @@ export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
               : false
           }
           modelSelector={modelSelector}
+          required={errorPopUp.active && !addOEditVehicle.vehicle.model_name}
         />
         <Selector
           label="ลักษณะในการจดทะเบียน*"
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           type="selector"
           selectorData={selectorData?.response[3]}
+          required={
+            errorPopUp.active &&
+            !addOEditVehicle.vehicle.registration_type_code_id
+          }
         />
         <Selector
           label="ประเภทใบขับขี่่*"
           type="selector"
           selectorData={selectorData?.response[1]}
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
+          required={
+            errorPopUp.active &&
+            !addOEditVehicle.vehicle.driving_license_type_code_id
+          }
         />
         <Input
           label="จำนวนเพลา*"
@@ -177,6 +220,9 @@ export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setNumberOfAxles(Number(e.currentTarget.value)));
           }}
+          required={
+            errorPopUp.active && !addOEditVehicle.vehicle.number_of_axles
+          }
         />
         <Input
           label="จำนวนกงล้อ*"
@@ -186,6 +232,9 @@ export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setNumberOfWheels(Number(e.currentTarget.value)));
           }}
+          required={
+            errorPopUp.active && !addOEditVehicle.vehicle.number_of_wheels
+          }
         />
         <Input
           label="จำนวนยาง*"
@@ -195,14 +244,16 @@ export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setNumberOfTires(Number(e.currentTarget.value)));
           }}
+          required={
+            errorPopUp.active && !addOEditVehicle.vehicle.number_of_tires
+          }
         />
       </InputFrame>
       {menu !== "vehicle" ? (
         <>
           <ButtonRightFrame>
-            <Link to=".." relative="path">
-              <Button name="บันทึก" onClick={handleClickSave} />
-            </Link>
+            <Button name="บันทึก" onClick={handleClickSave} />
+
             <Link to=".." relative="path">
               <Button name="ยกเลิก" />
             </Link>

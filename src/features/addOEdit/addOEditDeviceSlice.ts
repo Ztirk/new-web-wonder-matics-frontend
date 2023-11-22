@@ -36,7 +36,6 @@ const addOEditDeviceSlice = createSlice({
     setNetwork(state, actions: PayloadAction<number>) {},
     setPassword(state, actions: PayloadAction<number>) {},
     setSimSerial(state, actions: PayloadAction<number>) {},
-    
   },
 });
 

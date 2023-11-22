@@ -1,6 +1,6 @@
 import { useEffect, Fragment, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Input from "../components/Input/Input";
 import InputFrame from "../components/Input/InputFrame";
 import Divider from "../components/Table/Divider";
@@ -21,6 +21,11 @@ import getFleetSelector from "../api/getFleetSelector";
 import { v4 as uuidv4 } from "uuid";
 import { setFleetNew } from "../features/addNewOAddExistSlice";
 import { setDisplayFleetInteract } from "../features/displaySlice";
+import { ErrorPopUpType } from "../interface/componentType";
+import {
+  errorPopUpState,
+  setErrorPopUpState,
+} from "../features/errorPopUpSlice";
 
 interface Props {
   addNew1OId: string;
@@ -37,6 +42,8 @@ export default function AddNewFleet({ addNew1OId, addNew2OEdit }: Props) {
   // Redux
   const dispatch = useDispatch();
   const addOEditFleet: SendFleet = useSelector(addOEditFleetState);
+  const errorPopUp: ErrorPopUpType = useSelector(errorPopUpState);
+  const navigate = useNavigate();
 
   // useEffect
   useEffect(() => {
@@ -62,8 +69,13 @@ export default function AddNewFleet({ addNew1OId, addNew2OEdit }: Props) {
       vehicle_count: 0,
     };
 
-    dispatch(setFleetNew(newFleet));
-    dispatch(setDisplayFleetInteract(displayFleet));
+    if (!addOEditFleet.fleet.fleet_name) {
+      dispatch(setErrorPopUpState({ active: true, message: "" }));
+    } else {
+      dispatch(setFleetNew(newFleet));
+      dispatch(setDisplayFleetInteract(displayFleet));
+      navigate("..", { relative: "path" });
+    }
   };
   return (
     <Fragment>
@@ -78,6 +90,7 @@ export default function AddNewFleet({ addNew1OId, addNew2OEdit }: Props) {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setFleetName(e.currentTarget.value));
           }}
+          required={errorPopUp.active && !addOEditFleet.fleet.fleet_name}
         />
         <Selector
           label="ชื่อหัวฟลีต"
@@ -88,9 +101,8 @@ export default function AddNewFleet({ addNew1OId, addNew2OEdit }: Props) {
       </InputFrame>
       {menu !== "vehicle" ? (
         <ButtonRightFrame>
-          <Link to=".." relative="path">
-            <Button name="บันทึก" onClick={handleClickSave} />
-          </Link>
+          <Button name="บันทึก" onClick={handleClickSave} />
+
           <Link to=".." relative="path">
             <Button name="ยกเลิก" />
           </Link>

@@ -13,7 +13,7 @@ export async function getBrandSelector(
 ) {
   try {
     const res = await axios.get(
-      `${import.meta.env.VITE_ERP_BASE_URL}/vehicle/brand`
+      `${import.meta.env.VITE_ERP_BASE_URL}/select/vehicle/brand`
     );
     setBrandSelector(res.data);
   } catch (err) {
@@ -31,7 +31,7 @@ export async function getModelSelector(
 ) {
   try {
     const res = await axios.get(
-      `${import.meta.env.VITE_ERP_BASE_URL}/vehicle/model?brand=${
+      `${import.meta.env.VITE_ERP_BASE_URL}/select/vehicle/model?brand=${
         addOEditVehicle.vehicle.brand_name
       }`
     );

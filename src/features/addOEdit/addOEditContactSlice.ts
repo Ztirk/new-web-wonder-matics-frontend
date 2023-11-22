@@ -6,6 +6,9 @@ const initialState: SendContact = {
     contact_id: 0,
     contact_code_id: null,
     value: "",
+    customer_id: 0,
+    person_id: 0,
+    owner_type_code_id: null,
   },
 };
 
@@ -22,18 +25,37 @@ const addOEditContactSlice = createSlice({
     setValue(state, action: PayloadAction<string>) {
       state.contact.value = action.payload;
     },
+    setContactCustomerId(state, action: PayloadAction<number>) {
+      state.contact.customer_id = action.payload ? action.payload : null;
+    },
+    setContactPersonId(state, action: PayloadAction<number>) {
+      state.contact.person_id = action.payload ? action.payload : null;
+    },
+    setOwnerTypeCodeId(state, action: PayloadAction<number>) {
+      state.contact.owner_type_code_id = action.payload ? action.payload : null;
+    },
     setDefaultContact(state) {
       state.contact = {
         contact_id: 0,
         contact_code_id: null,
         value: "",
+        customer_id: null,
+        owner_type_code_id: null,
+        person_id: null,
       };
     },
   },
 });
 
-export const { setContactCodeId, setContactId, setValue, setDefaultContact } =
-  addOEditContactSlice.actions;
+export const {
+  setContactCodeId,
+  setContactId,
+  setValue,
+  setDefaultContact,
+  setContactCustomerId,
+  setContactPersonId,
+  setOwnerTypeCodeId,
+} = addOEditContactSlice.actions;
 
 export const addOEditContactState = (state) => state.addOEditContact;
 

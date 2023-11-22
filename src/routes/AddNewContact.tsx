@@ -6,7 +6,7 @@ import { MasterCode } from "../interface/mastercodeType";
 
 import ButtonRightFrame from "../components/Button/ฺButtonRightFrame";
 import Button from "../components/Button/Button";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import InputFrame from "../components/Input/InputFrame";
 import { v4 as uuidv4 } from "uuid";
@@ -26,6 +26,12 @@ import { setContactNew } from "../features/addNewOAddExistSlice";
 import { SendCustomer } from "../interface/customerType";
 import { addOEditCustomerState } from "../features/addOEdit/addOEditCustomerSlice";
 import { setDisplayContactInteract } from "../features/displaySlice";
+import {
+  errorPopUpState,
+  setErrorPopUpState,
+} from "../features/errorPopUpSlice";
+import { ErrorPopUpType } from "../interface/componentType";
+import ErrorPopUp from "../components/PopUp/errorPopUp";
 
 interface Props {
   addNew1OId: string | number;
@@ -39,15 +45,19 @@ export default function AddNewContact({ addNew2OEdit, addNew1OId }: Props) {
   const location = useLocation();
   const segments = location.pathname.split("/").splice(1);
   const menu = segments[0];
+  const navigate = useNavigate();
 
   // Redux
   const dispatch = useDispatch();
   const addOEditContact: SendContact = useSelector(addOEditContactState);
   const addOEditCustomer: SendCustomer = useSelector(addOEditCustomerState);
+  const errorPopUp: ErrorPopUpType = useSelector(errorPopUpState);
 
   useEffect(() => {
     getSelector(setSelectorData, "contact");
   }, []);
+
+  useEffect(() => {}, []);
 
   const handleClickSave = () => {
     const contactData = addOEditContact.contact;
@@ -72,8 +82,16 @@ export default function AddNewContact({ addNew2OEdit, addNew1OId }: Props) {
       value: value,
     };
 
-    dispatch(setContactNew(newContact));
-    dispatch(setDisplayContactInteract(displayContact));
+    if (
+      !addOEditContact.contact?.contact_code_id ||
+      !addOEditContact.contact.value
+    ) {
+      dispatch(setErrorPopUpState({ active: true, message: "" }));
+    } else {
+      dispatch(setContactNew(newContact));
+      dispatch(setDisplayContactInteract(displayContact));
+      navigate("..", { relative: "path" });
+    }
   };
 
   return (
@@ -85,6 +103,9 @@ export default function AddNewContact({ addNew2OEdit, addNew1OId }: Props) {
           label={"ประเภทการติดต่อ*"}
           type="selector"
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
+          required={
+            errorPopUp.active && !addOEditContact.contact?.contact_code_id
+          }
         />
         <Input
           label={"รายละเอียดการติดต่อ*"}
@@ -93,14 +114,59 @@ export default function AddNewContact({ addNew2OEdit, addNew1OId }: Props) {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setValue(e.currentTarget.value));
           }}
+          required={errorPopUp.active && !addOEditContact.contact?.value}
         />
       </InputFrame>
+      {menu == "contact" ? (
+        <>
+          <Divider title="ข้อมูลเจ้าของ" />
+          <InputFrame>
+            <Selector
+              selectorData={[
+                {
+                  code_id: -1,
+                  category: "personOcustomer",
+                  class: null,
+                  value: "บุคคล",
+                },
+                {
+                  code_id: -2,
+                  category: "personOcustomer",
+                  class: null,
+                  value: "ลูกค้า",
+                },
+              ]}
+              label={"ประเภทเจ้าของ*"}
+              type="selector"
+              disabled={
+                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
+              }
+              required={
+                errorPopUp.active &&
+                !addOEditContact.contact?.customer_id &&
+                !addOEditContact.contact?.person_id
+              }
+            />
+            <Selector
+              selectorData={selectorData?.response[0]}
+              label={"ชื่อเจ้าของ"}
+              type="selector"
+              disabled={
+                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
+              }
+              required={
+                errorPopUp.active && !addOEditContact.contact?.contact_code_id
+              }
+            />
+          </InputFrame>
+        </>
+      ) : (
+        <></>
+      )}
       <ButtonRightFrame>
         {menu !== "contact" ? (
           <>
-            <Link to=".." relative="path">
-              <Button name="บันทึก" onClick={handleClickSave} />
-            </Link>
+            <Button name="บันทึก" onClick={handleClickSave} />
 
             <Link to=".." relative="path">
               <Button name="ยกเลิก" />

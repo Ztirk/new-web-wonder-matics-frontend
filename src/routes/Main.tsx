@@ -19,11 +19,11 @@ import Option from "../components/Table/Option";
 import Th from "../components/Table/Th";
 import Thead from "../components/Table/Thead";
 import Tbody from "../components/Table/Tbody";
-import togglePopup from "../components/PopUp/togglePopup";
+import togglePopup from "../components/PopUp/TogglePopup";
 import InputNAddNewFrame from "../components/Input/Input&AddNewFrame";
 import Loading from "../components/Etc/Loading";
 import { deleteData } from "../api/deleteData";
-import TogglePopup from "../components/PopUp/togglePopup";
+import TogglePopup from "../components/PopUp/TogglePopup";
 import { useSelector } from "react-redux";
 import {
   setTogglePropsDefault,
@@ -158,6 +158,7 @@ export default function Main() {
             placeholder="ชื่อลูกค้า"
             name="filter"
             onClick={handleSearch}
+            onEnter={handleSearch}
             refObject={filter}
           />
           <InputNAddNewFrame>

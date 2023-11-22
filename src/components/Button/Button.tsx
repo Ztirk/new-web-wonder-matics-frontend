@@ -17,16 +17,18 @@ export default function Button({ name, disabled, onClick, type }: Props) {
     <div>
       <button
         className={` h-[40px] w-[100px] rounded-md text-white ${
-          name == "ค้นหา" || name == "เพิ่มใหม่"
+          disabled
+            ? "bg-[#D0D0D0]"
+            : name == "ค้นหา" || name == "เพิ่มใหม่"
             ? "bg-[#003E51]/80"
             : name == "ย้อนกลับ" || name == "ยกเลิก"
-            ? "bg-[#D92D20]"
+            ? "bg-[#808080]"
             : name == "เพิ่มที่มี"
             ? "bg-[#A88679]"
             : name == "บันทึก" || name == "ยืนยัน"
             ? "bg-[#198754]"
             : ""
-        } ${disabled ? "opacity-50" : ""}`}
+        }`}
         onClick={onClick}
         disabled={disabled}
         type="submit"

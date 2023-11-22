@@ -15,7 +15,7 @@ export async function getProvinceSelector(
 ) {
   try {
     const res = await axios.get(
-      `${import.meta.env.VITE_ERP_BASE_URL}/address/province`
+      `${import.meta.env.VITE_ERP_BASE_URL}/select/address/province`
     );
     setProvinceSelector(res.data);
   } catch (err) {
@@ -33,7 +33,7 @@ export async function getDistrictSelector(
 ) {
   try {
     const res = await axios.get(
-      `${import.meta.env.VITE_ERP_BASE_URL}/address/district?province=${
+      `${import.meta.env.VITE_ERP_BASE_URL}/select/address/district?province=${
         addOEditAddress.address.province
       }`
     );
@@ -53,7 +53,9 @@ export async function getSubDistrictSelector(
 ) {
   try {
     const res = await axios.get(
-      `${import.meta.env.VITE_ERP_BASE_URL}/address/sub_district?province=${
+      `${
+        import.meta.env.VITE_ERP_BASE_URL
+      }/select/address/sub_district?province=${
         addOEditAddress.address.province
       }&district=${addOEditAddress.address.district}`
     );

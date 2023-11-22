@@ -6,6 +6,7 @@ export interface SendCard {
     card_code_id: number | null;
     value: string;
     person_id: number;
+    owner_type_code_id: number | null;
   };
 }
 

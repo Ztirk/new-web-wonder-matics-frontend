@@ -2,6 +2,8 @@ import { Outlet } from "react-router-dom";
 import Headbar from "../components/Layout/Headbar";
 import Navbar from "../components/Layout/Navbar";
 import MainContent from "../components/Layout/MainContent";
+import ErrorPopUp from "../components/PopUp/errorPopUp";
+import AddExistPopup from "../components/PopUp/AddExistPopup";
 
 export default function Frame() {
   return (
@@ -11,6 +13,8 @@ export default function Frame() {
       <MainContent>
         <Outlet />
       </MainContent>
+      <ErrorPopUp />
+      <AddExistPopup />
     </div>
   );
 }

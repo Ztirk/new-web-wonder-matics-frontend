@@ -26,7 +26,7 @@ import {
 } from "../interface/addressType";
 import { getSelector } from "../api/getSelector";
 import { MasterCode } from "../interface/mastercodeType";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Selector from "../components/Input/Selector";
 import Button from "../components/Button/Button";
 import ButtonRightFrame from "../components/Button/ฺButtonRightFrame";
@@ -38,6 +38,12 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { setAddressNew } from "../features/addNewOAddExistSlice";
 import { setDisplayAddressInteract } from "../features/displaySlice";
+import { ErrorPopUpType } from "../interface/componentType";
+import {
+  errorPopUpState,
+  setErrorPopUpState,
+} from "../features/errorPopUpSlice";
+import { relative } from "path";
 
 interface Props {
   addNew1OId: string;
@@ -56,10 +62,12 @@ export default function AddNewAddress({ addNew1OId, addNew2OEdit }: Props) {
   const location = useLocation();
   const segments = location.pathname.split("/").splice(1);
   const menu = segments[0];
+  const navigate = useNavigate();
 
   // Redux
   const dispatch = useDispatch();
   const addOEditAddress: SendAddress = useSelector(addOEditAddressState);
+  const errorPopUp: ErrorPopUpType = useSelector(errorPopUpState);
 
   // useEffect
   useEffect(() => {
@@ -175,8 +183,19 @@ export default function AddNewAddress({ addNew1OId, addNew2OEdit }: Props) {
       RowNum: null,
     };
 
-    dispatch(setAddressNew(newAddress));
-    dispatch(setDisplayAddressInteract(displayAddress));
+    if (
+      !addOEditAddress.address.address_type_code_id.length ||
+      !addOEditAddress.address.province ||
+      !addOEditAddress.address.district ||
+      !addOEditAddress.address.sub_district ||
+      !addOEditAddress.address.postal_code
+    ) {
+      dispatch(setErrorPopUpState({ active: true, message: "" }));
+    } else {
+      dispatch(setAddressNew(newAddress));
+      dispatch(setDisplayAddressInteract(displayAddress));
+      navigate("..", { relative: "path" });
+    }
   };
 
   return (
@@ -190,6 +209,10 @@ export default function AddNewAddress({ addNew1OId, addNew2OEdit }: Props) {
           )}
           type="multi-selector"
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
+          required={
+            errorPopUp.active &&
+            !addOEditAddress.address.address_type_code_id.length
+          }
         />
         <Input
           label="ชื่อที่อยู่"
@@ -242,6 +265,7 @@ export default function AddNewAddress({ addNew1OId, addNew2OEdit }: Props) {
           type="selector"
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           provinceSelector={provinceSelector}
+          required={errorPopUp.active && !addOEditAddress.address.province}
         />
         <Selector
           label="อำเภอ/เขต*"
@@ -254,6 +278,7 @@ export default function AddNewAddress({ addNew1OId, addNew2OEdit }: Props) {
               : false
           }
           districtSelector={districtSelector}
+          required={errorPopUp.active && !addOEditAddress.address.district}
         />
         <Selector
           label="ตำบล/แขวง*"
@@ -267,6 +292,7 @@ export default function AddNewAddress({ addNew1OId, addNew2OEdit }: Props) {
               : false
           }
           subDistrictSelector={subDistrictSelector}
+          required={errorPopUp.active && !addOEditAddress.address.sub_district}
         />
         <Selector
           label="รหัสไปรษณีย์*"
@@ -278,13 +304,12 @@ export default function AddNewAddress({ addNew1OId, addNew2OEdit }: Props) {
               : ""
           }
           disabled={true}
+          required={errorPopUp.active && !addOEditAddress.address.postal_code}
         />
       </InputFrame>
       {menu !== "address" ? (
         <ButtonRightFrame>
-          <Link to=".." relative="path">
-            <Button name="บันทึก" onClick={handleClickSave} />
-          </Link>
+          <Button name="บันทึก" onClick={handleClickSave} />
           <Link to=".." relative="path">
             <Button name="ยกเลิก" />
           </Link>

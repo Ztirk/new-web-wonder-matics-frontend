@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ErrorPopUp } from "../interface/componentType";
+import { ErrorPopUpType } from "../interface/componentType";
 
-const initialState: ErrorPopUp = {
+const initialState: ErrorPopUpType = {
   active: false,
   message: "",
 };
@@ -10,7 +10,7 @@ const errorPopUpSlice = createSlice({
   name: "errorPopUp",
   initialState,
   reducers: {
-    setErrorPopUpState(state, action: PayloadAction<ErrorPopUp>) {
+    setErrorPopUpState(state, action: PayloadAction<ErrorPopUpType>) {
       state.active = action.payload.active;
       state.message = action.payload.message;
     },

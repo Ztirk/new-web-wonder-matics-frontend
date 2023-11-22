@@ -12,10 +12,10 @@ export default function ErrorPopUp() {
   return (
     <>
       {errorPopUp.active ? (
-        <div className="absolute left-1/2 -translate-x-1/2 h-12 z-50 w-[800px] bg-[#F8D7DA] rounded-sm flex justify-between items-center px-3">
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 h-12 z-50 w-[800px] bg-[#F8D7DA] rounded-sm flex justify-between items-center px-3">
           <p>
-            <span className="font-bold">เกิดข้อผิดพลาด </span>-{" "}
-            {errorPopUp.message}
+            <span className="font-bold">เกิดข้อผิดพลาด </span>-{" กรุณากรอกข้อมูลให้ครบถ้วนก่อนกดบันทึก"}
+            {/* {errorPopUp.message} */}
           </p>
           <i
             className="fa-solid fa-x cursor-pointer"

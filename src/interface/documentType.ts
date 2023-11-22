@@ -9,6 +9,7 @@ export interface SendDocument {
     person_id: number | null;
     address_id: number | null;
     vehicle_id: number | null;
+    owner_type_code_id: number | null;
   };
 }
 

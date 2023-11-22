@@ -7,6 +7,7 @@ const initialState: SendCard = {
     card_code_id: null,
     person_id: 0,
     value: "",
+    owner_type_code_id: null,
   },
 };
 
@@ -26,12 +27,16 @@ const addOEditCardSlice = createSlice({
     setCardValue(state, action: PayloadAction<string>) {
       state.card.value = action.payload;
     },
+    setCardTypeCodeId(state, action: PayloadAction<number>) {
+      state.card.owner_type_code_id = action.payload ? action.payload : null;
+    },
     setDefaultCard(state) {
       state.card = {
         card_id: 0,
         card_code_id: null,
         person_id: 0,
         value: "",
+        owner_type_code_id: null,
       };
     },
   },
@@ -43,6 +48,7 @@ export const {
   setCardPersonId,
   setCardValue,
   setDefaultCard,
+  setCardTypeCodeId,
 } = addOEditCardSlice.actions;
 
 export const addOEditCardState = (state) => state.addOEditCard;

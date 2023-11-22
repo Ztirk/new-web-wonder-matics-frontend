@@ -8,7 +8,7 @@ export async function getSelector(
 ): Promise<void> {
   try {
     const res = await axios.get(
-      `${import.meta.env.VITE_ERP_BASE_URL}/master_code?${
+      `${import.meta.env.VITE_ERP_BASE_URL}/select/master_code?${
         menu == "customer"
           ? "category=customer&class=sales_type&category=customer&class=customer_type"
           : menu == "person"

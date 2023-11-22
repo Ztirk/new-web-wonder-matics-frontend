@@ -25,6 +25,12 @@ import { useDispatch } from "react-redux";
 import { setDisplayPersonInteract } from "../features/displaySlice";
 import { setPersonNew } from "../features/addNewOAddExistSlice";
 import { Contact, ContactInMain, SendContact } from "../interface/contactType";
+import {
+  errorPopUpState,
+  setErrorPopUpState,
+} from "../features/errorPopUpSlice";
+import { ErrorPopUpType } from "../interface/componentType";
+import ErrorPopUp from "../components/PopUp/errorPopUp";
 
 interface Props {
   addNew1OId?: string;
@@ -43,6 +49,7 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
   // Redux
   const dispatch = useDispatch();
   const addOEditPerson: SendPerson = useSelector(addOEditPersonState);
+  const errorPopUp: ErrorPopUpType = useSelector(errorPopUpState);
 
   // useEffect
   useEffect(() => {
@@ -106,7 +113,7 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
       role: displayRole ? displayRole : "",
     };
 
-    const sendPersonData: SendPerson & ContactInMain = {
+    const sendPersonData: SendPerson & SendContact = {
       person: {
         description: description,
         firstname: firstname,
@@ -123,8 +130,18 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
       contactNew: contact,
     };
 
-    dispatch(setPersonNew(sendPersonData));
-    dispatch(setDisplayPersonInteract(displayPersonData));
+    if (
+      !sendPersonData.person.firstname ||
+      !sendPersonData.person.lastname ||
+      !sendPersonData.person.title_code_id ||
+      !sendPersonData.person.role.length
+    ) {
+      dispatch(setErrorPopUpState({ active: true, message: "" }));
+    } else {
+      dispatch(setPersonNew(sendPersonData));
+      dispatch(setDisplayPersonInteract(displayPersonData));
+      navigate("..", { relative: "path" });
+    }
   };
 
   return (
@@ -141,6 +158,7 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setFirstName(e.currentTarget.value));
           }}
+          required={errorPopUp.active && !addOEditPerson.person.firstname}
         />
         <Input
           label="นามสกุล*"
@@ -151,12 +169,14 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setLastName(e.currentTarget.value));
           }}
+          required={errorPopUp.active && !addOEditPerson.person.lastname}
         />
         <Selector
           label="คำนำหน้า*"
           type="selector"
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           selectorData={selectorData?.response[0]}
+          required={errorPopUp.active && !addOEditPerson.person.title_code_id}
         />
         <Input
           label="ชื่อเล่น"
@@ -173,6 +193,7 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
           type="multi-selector"
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           selectorData={selectorData?.response[1]}
+          required={errorPopUp.active && !addOEditPerson.person.role.length}
         />
         <Input
           label="รายละเอียด"
@@ -226,9 +247,7 @@ export default function AddNewPerson({ addNew1OId, addNew2OEdit }: Props) {
       </InputFrame>
       {menu !== "person" ? (
         <ButtonRightFrame>
-          <Link to=".." relative="path">
-            <Button name="บันทึก" onClick={handleClickSave} />
-          </Link>
+          <Button name="บันทึก" onClick={handleClickSave} />
           <Link to=".." relative="path">
             <Button name="ยกเลิก" />
           </Link>

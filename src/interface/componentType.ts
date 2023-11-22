@@ -6,7 +6,7 @@ export interface ToggleProps {
   type: "delete" | "save" | "" | "change";
 }
 
-export interface ErrorPopUp {
+export interface ErrorPopUpType {
   active: boolean;
   message: string;
 }

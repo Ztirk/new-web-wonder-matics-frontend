@@ -1,10 +1,19 @@
 import { ApiStatus } from "./apiStatus";
 
+export interface SendContactNew {
+  contactNew: {
+    contact_code_id: number;
+    value: string;
+  }[];
+}
 export interface SendContact {
   contact: {
     contact_id: number | string;
     contact_code_id: number | null;
     value: string;
+    customer_id: number | null;
+    person_id: number | null;
+    owner_type_code_id: number | null;
   };
 }
 

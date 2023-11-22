@@ -125,7 +125,9 @@ const addNewOAddExistSlice = createSlice({
     setDocumentCodeNew(state, action: PayloadAction<number>) {
       state.documentCodeNew.push(action.payload);
     },
-    removeDocumentCodeNew(state, action: PayloadAction<>) {},
+    removeDocumentCodeNew(state, action: PayloadAction<number>) {
+      state.documentCodeNew = state.documentCodeNew.splice(action.payload, 1);
+    },
     setCardNew(state, action: PayloadAction<>) {},
     removeCardNew(state, action: PayloadAction) {},
   },

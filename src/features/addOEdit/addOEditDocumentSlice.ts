@@ -10,6 +10,7 @@ const initialState: SendDocument = {
     document_name: "",
     person_id: null,
     vehicle_id: null,
+    owner_type_code_id: null,
   },
 };
 
@@ -23,7 +24,7 @@ const addOEditDocumentSlice = createSlice({
     setDocumentAddressId(state, action: PayloadAction<number>) {
       state.document.address_id = action.payload ? action.payload : null;
     },
-    setCustomerId(state, action: PayloadAction<number>) {
+    setDocumentCustomerId(state, action: PayloadAction<number>) {
       state.document.customer_id = action.payload ? action.payload : null;
     },
     setDocumentCodeId(state, action: PayloadAction<number>) {
@@ -38,6 +39,11 @@ const addOEditDocumentSlice = createSlice({
     setDocumentVehicleId(state, action: PayloadAction<number>) {
       state.document.vehicle_id = action.payload ? action.payload : null;
     },
+    setDocumentOwnerTypeCodeId(state, action: PayloadAction<number>) {
+      state.document.owner_type_code_id = action.payload
+        ? action.payload
+        : null;
+    },
 
     setDefaultDocument(state) {
       state.document = {
@@ -48,13 +54,14 @@ const addOEditDocumentSlice = createSlice({
         document_name: "",
         person_id: null,
         vehicle_id: null,
+        owner_type_code_id: null,
       };
     },
   },
 });
 
 export const {
-  setCustomerId,
+  setDocumentCustomerId,
   setDefaultDocument,
   setDocumentAddressId,
   setDocumentCodeId,
@@ -62,6 +69,7 @@ export const {
   setDocumentName,
   setDocumentPersonId,
   setDocumentVehicleId,
+  setDocumentOwnerTypeCodeId,
 } = addOEditDocumentSlice.actions;
 
 export const addOEditDocumentState = (state) => state.addOEditDocument;

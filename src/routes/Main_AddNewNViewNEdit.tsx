@@ -127,7 +127,18 @@ import {
 } from "../features/addOEdit/addOEditContactSlice";
 import {
   addOEditAddressState,
+  setAddressId,
+  setAddressType,
+  setAlley,
   setDefaultAddress,
+  setDistrict,
+  setHouseNo,
+  setName,
+  setPostalCode,
+  setProvince,
+  setRoad,
+  setSubDistrict,
+  setVillageNo,
 } from "../features/addOEdit/addOEditAddressSlice";
 import {
   addOEditFleetState,
@@ -177,7 +188,7 @@ import {
 } from "../features/addOEdit/addOEditDocumentSlice";
 import { filesState } from "../features/fileSlice";
 import { ToggleProps } from "../interface/componentType";
-import TogglePopup from "../components/PopUp/togglePopup";
+import TogglePopup from "../components/PopUp/TogglePopup";
 import ErrorPopUp from "../components/PopUp/errorPopUp";
 import {
   setTogglePropsDefault,
@@ -368,10 +379,24 @@ export default function Main_AddNewNViewNEdit() {
         dispatch(setFrameNo(vehicleData.frame_no));
         dispatch(setLicensePlate(vehicleData.license_plate));
       } else if (menu == "address" && !addOEditAddress.address.address_id) {
+        dispatch(setAddressId(Number(addNew1OId)));
+        for (const obj of addressData.address_type) {
+          dispatch(setAddressType(obj.address_type_code_id));
+        }
+        dispatch(setName(addressData.name));
+        dispatch(setHouseNo(addressData.house_no));
+        dispatch(setVillageNo(addressData.village_no));
+        dispatch(setAlley(addressData.alley));
+        dispatch(setRoad(addressData.road));
+        dispatch(setProvince(addressData.province));
+        dispatch(setDistrict(addressData.district));
+        dispatch(setSubDistrict(addressData.sub_district));
+        dispatch(setPostalCode(addressData.postal_code));
       } else if (menu == "contact" && !addOEditContact.contact.contact_id) {
       } else if (menu == "document" && !addOEditDocument.document.document_id) {
       } else if (menu == "card " && !addOEditCard.card.card_id) {
       } else if (menu == "device" && !addOEditDevice.device.device_id) {
+        dispatch(setDeviceId);
       } else if (
         menu == "device-serial" &&
         !addOEditDeviceSerial.deviceSerial.device_serial_id
@@ -379,7 +404,6 @@ export default function Main_AddNewNViewNEdit() {
       }
     }
   }, [individualData]);
-
 
   // เพิ่มข้อมูลใหม่เมื่อใน State ได้กรอกชื่อลูกค้า ลักษณะลูกค้า และประเภทลูกค้า แล้ว
   const handleAddNewData: () => void = () => {
@@ -577,6 +601,7 @@ export default function Main_AddNewNViewNEdit() {
       }
 
       dispatch(setDisplayVehicleDelete(id));
+    } else if (type == "document") {
     }
   };
 
@@ -626,9 +651,6 @@ export default function Main_AddNewNViewNEdit() {
 
   return (
     <>
-      <AddExistPopup popUpLoading={popUpLoading} />
-      <ErrorPopUp />
-
       {menu == "customer" ? (
         <AddNewCustomer addNew2OEdit={addNew2OEdit} addNew1OId={addNew1OId} />
       ) : menu == "person" ? (

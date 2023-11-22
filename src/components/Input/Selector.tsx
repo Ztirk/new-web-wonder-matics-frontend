@@ -21,6 +21,7 @@ import {
 import {
   addOEditContactState,
   setContactCodeId,
+  setOwnerTypeCodeId,
 } from "../../features/addOEdit/addOEditContactSlice";
 import { addOEditDeviceSerialState } from "../../features/addOEdit/addOEditDeviceSerialSlice";
 import { addOEditDeviceState } from "../../features/addOEdit/addOEditDeviceSlice";
@@ -189,8 +190,12 @@ export default function Selector({
         selectedData = selectorData.find(
           (data) => data.code_id == addOEditDocument.document.document_code_id
         );
+      } else if (category == "personOcustomer" && mcClass == null) {
+        selectedData = selectorData.find(
+          (data) => data.code_id == addOEditContact.contact.owner_type_code_id
+        );
       }
-      return selectedData ? selectedData.value : undefined;
+      return selectedData ? selectedData.value : "ยังไม่ระบุ";
     } else if (fleetSelector) {
       const selectedData: FleetIterate | undefined =
         fleetSelector.response.fleet.find(
@@ -268,6 +273,8 @@ export default function Selector({
         (mcClass == "customer" || mcClass == "person")
       ) {
         dispatch(setDocumentCodeId(code_id));
+      } else if (category == "personOcustomer" && mcClass == null) {
+        dispatch(setOwnerTypeCodeId(code_id));
       }
     } else if (fleetSelector) {
       const fleet_id = Number(e.currentTarget.id);
@@ -458,7 +465,7 @@ export default function Selector({
             />
           </div>
           {/* selector */}
-          <ul className="h-96 overflow-y-sc overflow-x-hidden">
+          <ul className="max-h-96 overflow-y-sc overflow-x-hidden">
             {type == "selector" ? (
               <>
                 {selectorData ? (
