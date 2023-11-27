@@ -7,7 +7,7 @@ import {
   setCustomerTypeCodeId,
   setSalesTypeCodeId,
 } from "../../features/addOEdit/addOEditCustomerSlice";
-import { SendCustomer } from "../../interface/customerType";
+import { CustomerSelector, SendCustomer } from "../../interface/customerType";
 import {
   addOEditAddressState,
   removeAddressType,
@@ -21,9 +21,14 @@ import {
 import {
   addOEditContactState,
   setContactCodeId,
+  setContactCustomerId,
+  setContactPersonId,
   setOwnerTypeCodeId,
 } from "../../features/addOEdit/addOEditContactSlice";
-import { addOEditDeviceSerialState } from "../../features/addOEdit/addOEditDeviceSerialSlice";
+import {
+  addOEditDeviceSerialState,
+  setDeviceTypeCodeId,
+} from "../../features/addOEdit/addOEditDeviceSerialSlice";
 import { addOEditDeviceState } from "../../features/addOEdit/addOEditDeviceSlice";
 import {
   addOEditFleetState,
@@ -47,6 +52,7 @@ import {
   setVehicleTypeCodeId,
 } from "../../features/addOEdit/addOEditVehicleSlice";
 import {
+  AddressSelector,
   DistrictSelector,
   PickedAddress,
   ProvinceSelector,
@@ -56,12 +62,18 @@ import {
 import { SendContact } from "../../interface/contactType";
 import { SendDeviceSerial } from "../../interface/deviceSerialType";
 import { SendDevice } from "../../interface/deviceType";
-import { Fleet, FleetIterate, SendFleet } from "../../interface/fleetType";
-import { SendPerson } from "../../interface/personType";
+import {
+  Fleet,
+  FleetIterate,
+  FleetSelector,
+  SendFleet,
+} from "../../interface/fleetType";
+import { PersonSelector, SendPerson } from "../../interface/personType";
 import {
   BrandSelector,
   ModelSelector,
   SendVehicle,
+  VehicleSelector,
 } from "../../interface/vehicleType";
 import { Memo } from "../../interface/reduxType";
 import { memoState } from "../../features/memoSlice";
@@ -70,16 +82,25 @@ import { SendCard } from "../../interface/cardType";
 import {
   addOEditCardState,
   setCardCodeId,
+  setCardOwnerTypeCodeId,
+  setCardPersonId,
 } from "../../features/addOEdit/addOEditCardSlice";
 import { SendDocument } from "../../interface/documentType";
 import {
   addOEditDocumentState,
+  setDocumentAddressId,
   setDocumentCodeId,
+  setDocumentCustomerId,
+  setDocumentOwnerTypeCodeId,
+  setDocumentPersonId,
+  setDocumentVehicleId,
 } from "../../features/addOEdit/addOEditDocumentSlice";
+import { FixedSizeList as List } from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
 
 interface Props {
   selectorData?: MasterCode["response"][0];
-  fleetSelector?: Fleet;
+  fleetSelector?: FleetSelector;
   provinceSelector?: ProvinceSelector;
   districtSelector?: DistrictSelector;
   subDistrictSelector?: SubDistrictSelector;
@@ -90,6 +111,10 @@ interface Props {
   type: "selector" | "multi-selector" | "search-selector";
   defaultValue?: string;
   required: boolean;
+  personSelector?: PersonSelector;
+  customerSelector?: CustomerSelector;
+  addressSelector?: AddressSelector;
+  vehicleSelector?: VehicleSelector;
 }
 
 export default function Selector({
@@ -105,6 +130,10 @@ export default function Selector({
   brandSelector,
   modelSelector,
   required,
+  personSelector,
+  addressSelector,
+  customerSelector,
+  vehicleSelector,
 }: Props) {
   // useState
   const [toggleSearchSelector, setToggleSearchSelector] =
@@ -185,20 +214,40 @@ export default function Selector({
         );
       } else if (
         category == "document" &&
-        (mcClass == "customer" || mcClass == "person")
+        (mcClass == "customer" ||
+          mcClass == "person" ||
+          mcClass == "vehicle" ||
+          mcClass == "address")
       ) {
         selectedData = selectorData.find(
           (data) => data.code_id == addOEditDocument.document.document_code_id
         );
-      } else if (category == "personOcustomer" && mcClass == null) {
+      } else if (category == "ownerType" && mcClass == null) {
+        if (menu == "card") {
+          selectedData = selectorData.find(
+            (data) => data.code_id == addOEditCard.card.owner_type_code_id
+          );
+        } else if (menu == "contact") {
+          selectedData = selectorData.find(
+            (data) => data.code_id == addOEditContact.contact.owner_type_code_id
+          );
+        } else if (menu == "document") {
+          selectedData = selectorData.find(
+            (data) =>
+              data.code_id == addOEditDocument.document.owner_type_code_id
+          );
+        }
+      } else if (category == "device" && mcClass == "type") {
         selectedData = selectorData.find(
-          (data) => data.code_id == addOEditContact.contact.owner_type_code_id
+          (data) =>
+            data.code_id ==
+            addOEditDeviceSerial.deviceSerial.device_type_code_id
         );
       }
-      return selectedData ? selectedData.value : "ยังไม่ระบุ";
+      return selectedData ? selectedData.value : undefined;
     } else if (fleetSelector) {
-      const selectedData: FleetIterate | undefined =
-        fleetSelector.response.fleet.find(
+      const selectedData: FleetSelector["response"]["fleets"] | undefined =
+        fleetSelector.response.fleets.find(
           (data) => data.fleet_id == addOEditFleet.fleet.parent_fleet_id
         );
       return selectedData ? selectedData.fleet_name : undefined;
@@ -240,6 +289,57 @@ export default function Selector({
         );
 
       return selectedData ? selectedData.model : undefined;
+    } else if (personSelector) {
+      let selectedData: PersonSelector["response"]["persons"][0] | undefined;
+      if (menu == "card") {
+        selectedData = personSelector.response.persons.find(
+          (data) => data.person_id == addOEditCard.card.person_id
+        );
+      } else if (menu == "contact") {
+        selectedData = personSelector.response.persons.find(
+          (data) => data.person_id == addOEditContact.contact.person_id
+        );
+      } else if (menu == "document") {
+        selectedData = personSelector.response.persons.find(
+          (data) => data.person_id == addOEditDocument.document.person_id
+        );
+      }
+      return selectedData ? selectedData.fullname : undefined;
+    } else if (customerSelector) {
+      let selectedData:
+        | CustomerSelector["response"]["customers"][0]
+        | undefined;
+      if (menu == "contact") {
+        selectedData = customerSelector.response.customers.find(
+          (data) => data.customer_id == addOEditContact.contact.customer_id
+        );
+      } else if (menu == "document") {
+        selectedData = customerSelector.response.customers.find(
+          (data) => data.customer_id == addOEditDocument.document.customer_id
+        );
+      }
+
+      return selectedData ? selectedData.customer_name : undefined;
+    } else if (addressSelector) {
+      if (menu == "document") {
+        const selectedData:
+          | AddressSelector["response"]["addresses"][0]
+          | undefined = addressSelector.response.addresses.find(
+          (data) => data.address_id == addOEditDocument.document.address_id
+        );
+
+        return selectedData ? selectedData.location : undefined;
+      }
+    } else if (vehicleSelector) {
+      if (menu == "document") {
+        const selectedData:
+          | VehicleSelector["response"]["vehicles"][0]
+          | undefined = vehicleSelector.response.vehicles.find(
+          (data) => data.vehicle_id == addOEditDocument.document.vehicle_id
+        );
+
+        return selectedData ? selectedData.license_plate : undefined;
+      }
     }
   };
 
@@ -270,11 +370,22 @@ export default function Selector({
         dispatch(setCardCodeId(code_id));
       } else if (
         category == "document" &&
-        (mcClass == "customer" || mcClass == "person")
+        (mcClass == "customer" ||
+          mcClass == "person" ||
+          mcClass == "vehicle" ||
+          mcClass == "address")
       ) {
         dispatch(setDocumentCodeId(code_id));
-      } else if (category == "personOcustomer" && mcClass == null) {
-        dispatch(setOwnerTypeCodeId(code_id));
+      } else if (category == "ownerType" && mcClass == null) {
+        if (menu == "card") {
+          dispatch(setCardOwnerTypeCodeId(code_id));
+        } else if (menu == "contact") {
+          dispatch(setOwnerTypeCodeId(code_id));
+        } else if (menu == "document") {
+          dispatch(setDocumentOwnerTypeCodeId(code_id));
+        }
+      } else if (category == "device" && mcClass == "type") {
+        dispatch(setDeviceTypeCodeId(code_id));
       }
     } else if (fleetSelector) {
       const fleet_id = Number(e.currentTarget.id);
@@ -294,6 +405,33 @@ export default function Selector({
     } else if (modelSelector) {
       const model = e.currentTarget.id;
       dispatch(setModelName(model));
+    } else if (personSelector) {
+      const personId = Number(e.currentTarget.id);
+      if (menu == "card") {
+        dispatch(setCardPersonId(personId));
+      } else if (menu == "contact") {
+        dispatch(setContactPersonId(personId));
+      } else if (menu == "document") {
+        dispatch(setDocumentPersonId(personId));
+      }
+    } else if (customerSelector) {
+      const customerId = Number(e.currentTarget.id);
+      if (menu == "contact") {
+        dispatch(setContactCustomerId(customerId));
+      } else if (menu == "document") {
+        dispatch(setDocumentCustomerId(customerId));
+      }
+    } else if (addressSelector) {
+      const addressId = Number(e.currentTarget.id);
+      if (menu == "document") {
+        dispatch(setDocumentAddressId(addressId));
+      }
+    } else if (vehicleSelector) {
+      const vehicleId = Number(e.currentTarget.id);
+      console.log(vehicleId);
+      if (menu == "document") {
+        dispatch(setDocumentVehicleId(vehicleId));
+      }
     }
 
     handleToggleSearchSelector();
@@ -395,6 +533,303 @@ export default function Selector({
     }
   };
 
+  const Row = () => (
+    <ul>
+      {type == "selector" ? (
+        <>
+          {selectorData ? (
+            selectorData.map((data) => (
+              <>
+                {data.value.match(searchString) ? (
+                  <li
+                    className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                      addOEditPerson.person.title_code_id == data.code_id ||
+                      addOEditContact.contact.contact_code_id == data.code_id
+                        ? "bg-[#007FA4]/30"
+                        : ""
+                    }`}
+                    id={data.code_id.toString()}
+                    onClick={handleClickSelector}
+                    key={data.code_id}
+                  >
+                    {data.value}
+                  </li>
+                ) : (
+                  <></>
+                )}
+              </>
+            ))
+          ) : fleetSelector ? (
+            <>
+              {fleetSelector.response.fleets.map((data) =>
+                data.fleet_name.match(searchString) ? (
+                  <li
+                    className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                      addOEditFleet.fleet.fleet_id == data.fleet_id
+                        ? "bg-[#007FA4]/30"
+                        : ""
+                    }`}
+                    id={data.fleet_id.toString()}
+                    onClick={handleClickSelector}
+                    key={data.fleet_id}
+                  >
+                    {data.fleet_name}
+                  </li>
+                ) : (
+                  <></>
+                )
+              )}
+            </>
+          ) : provinceSelector ? (
+            <>
+              {provinceSelector.response.provinces.map((data) =>
+                data.province_th.match(searchString) ? (
+                  <li
+                    className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                      addOEditAddress.address.province == data.province_th
+                        ? "bg-[#007FA4]/30"
+                        : ""
+                    }`}
+                    id={data.province_th}
+                    onClick={handleClickSelector}
+                    key={data.province_th}
+                  >
+                    {data.province_th}
+                  </li>
+                ) : (
+                  <></>
+                )
+              )}
+            </>
+          ) : districtSelector ? (
+            <>
+              {districtSelector.response.districts.map((data) =>
+                data.district_th.match(searchString) ? (
+                  <li
+                    className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                      addOEditAddress.address.district == data.district_th
+                        ? "bg-[#007FA4]/30"
+                        : ""
+                    }`}
+                    id={data.district_th}
+                    onClick={handleClickSelector}
+                    key={data.district_th}
+                  >
+                    {data.district_th}
+                  </li>
+                ) : (
+                  <></>
+                )
+              )}
+            </>
+          ) : subDistrictSelector ? (
+            <>
+              {subDistrictSelector.response.sub_districts.map((data) =>
+                data.sub_district_th.match(searchString) ? (
+                  <li
+                    className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                      addOEditAddress.address.sub_district ==
+                      data.sub_district_th
+                        ? "bg-[#007FA4]/30"
+                        : ""
+                    }`}
+                    id={data.sub_district_th}
+                    onClick={handleClickSelector}
+                    key={data.sub_district_th}
+                  >
+                    {data.sub_district_th}
+                  </li>
+                ) : (
+                  <></>
+                )
+              )}
+            </>
+          ) : brandSelector ? (
+            <>
+              {brandSelector.response.brands.map((data) =>
+                data.brand.match(searchString) ? (
+                  <li
+                    className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                      addOEditVehicle.vehicle.brand_name == data.brand
+                        ? "bg-[#007FA4]/30"
+                        : ""
+                    }`}
+                    id={data.brand}
+                    onClick={handleClickSelector}
+                    key={data.brand}
+                  >
+                    {data.brand}
+                  </li>
+                ) : (
+                  <></>
+                )
+              )}
+            </>
+          ) : modelSelector ? (
+            <>
+              {modelSelector.response.models.map((data) =>
+                data.model.match(searchString) ? (
+                  <li
+                    className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                      addOEditVehicle.vehicle.model_name == data.model
+                        ? "bg-[#007FA4]/30"
+                        : ""
+                    }`}
+                    id={data.model}
+                    onClick={handleClickSelector}
+                    key={data.model}
+                  >
+                    {data.model}
+                  </li>
+                ) : (
+                  <></>
+                )
+              )}
+            </>
+          ) : personSelector ? (
+            <>
+              {personSelector.response.persons.map((data) =>
+                data.fullname.match(searchString) ? (
+                  <li
+                    className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                      (addOEditCard.card.person_id &&
+                        addOEditCard.card.person_id == data.person_id) ||
+                      (addOEditContact.contact.person_id &&
+                        addOEditContact.contact.person_id == data.person_id) ||
+                      (addOEditDocument.document.person_id &&
+                        addOEditDocument.document.person_id == data.person_id)
+                        ? "bg-[#007FA4]/30"
+                        : ""
+                    }`}
+                    id={data.person_id.toString()}
+                    onClick={handleClickSelector}
+                    key={data.person_id}
+                  >
+                    {data.fullname}
+                  </li>
+                ) : (
+                  <></>
+                )
+              )}
+            </>
+          ) : customerSelector ? (
+            <>
+              {customerSelector.response.customers.map((data) =>
+                data.customer_name.match(searchString) ? (
+                  <li
+                    className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                      (addOEditContact.contact.customer_id &&
+                        addOEditContact.contact.customer_id ==
+                          data.customer_id) ||
+                      (addOEditDocument.document.customer_id &&
+                        addOEditDocument.document.customer_id ==
+                          data.customer_id)
+                        ? "bg-[#007FA4]/30"
+                        : ""
+                    }`}
+                    id={data.customer_id.toString()}
+                    onClick={handleClickSelector}
+                    key={data.customer_id}
+                  >
+                    {data.customer_name}
+                  </li>
+                ) : (
+                  <></>
+                )
+              )}
+            </>
+          ) : addressSelector ? (
+            <>
+              {addressSelector.response.addresses.map((data) =>
+                data.location.match(searchString) ? (
+                  <li
+                    className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                      addOEditDocument.document.address_id &&
+                      addOEditDocument.document.address_id == data.address_id
+                        ? "bg-[#007FA4]/30"
+                        : ""
+                    }`}
+                    id={data.address_id.toString()}
+                    onClick={handleClickSelector}
+                    key={data.address_id}
+                  >
+                    {data.location}
+                  </li>
+                ) : (
+                  <></>
+                )
+              )}
+            </>
+          ) : vehicleSelector ? (
+            <>
+              {vehicleSelector.response.vehicles.map((data) =>
+                data.license_plate.match(searchString) ? (
+                  <li
+                    className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                      addOEditDocument.document.vehicle_id &&
+                      addOEditDocument.document.vehicle_id == data.vehicle_id
+                        ? "bg-[#007FA4]/30"
+                        : ""
+                    }`}
+                    id={data.vehicle_id.toString()}
+                    onClick={handleClickSelector}
+                    key={data.vehicle_id}
+                  >
+                    {data.license_plate}
+                  </li>
+                ) : (
+                  <></>
+                )
+              )}
+            </>
+          ) : (
+            <></>
+          )}
+        </>
+      ) : type == "multi-selector" ? (
+        <>
+          {selectorData ? (
+            selectorData.map((data) =>
+              data.value.match(searchString) ? (
+                <li
+                  className={`px-3 items-center h-[50px] hover:rounded-md`}
+                  key={data.code_id}
+                >
+                  <input
+                    type="checkbox"
+                    className="h-[20px] w-[20px] mx-3 sr-only"
+                    id={data.code_id.toString()}
+                    onClick={handleCheckMultiSelector}
+                  />
+                  <label
+                    className={`px-1 h-full flex items-center hover:bg-[#007FA4]/30 ${
+                      addOEditPerson.person.role.includes(data.code_id) ||
+                      addOEditAddress.address.address_type_code_id.includes(
+                        data.code_id
+                      )
+                        ? "bg-[#007FA4]/30 rounded-md"
+                        : ""
+                    }`}
+                    htmlFor={data.code_id.toString()}
+                    key={data.code_id}
+                  >
+                    {data.value}
+                  </label>
+                </li>
+              ) : (
+                <></>
+              )
+            )
+          ) : (
+            <></>
+          )}
+        </>
+      ) : (
+        <></>
+      )}
+    </ul>
+  );
+
   return (
     <Fragment>
       {/* invisible bg */}
@@ -458,14 +893,19 @@ export default function Selector({
 
             <input
               className="w-full"
-              placeholder="ค้นหาชื่อฟลีต"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setSearchString(e.currentTarget.value);
+              placeholder="ค้นหา"
+              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                if (e.key == "Enter") {
+                  setSearchString(e.currentTarget.value);
+                }
               }}
             />
           </div>
           {/* selector */}
-          <ul className="max-h-96 overflow-y-sc overflow-x-hidden">
+          <List height={250} itemCount={1} itemSize={50} width={240}>
+            {Row}
+          </List>
+          {/* <ul className="max-h-96 overflow-y-sc overflow-x-hidden">
             {type == "selector" ? (
               <>
                 {selectorData ? (
@@ -619,6 +1059,106 @@ export default function Selector({
                       )
                     )}
                   </>
+                ) : personSelector ? (
+                  <>
+                    {personSelector.response.persons.map((data) =>
+                      data.fullname.match(searchString) ? (
+                        <li
+                          className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                            (addOEditCard.card.person_id &&
+                              addOEditCard.card.person_id == data.person_id) ||
+                            (addOEditContact.contact.person_id &&
+                              addOEditContact.contact.person_id ==
+                                data.person_id) ||
+                            (addOEditDocument.document.person_id &&
+                              addOEditDocument.document.person_id ==
+                                data.person_id)
+                              ? "bg-[#007FA4]/30"
+                              : ""
+                          }`}
+                          id={data.person_id.toString()}
+                          onClick={handleClickSelector}
+                          key={data.person_id}
+                        >
+                          {data.fullname}
+                        </li>
+                      ) : (
+                        <></>
+                      )
+                    )}
+                  </>
+                ) : customerSelector ? (
+                  <>
+                    {customerSelector.response.customers.map((data) =>
+                      data.customer_name.match(searchString) ? (
+                        <li
+                          className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                            (addOEditContact.contact.customer_id &&
+                              addOEditContact.contact.customer_id ==
+                                data.customer_id) ||
+                            (addOEditDocument.document.customer_id &&
+                              addOEditDocument.document.customer_id ==
+                                data.customer_id)
+                              ? "bg-[#007FA4]/30"
+                              : ""
+                          }`}
+                          id={data.customer_id.toString()}
+                          onClick={handleClickSelector}
+                          key={data.customer_id}
+                        >
+                          {data.customer_name}
+                        </li>
+                      ) : (
+                        <></>
+                      )
+                    )}
+                  </>
+                ) : addressSelector ? (
+                  <>
+                    {addressSelector.response.addresses.map((data) =>
+                      data.location.match(searchString) ? (
+                        <li
+                          className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                            addOEditDocument.document.address_id &&
+                            addOEditDocument.document.address_id ==
+                              data.address_id
+                              ? "bg-[#007FA4]/30"
+                              : ""
+                          }`}
+                          id={data.address_id.toString()}
+                          onClick={handleClickSelector}
+                          key={data.address_id}
+                        >
+                          {data.location}
+                        </li>
+                      ) : (
+                        <></>
+                      )
+                    )}
+                  </>
+                ) : vehicleSelector ? (
+                  <>
+                    {vehicleSelector.response.vehicles.map((data) =>
+                      data.license_plate.match(searchString) ? (
+                        <li
+                          className={`px-3 grid grid-cols-[auto_1fr] items-center hover:bg-[#007FA4]/30 h-[50px] hover:rounded-md ${
+                            addOEditDocument.document.vehicle_id &&
+                            addOEditDocument.document.vehicle_id ==
+                              data.vehicle_id
+                              ? "bg-[#007FA4]/30"
+                              : ""
+                          }`}
+                          id={data.vehicle_id.toString()}
+                          onClick={handleClickSelector}
+                          key={data.vehicle_id}
+                        >
+                          {data.license_plate}
+                        </li>
+                      ) : (
+                        <></>
+                      )
+                    )}
+                  </>
                 ) : (
                   <></>
                 )}
@@ -630,6 +1170,7 @@ export default function Selector({
                     data.value.match(searchString) ? (
                       <li
                         className={`px-3 items-center h-[50px] hover:rounded-md`}
+                        key={data.code_id}
                       >
                         <input
                           type="checkbox"
@@ -663,7 +1204,7 @@ export default function Selector({
             ) : (
               <></>
             )}
-          </ul>
+          </ul> */}
         </div>
       </div>
     </Fragment>

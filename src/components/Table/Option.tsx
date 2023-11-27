@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import Td from "./Td";
 import { Link } from "react-router-dom";
 
@@ -24,31 +23,29 @@ export default function Option({
 }: Props) {
   return (
     <Td>
-      <nav>
-        <ul className="flex gap-3">
-          {full ? (
-            <>
-              <Link to={onView}>
-                <i className="fa-regular fa-eye"></i>
-              </Link>
-              <Link to={onEdit}>
-                <i className="fa-regular fa-pen-to-square"></i>
-              </Link>
-            </>
-          ) : (
-            <></>
-          )}
-          <li
-            onClick={onDelete}
-            id={id}
-            className="cursor-pointer"
-            data-name={dataName}
-            title={title}
-          >
-            <i className="fa-regular fa-trash-can"></i>
-          </li>
-        </ul>
-      </nav>
+      <ul className="flex gap-3">
+        {full ? (
+          <>
+            <Link to={onView}>
+              <i className="fa-regular fa-eye"></i>
+            </Link>
+            <Link to={onEdit}>
+              <i className="fa-regular fa-pen-to-square"></i>
+            </Link>
+          </>
+        ) : (
+          <></>
+        )}
+        <li
+          onClick={onDelete}
+          id={id}
+          className="cursor-pointer"
+          data-name={dataName}
+          title={title}
+        >
+          <i className="fa-regular fa-trash-can"></i>
+        </li>
+      </ul>
     </Td>
   );
 }

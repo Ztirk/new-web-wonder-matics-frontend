@@ -31,6 +31,12 @@ import {
   togglePropsPopUpState,
 } from "../features/togglePropsPopUpSlice";
 import { useDispatch } from "react-redux";
+import getFleetSelector from "../api/getFleetSelector";
+import axios from "axios";
+import { ChildFleets, Fleet } from "../interface/fleetType";
+import ReactDOM from "react-dom";
+import getChildFleets from "../api/getChildFleets";
+import { addChildFleets } from "../features/displaySlice";
 
 export default function Main() {
   // useState
@@ -143,6 +149,86 @@ export default function Main() {
     if (filter.current) {
       const page = searchParams.get("page") ?? "";
       setSearchParams({ page: page, filter: filter.current.value });
+    }
+  };
+
+  const handleClickFleetTree: (
+    e: React.MouseEvent<HTMLTableRowElement>
+  ) => void = async (e) => {
+    const trElem = e.currentTarget;
+    const fleetId = Number(trElem.id);
+    const trActive = trElem.getAttribute("data-active");
+
+    if (fleetId && trActive == "false") {
+      trElem.setAttribute("data-active", "true");
+      let childFleets: ChildFleets = await getChildFleets(fleetId);
+      let index: string;
+      if (data) {
+        if (typeof data.response.fleet[0].layer === "undefined") {
+          const newData = data.response.fleet.map((data) => ({
+            ...data,
+            layer: 0,
+          }));
+          setData((prev) => ({
+            ...prev,
+            response: {
+              ...prev,
+              fleet: newData,
+            },
+          }));
+        }
+
+        let layer: number | undefined;
+        for (const i in data.response.fleet) {
+          if (
+            data.response.fleet[i].fleet_id ==
+            childFleets.response.fleet[0].parent_fleet_id
+          ) {
+            index = i;
+            layer = data.response.fleet[i].layer;
+            const newChildFleets = childFleets.response.fleet.map((data) => ({
+              ...data,
+              layer: layer ? layer + 1 : 1,
+              RowNum: "",
+            }));
+            childFleets = {
+              ...childFleets,
+              response: { fleet: newChildFleets },
+            };
+          }
+        }
+
+        console.log(data.response.fleet);
+        console.log(childFleets);
+
+        setData((prev) => ({
+          ...prev,
+          response: {
+            fleet: [
+              ...prev?.response.fleet.slice(0, Number(index) + 1),
+              ...childFleets.response.fleet,
+              ...prev?.response.fleet.slice(Number(index) + 1),
+            ],
+          },
+        }));
+      }
+    } else {
+      trElem.setAttribute("data-active", "false");
+      const trLayer = Number(trElem.getAttribute("data-layer"));
+      console.log(trElem);
+      console.log(trLayer);
+      let deleted = false;
+      const removeFleets = data?.response.fleet.filter((data) => {
+        if (fleetId == data.fleet_id) {
+          deleted = true;
+        } else if (trLayer >= data.layer) {
+          deleted = false;
+        }
+        console.log(trLayer, data.layer, deleted);
+        return (!deleted && trLayer >= data.layer) || data.fleet_id == fleetId;
+      });
+      console.log(removeFleets);
+      setData((prev) => ({ ...prev, response: { fleet: removeFleets } }));
     }
   };
 
@@ -281,22 +367,36 @@ export default function Main() {
                     ))
                   ) : data.response.fleet && data.response.fleet ? (
                     data.response.fleet.map((data) => (
-                      <Tr type="tbody" key={data.fleet_id}>
-                        {/* ฟลีต */}
-                        <Td>{data.RowNum}</Td>
-                        {/* <Td>{data.fleet_id}</Td> */}
-                        <Td>{data.fleet_name}</Td>
-                        <Td>{data.vehicle_count}</Td>
-                        <Option
-                          full
-                          onEdit={`/fleet/${data.fleet_id}/edit`}
-                          onView={`/fleet/${data.fleet_id}`}
-                          id={data.fleet_id}
-                          title="ฟลีต"
-                          dataName={data.fleet_name}
-                          onDelete={handleToggleDeleteShowUp}
-                        ></Option>
-                      </Tr>
+                      <>
+                        <Tr
+                          type="tbody"
+                          key={data.fleet_id}
+                          id={data.have_child ? data.fleet_id.toString() : ""}
+                          onClick={
+                            data.have_child ? handleClickFleetTree : undefined
+                          }
+                          dataLayer={data.layer}
+                        >
+                          {/* ฟลีต */}
+                          <Td>{data.RowNum}</Td>
+                          {/* <Td>{data.fleet_id}</Td> */}
+                          <Td>
+                            {data.have_child ? <>+ </> : <></>}
+                            {data.fleet_name}
+                          </Td>
+                          <Td>{data.vehicle_count}</Td>
+                          <Option
+                            full
+                            onEdit={`/fleet/${data.fleet_id}/edit`}
+                            onView={`/fleet/${data.fleet_id}`}
+                            id={data.fleet_id}
+                            title="ฟลีต"
+                            dataName={data.fleet_name}
+                            onDelete={handleToggleDeleteShowUp}
+                          ></Option>
+                        </Tr>
+                        {/* {handleClickFleetTree()} */}
+                      </>
                     ))
                   ) : data.response.vehicle && data.response.vehicle ? (
                     data.response.vehicle.map((data) => (
@@ -329,7 +429,7 @@ export default function Main() {
                         <Td>{data.RowNum}</Td>
                         {/* <Td>{data.device_id}</Td> */}
                         <Td>{data.veh_id}</Td>
-                        <Td>{data.device_serial_id}</Td>
+                        <Td>{data.serial_id}</Td>
                         <Td>{data.box_type}</Td>
                         <Td>{data.sim_type}</Td>
 

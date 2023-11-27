@@ -8,9 +8,25 @@ import { Person, SendPerson } from "./personType";
 import { SendVehicle, Vehicle } from "./vehicleType";
 import { Document } from "./documentType";
 import { Card } from "./cardType";
+import { ApiStatus } from "./apiStatus";
 
 export interface ActionBy {
   action_by: number;
+}
+
+export interface Installation extends ApiStatus {
+  response: {
+    installation: {
+      RowNum: number;
+      package_history_id: number;
+      device_id: number;
+      veh_id: number;
+      license_plate: string;
+      frame_no: string;
+      install_date: string;
+      uninstall_date: string;
+    }[];
+  };
 }
 
 export type DisplayData = Customer["response"] &
@@ -22,7 +38,8 @@ export type DisplayData = Customer["response"] &
   Device["response"] &
   DeviceSerial["response"] &
   Document["response"] &
-  Card["response"];
+  Card["response"] &
+  Installation["response"];
 
 export interface AddNewOAddExist {
   customerNew: SendCustomer[];

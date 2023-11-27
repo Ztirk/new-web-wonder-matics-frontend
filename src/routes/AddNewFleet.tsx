@@ -14,6 +14,7 @@ import ButtonRightFrame from "../components/Button/ฺButtonRightFrame";
 import {
   Fleet,
   FleetIterate,
+  FleetSelector,
   SendFleet,
   SendFleetShape,
 } from "../interface/fleetType";
@@ -33,7 +34,7 @@ interface Props {
 }
 
 export default function AddNewFleet({ addNew1OId, addNew2OEdit }: Props) {
-  const [fleetSelector, setFleetSelector] = useState<Fleet>();
+  const [fleetSelector, setFleetSelector] = useState<FleetSelector>();
   // Router
   const location = useLocation();
   const segments = location.pathname.split("/").splice(1);
@@ -83,14 +84,15 @@ export default function AddNewFleet({ addNew1OId, addNew2OEdit }: Props) {
       <Divider title="ข้อมูลฟลีต" />
       <InputFrame>
         <Input
-          label="ชื่อฟลีต"
-          placeholder="ชื่อฟลีต"
+          label="ชื่อฟลีต*"
+          placeholder="ชื่อฟลีต*"
           type="regular"
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setFleetName(e.currentTarget.value));
           }}
           required={errorPopUp.active && !addOEditFleet.fleet.fleet_name}
+          defaultValue={addOEditFleet.fleet.fleet_name}
         />
         <Selector
           label="ชื่อหัวฟลีต"

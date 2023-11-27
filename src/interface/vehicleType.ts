@@ -1,5 +1,9 @@
 import { ApiStatus } from "./apiStatus";
 
+export interface VehicleSelector extends ApiStatus {
+  response: { vehicles: { vehicle_id: number; license_plate: string }[] };
+}
+
 export interface BrandSelector extends ApiStatus {
   response: {
     brands: { brand: string }[];
@@ -43,7 +47,7 @@ export interface SendVehicle {
     max_empty_voltage: number;
     max_empty_voltage_2: number;
     max_empty_voltage_3: number;
-    fuel_status: number;
+    fuel_status: boolean;
   };
   vehiclePermit: {
     dlt: boolean;
@@ -82,6 +86,8 @@ export interface IndividualVehicle extends ApiStatus {
       number_of_wheels: number;
       number_of_tires: number;
       vehicle_type_code_id: number;
+      brand_name: string;
+      model_name: string;
     };
     vehicleConfig: {
       vehicle_config_id: number;
@@ -101,7 +107,7 @@ export interface IndividualVehicle extends ApiStatus {
       max_empty_voltage: number;
       max_empty_voltage_2: number;
       max_empty_voltage_3: number;
-      fuel_status: number;
+      fuel_status: boolean;
     };
     vehiclePermit: {
       dlt: boolean;

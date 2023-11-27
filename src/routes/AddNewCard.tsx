@@ -14,6 +14,8 @@ import ButtonRightFrame from "../components/Button/ฺButtonRightFrame";
 import Button from "../components/Button/Button";
 import { ErrorPopUpType } from "../interface/componentType";
 import { errorPopUpState } from "../features/errorPopUpSlice";
+import getPersonSelector from "../api/getPersonSelector";
+import { PersonSelector } from "../interface/personType";
 
 interface Props {
   addNew1OId: string;
@@ -22,6 +24,7 @@ interface Props {
 
 export default function AddNewCard({ addNew1OId, addNew2OEdit }: Props) {
   const [selectorData, setSelectorData] = useState<MasterCode>();
+  const [personSelector, setPersonSelector] = useState<PersonSelector>();
 
   const location = useLocation();
   const segments = location.pathname.split("/").splice(1);
@@ -37,6 +40,10 @@ export default function AddNewCard({ addNew1OId, addNew2OEdit }: Props) {
     getSelector(setSelectorData, "card");
   }, []);
 
+  useEffect(() => {
+    getPersonSelector(setPersonSelector);
+  }, []);
+
   const handleClickSave = () => {};
   return (
     <Fragment>
@@ -48,7 +55,11 @@ export default function AddNewCard({ addNew1OId, addNew2OEdit }: Props) {
           type={"selector"}
           selectorData={selectorData?.response[0]}
         />
-        <Input label="รายละเอียดบัตร" type="regular" />
+        <Input
+          label="รายละเอียดบัตร"
+          type="regular"
+          defaultValue={addOEditCard.card.value}
+        />
       </InputFrame>
       {menu !== "card" ? (
         <ButtonRightFrame>
@@ -70,26 +81,27 @@ export default function AddNewCard({ addNew1OId, addNew2OEdit }: Props) {
               selectorData={[
                 {
                   code_id: -1,
-                  category: "personOcustomer",
+                  category: "ownerType",
                   class: null,
                   value: "บุคคล",
                 },
               ]}
               label={"ประเภทเจ้าของ*"}
               type="selector"
-              disabled={
-                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
-              }
+              disabled={!isNaN(Number(addNew1OId)) ? true : false}
               required={
                 errorPopUp.active && !addOEditCard.card.owner_type_code_id
               }
             />
             <Selector
-              selectorData={selectorData?.response[0]}
+              personSelector={personSelector}
               label={"ชื่อเจ้าของ"}
               type="selector"
               disabled={
-                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
+                !isNaN(Number(addNew1OId)) ||
+                !addOEditCard.card.owner_type_code_id
+                  ? true
+                  : false
               }
               required={errorPopUp.active}
             />

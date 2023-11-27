@@ -23,7 +23,7 @@ import {
   SendContactShape,
 } from "../interface/contactType";
 import { setContactNew } from "../features/addNewOAddExistSlice";
-import { SendCustomer } from "../interface/customerType";
+import { CustomerSelector, SendCustomer } from "../interface/customerType";
 import { addOEditCustomerState } from "../features/addOEdit/addOEditCustomerSlice";
 import { setDisplayContactInteract } from "../features/displaySlice";
 import {
@@ -32,19 +32,21 @@ import {
 } from "../features/errorPopUpSlice";
 import { ErrorPopUpType } from "../interface/componentType";
 import ErrorPopUp from "../components/PopUp/errorPopUp";
+import { PersonSelector } from "../interface/personType";
+import getPersonSelector from "../api/getPersonSelector";
+import getCustomerSelector from "../api/getCustomerSelector";
 
-interface Props {
-  addNew1OId: string | number;
-  addNew2OEdit: string;
-}
-
-export default function AddNewContact({ addNew2OEdit, addNew1OId }: Props) {
+export default function AddNewContact() {
   const [selectorData, setSelectorData] = useState<MasterCode>();
+  const [personSelector, setPersonSelector] = useState<PersonSelector>();
+  const [customerSelector, setCustomerSelector] = useState<CustomerSelector>();
 
   // Router
   const location = useLocation();
   const segments = location.pathname.split("/").splice(1);
   const menu = segments[0];
+  const addNew1OId = segments[1];
+  const addNew2OEdit = segments[2];
   const navigate = useNavigate();
 
   // Redux
@@ -54,10 +56,14 @@ export default function AddNewContact({ addNew2OEdit, addNew1OId }: Props) {
   const errorPopUp: ErrorPopUpType = useSelector(errorPopUpState);
 
   useEffect(() => {
-    getSelector(setSelectorData, "contact");
+    if (addNew2OEdit == "edit" || !addNew2OEdit)
+      getSelector(setSelectorData, "contact");
   }, []);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    getPersonSelector(setPersonSelector);
+    getCustomerSelector(setCustomerSelector);
+  }, []);
 
   const handleClickSave = () => {
     const contactData = addOEditContact.contact;
@@ -96,6 +102,62 @@ export default function AddNewContact({ addNew2OEdit, addNew1OId }: Props) {
 
   return (
     <>
+      {menu == "contact" ? (
+        <>
+          <Divider title="ข้อมูลเจ้าของ" />
+          <InputFrame>
+            <Selector
+              selectorData={[
+                {
+                  code_id: -1,
+                  category: "ownerType",
+                  class: null,
+                  value: "บุคคล",
+                },
+                {
+                  code_id: -2,
+                  category: "ownerType",
+                  class: null,
+                  value: "ลูกค้า",
+                },
+              ]}
+              label={"ประเภทเจ้าของ*"}
+              type="selector"
+              disabled={!isNaN(Number(addNew1OId)) ? true : false}
+              required={
+                errorPopUp.active &&
+                !addOEditContact.contact?.customer_id &&
+                !addOEditContact.contact?.person_id
+              }
+            />
+            <Selector
+              personSelector={
+                addOEditContact.contact.owner_type_code_id == -1
+                  ? personSelector
+                  : undefined
+              }
+              customerSelector={
+                addOEditContact.contact.owner_type_code_id == -2
+                  ? customerSelector
+                  : undefined
+              }
+              label={"ชื่อเจ้าของ*"}
+              type="selector"
+              disabled={
+                !isNaN(Number(addNew1OId)) ||
+                !addOEditContact.contact.owner_type_code_id
+                  ? true
+                  : false
+              }
+              required={
+                errorPopUp.active && !addOEditContact.contact.contact_code_id
+              }
+            />
+          </InputFrame>
+        </>
+      ) : (
+        <></>
+      )}
       <Divider title="ข้อมูลการติดต่อ" />
       <InputFrame>
         <Selector
@@ -114,55 +176,11 @@ export default function AddNewContact({ addNew2OEdit, addNew1OId }: Props) {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setValue(e.currentTarget.value));
           }}
+          disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           required={errorPopUp.active && !addOEditContact.contact?.value}
+          defaultValue={addOEditContact.contact.value}
         />
       </InputFrame>
-      {menu == "contact" ? (
-        <>
-          <Divider title="ข้อมูลเจ้าของ" />
-          <InputFrame>
-            <Selector
-              selectorData={[
-                {
-                  code_id: -1,
-                  category: "personOcustomer",
-                  class: null,
-                  value: "บุคคล",
-                },
-                {
-                  code_id: -2,
-                  category: "personOcustomer",
-                  class: null,
-                  value: "ลูกค้า",
-                },
-              ]}
-              label={"ประเภทเจ้าของ*"}
-              type="selector"
-              disabled={
-                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
-              }
-              required={
-                errorPopUp.active &&
-                !addOEditContact.contact?.customer_id &&
-                !addOEditContact.contact?.person_id
-              }
-            />
-            <Selector
-              selectorData={selectorData?.response[0]}
-              label={"ชื่อเจ้าของ"}
-              type="selector"
-              disabled={
-                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
-              }
-              required={
-                errorPopUp.active && !addOEditContact.contact?.contact_code_id
-              }
-            />
-          </InputFrame>
-        </>
-      ) : (
-        <></>
-      )}
       <ButtonRightFrame>
         {menu !== "contact" ? (
           <>

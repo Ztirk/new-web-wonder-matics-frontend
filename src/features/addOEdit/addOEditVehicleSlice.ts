@@ -91,7 +91,7 @@ const addOEditVehicleSlice = createSlice({
     setCc(state, action: PayloadAction<number>) {
       state.vehicleConfig.cc = action.payload;
     },
-    setFuelStatus(state, action: PayloadAction<number>) {
+    setFuelStatus(state, action: PayloadAction<boolean>) {
       state.vehicleConfig.fuel_status = action.payload;
     },
     setIdleTime(state, action: PayloadAction<number>) {
@@ -121,7 +121,7 @@ const addOEditVehicleSlice = createSlice({
     setMaxFuelVoltage(state, action: PayloadAction<number>) {
       state.vehicleConfig.max_fuel_voltage = action.payload;
     },
-    setMaxFuelVoltage2(state, aciton: PayloadAction<number>) {
+    setMaxFuelVoltage2(state, action: PayloadAction<number>) {
       state.vehicleConfig.max_fuel_voltage_2 = action.payload;
     },
     setMaxFuelVoltage3(state, action: PayloadAction<number>) {

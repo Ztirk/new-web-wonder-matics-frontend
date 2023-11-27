@@ -4,10 +4,17 @@ import { key } from "localforage";
 
 interface Props {
   label?: string;
-  type: "checkbox" | "filter" | "regular" | "file" | "date";
+  type:
+    | "checkbox"
+    | "filter"
+    | "regular"
+    | "file"
+    | "date-time"
+    | "number"
+    | "checkbox-form";
   placeholder?: string;
   name?: string;
-  defaultValue?: string;
+  defaultValue?: string | number | boolean;
   id?: string;
   refObject: React.RefObject<HTMLInputElement>;
   disabled: boolean;
@@ -16,6 +23,7 @@ interface Props {
   onEnter: () => void;
   setFile?: React.Dispatch<React.SetStateAction<FileList[0] | null>>;
   required: boolean;
+  onChecked?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export default function Input({
@@ -32,17 +40,29 @@ export default function Input({
   setFile,
   required,
   onEnter,
+  onChecked,
 }: Props) {
   return (
     <Fragment>
-      {type !== "checkbox" ? (
+      {type == "checkbox" ? (
+        <input type="checkbox" className="h-[20px] w-full" />
+      ) : type == "checkbox-form" ? (
+        <div className={`flex gap-3`}>
+          <input
+            type="checkbox"
+            className="h-[25px] aspect-square"
+            onChange={onChecked}
+            checked={
+              typeof defaultValue == "boolean" ? defaultValue : undefined
+            }
+            disabled={disabled}
+          />
+          <label className="font-bold">{label}</label>
+        </div>
+      ) : (
         <div
           className={`flex ${
-            type == "filter"
-              ? "gap-5 items-center"
-              : type == "regular" || type == "file" || type == "date"
-              ? "flex-col"
-              : ""
+            type == "filter" ? "gap-5 items-center" : "flex-col"
           }`}
         >
           <label htmlFor={""} className="font-bold">
@@ -58,7 +78,11 @@ export default function Input({
             disabled={disabled}
             list="data"
             name={name}
-            defaultValue={defaultValue == undefined ? "" : defaultValue}
+            defaultValue={
+              typeof defaultValue == "string" || typeof defaultValue == "number"
+                ? defaultValue
+                : undefined
+            }
             ref={refObject}
             onChange={
               type == "file"
@@ -69,7 +93,15 @@ export default function Input({
                   }
                 : onChange
             }
-            type={type == "file" ? "file" : type == "date" ? "date" : ""}
+            type={
+              type == "file"
+                ? "file"
+                : type == "date-time"
+                ? "datetime-local"
+                : type == "number"
+                ? "number"
+                : ""
+            }
             onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
               if (e.key == "Enter") onEnter();
             }}
@@ -78,8 +110,6 @@ export default function Input({
 
           {type == "filter" ? <Button name="ค้นหา" onClick={onClick} /> : <></>}
         </div>
-      ) : (
-        <input type="checkbox" className="h-[20px] w-full" />
       )}
     </Fragment>
   );

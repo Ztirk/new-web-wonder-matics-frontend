@@ -37,6 +37,10 @@ export interface IndividualDocument extends ApiStatus {
       create_date: string;
       owner_type: string;
       owner_name: string;
+      person_id: number | null;
+      customer_id: number | null;
+      address_id: number | null;
+      vehicle_id: number | null;
     };
   };
 }

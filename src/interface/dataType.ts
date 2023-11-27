@@ -7,6 +7,7 @@ import { Device, IndividualDevice } from "./deviceType";
 import { IndividualDocument, Document } from "./documentType";
 import { Fleet, IndividualFleet } from "./fleetType";
 import { IndividualPerson, Person } from "./personType";
+import { Installation } from "./reduxType";
 import { IndividualVehicle, Vehicle } from "./vehicleType";
 
 export type Data = Customer &
@@ -18,7 +19,8 @@ export type Data = Customer &
   Device &
   DeviceSerial &
   Card &
-  Document;
+  Document &
+  Installation;
 
 export type IndividualData = IndividualCustomer &
   IndividualPerson &

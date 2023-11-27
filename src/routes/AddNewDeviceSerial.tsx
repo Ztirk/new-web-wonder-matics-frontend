@@ -6,11 +6,12 @@ import { getSelector } from "../api/getSelector";
 import Input from "../components/Input/Input";
 import InputFrame from "../components/Input/InputFrame";
 import Divider from "../components/Table/Divider";
-import { addOEditDeviceState } from "../features/addOEdit/addOEditDeviceSlice";
-import { SendDevice } from "../interface/deviceType";
 import { MasterCode } from "../interface/mastercodeType";
 import { addOEditDeviceSerialState } from "../features/addOEdit/addOEditDeviceSerialSlice";
 import { SendDeviceSerial } from "../interface/deviceSerialType";
+import { ErrorPopUpType } from "../interface/componentType";
+import { errorPopUpState } from "../features/errorPopUpSlice";
+import Selector from "../components/Input/Selector";
 interface Props {
   addNew1OId: string;
   addNew2OEdit: string;
@@ -30,10 +31,11 @@ export default function AddNewDeviceSerial({
   const addOEditDeviceSerial: SendDeviceSerial = useSelector(
     addOEditDeviceSerialState
   );
+  const errorPopUp: ErrorPopUpType = useSelector(errorPopUpState);
 
   // useEffect
   useEffect(() => {
-    // getSelector(setSelectorData, "device-serial");
+    getSelector(setSelectorData, "device-serial");
   }, []);
 
   return (
@@ -45,25 +47,27 @@ export default function AddNewDeviceSerial({
           placeholder="device_serial"
           type="regular"
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
+          defaultValue={addOEditDeviceSerial.deviceSerial.serial_id}
         />
         <Input
           label="IMEI"
           placeholder="IMEI"
           type="regular"
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
+          defaultValue={addOEditDeviceSerial.deviceSerial.imei_serial}
         />
         <Selector
           label="ประเภทกล่อง"
-          defaultValue="เลือกประเภทกล่อง"
-          selectorData={selectorData}
-          number={0}
+          type="selector"
+          selectorData={selectorData?.response[0]}
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
         />
         <Input
           label="วันที่เพิ่ม"
           placeholder="วันที่เพิ่ม"
-          type="regular"
-          disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
+          type="date-time"
+          disabled
+          defaultValue={addOEditDeviceSerial.deviceSerial.create_date}
         />
       </InputFrame>
     </Fragment>

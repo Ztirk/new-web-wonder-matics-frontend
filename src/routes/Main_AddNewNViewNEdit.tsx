@@ -41,9 +41,11 @@ import {
   setDisplayContactFetch,
   setDisplayCustomerDelete,
   setDisplayCustomerFetch,
+  setDisplayDeviceFetch,
   setDisplayDocumentFetch,
   setDisplayFleetDelete,
   setDisplayFleetFetch,
+  setDisplayInstallationFetch,
   setDisplayPersonDelete,
   setDisplayPersonFetch,
   setDisplayVehicleDelete,
@@ -123,7 +125,13 @@ import {
 } from "../features/memoSlice";
 import {
   addOEditContactState,
+  setContactCodeId,
+  setContactCustomerId,
+  setContactId,
+  setContactPersonId,
   setDefaultContact,
+  setOwnerTypeCodeId,
+  setValue,
 } from "../features/addOEdit/addOEditContactSlice";
 import {
   addOEditAddressState,
@@ -149,19 +157,65 @@ import {
 } from "../features/addOEdit/addOEditFleetSlice";
 import {
   addOEditVehicleState,
+  setBrandName,
+  setCc,
+  setDIW,
+  setDLT,
   setDefaultVehicle,
+  setDrivingLicenseTypeCodeId,
   setFrameNo,
+  setFuelStatus,
+  setIdleTime,
+  setKiloRate,
   setLicensePlate,
+  setMaxEmptyVoltage,
+  setMaxEmptyVoltage2,
+  setMaxEmptyVoltage3,
+  setMaxFuelVoltage,
+  setMaxFuelVoltage2,
+  setMaxFuelVoltage3,
+  setMaxSpeed,
+  setModelName,
+  setNumberOfAxles,
+  setOilLite,
+  setRegistrationProvinceCodeId,
+  setRegistrationTypeCodeId,
+  setSCGL,
+  setTLS,
+  setType,
   setVehicleId,
   setVehicleModelId,
+  setVehicleTypeCodeId,
 } from "../features/addOEdit/addOEditVehicleSlice";
 import { SendDevice } from "../interface/deviceType";
 import {
   addOEditDeviceSerialState,
   setDefaultDeviceSerial,
+  setDeviceSerialCreateDate,
+  setDeviceTypeCodeId,
+  setImeiSerial,
+  setSerialId,
 } from "../features/addOEdit/addOEditDeviceSerialSlice";
 import { SendDeviceSerial } from "../interface/deviceSerialType";
-import { addOEditDeviceState } from "../features/addOEdit/addOEditDeviceSlice";
+import {
+  addOEditDeviceState,
+  setConfigName,
+  setDeviceCreateDate,
+  setDeviceId,
+  setDeviceSerialId,
+  setGatewayPort,
+  setIpAddress,
+  setMobileNumber,
+  setNetwork,
+  setPassword,
+  setSimSerial,
+  setSimTypeCodeId,
+  setSmsMessageCenter,
+  setSmsServerNumber,
+  setSoftwareVersion,
+  setUsername,
+  setVehId,
+} from "../features/addOEdit/addOEditDeviceSlice";
 import {
   deleteState,
   setAddressDelete,
@@ -179,12 +233,24 @@ import AddNewCard from "./AddNewCard";
 import { SendCard } from "../interface/cardType";
 import {
   addOEditCardState,
+  setCardCodeId,
+  setCardId,
+  setCardOwnerTypeCodeId,
+  setCardPersonId,
+  setCardValue,
   setDefaultCard,
 } from "../features/addOEdit/addOEditCardSlice";
 import { SendDocument } from "../interface/documentType";
 import {
   addOEditDocumentState,
   setDefaultDocument,
+  setDocumentAddressId,
+  setDocumentCodeId,
+  setDocumentCustomerId,
+  setDocumentId,
+  setDocumentOwnerTypeCodeId,
+  setDocumentPersonId,
+  setDocumentVehicleId,
 } from "../features/addOEdit/addOEditDocumentSlice";
 import { filesState } from "../features/fileSlice";
 import { ToggleProps } from "../interface/componentType";
@@ -313,8 +379,10 @@ export default function Main_AddNewNViewNEdit() {
       const deviceData = individualData.response.device;
       const deviceConfigData = individualData.response.deviceConfig;
       const deviceSerialData = individualData.response.deviceSerial;
+      const installationData = individualData.response.installation;
 
       if (menu == "customer" && !addOEditCustomer.customer.customer_id) {
+        // ลูกค้า
         dispatch(setCustomerId(customerData.customer_id));
         dispatch(setCustomerName(customerData.customer_name));
         dispatch(setCustomerTypeCodeId(customerData.customer_type_code_id));
@@ -324,21 +392,27 @@ export default function Main_AddNewNViewNEdit() {
         for (const obj of personData) {
           dispatch(memoPersonId(obj.person_id));
         }
+        // ติดต่อ
         dispatch(setDisplayContactFetch(contactData));
+        // ที่อยู่
         dispatch(setDisplayAddressFetch(addressData));
         for (const obj of addressData) {
           dispatch(memoAddressId(obj.address_id));
         }
+        // ฟลีต
         dispatch(setDisplayFleetFetch(fleetData));
         for (const obj of fleetData) {
           dispatch(memoFleetId(obj.fleet_id));
         }
+        // ยานพาหนะ
         dispatch(setDisplayVehicleFetch(vehicleData));
         for (const obj of vehicleData) {
           dispatch(memoVehicleId(obj.vehicle_id));
         }
+        // เอกสาร
         dispatch(setDisplayDocumentFetch(documentData));
       } else if (menu == "person" && !addOEditPerson.person.person_id) {
+        // ข้อมูลคน
         dispatch(setPersonId(personData.person_id));
         dispatch(setFirstName(personData.firstname));
         dispatch(setLastName(personData.lastname));
@@ -349,7 +423,7 @@ export default function Main_AddNewNViewNEdit() {
         for (const obj of personData.role) {
           dispatch(setRole(obj.role_code_id));
         }
-
+        //
         dispatch(setDisplayCustomerFetch(customerData));
         for (const obj of customerData) {
           dispatch(memoCustomerId(obj.customer_id));
@@ -375,10 +449,67 @@ export default function Main_AddNewNViewNEdit() {
           dispatch(memoVehicleId(obj.vehicle_id));
         }
       } else if (menu == "vehicle" && !addOEditVehicle.vehicle.vehicle_id) {
+        // ข้อมูลยานพาหนะ
         dispatch(setVehicleId(vehicleData.vehicle_id));
         dispatch(setFrameNo(vehicleData.frame_no));
         dispatch(setLicensePlate(vehicleData.license_plate));
+        dispatch(setVehicleModelId(vehicleData.vehicle_model_id));
+        dispatch(
+          setRegistrationProvinceCodeId(
+            vehicleData.registration_province_code_id
+          )
+        );
+        dispatch(
+          setRegistrationTypeCodeId(vehicleData.registration_type_code_id)
+        );
+        dispatch(
+          setDrivingLicenseTypeCodeId(vehicleData.driving_license_type_code_id)
+        );
+        dispatch(setNumberOfAxles(vehicleData.number_of_axles));
+        dispatch(setVehicleTypeCodeId(vehicleData.vehicle_type_code_id));
+        dispatch(setBrandName(vehicleData.brand_name));
+        dispatch(setModelName(vehicleData.model_name));
+        // ข้อมูลconfig
+        dispatch(setOilLite(vehicleConfigData.oil_lite));
+        dispatch(setKiloRate(vehicleConfigData.kilo_rate));
+        dispatch(setMaxSpeed(vehicleConfigData.max_speed));
+        dispatch(setIdleTime(vehicleConfigData.idle_time));
+        dispatch(setCc(vehicleConfigData.cc));
+        dispatch(setType(vehicleConfigData.type));
+        dispatch(setMaxFuelVoltage(vehicleConfigData.max_fuel_voltage));
+        dispatch(setMaxFuelVoltage2(vehicleConfigData.max_fuel_voltage_2));
+        dispatch(setMaxFuelVoltage3(vehicleConfigData.max_fuel_voltage_3));
+        dispatch(setMaxEmptyVoltage(vehicleConfigData.max_empty_voltage));
+        dispatch(setMaxEmptyVoltage2(vehicleConfigData.max_empty_voltage_2));
+        dispatch(setMaxEmptyVoltage3(vehicleConfigData.max_empty_voltage_3));
+        dispatch(setFuelStatus(vehicleConfigData.fuel_status));
+
+        // ข้อมูลPermit
+        dispatch(setDLT(vehiclePermitData.dlt));
+        dispatch(setTLS(vehiclePermitData.tls));
+        dispatch(setSCGL(vehiclePermitData.scgl));
+        dispatch(setDIW(vehiclePermitData.diw));
+
+        // ลูกค้า
+        dispatch(setDisplayCustomerFetch(customerData));
+        for (const obj of customerData) {
+          dispatch(memoCustomerId(obj.customer_id));
+        }
+        // บุคคล
+        dispatch(setDisplayPersonFetch(personData));
+        for (const obj of personData) {
+          dispatch(memoPersonId(obj.person_id));
+        }
+
+        // ฟลีต
+        dispatch(setDisplayFleetFetch(fleetData));
+        for (const obj of fleetData) {
+          dispatch(memoFleetId(obj.fleet_id));
+        }
+        // เอกสาร
+        dispatch(setDisplayDocumentFetch(documentData));
       } else if (menu == "address" && !addOEditAddress.address.address_id) {
+        // ที่อยู่
         dispatch(setAddressId(Number(addNew1OId)));
         for (const obj of addressData.address_type) {
           dispatch(setAddressType(obj.address_type_code_id));
@@ -393,14 +524,88 @@ export default function Main_AddNewNViewNEdit() {
         dispatch(setSubDistrict(addressData.sub_district));
         dispatch(setPostalCode(addressData.postal_code));
       } else if (menu == "contact" && !addOEditContact.contact.contact_id) {
+        dispatch(setContactId(Number(addNew1OId)));
+        console.log(contactData);
+        dispatch(setContactCodeId(contactData.contact_code_id));
+        dispatch(setValue(contactData.value));
+        if (contactData.owner_type == "บุคคล" && contactData.person_id) {
+          dispatch(setContactPersonId(contactData.person_id));
+          dispatch(setOwnerTypeCodeId(-1));
+        } else if (
+          contactData.owner_type == "ลูกค้า" &&
+          contactData.customer_id
+        ) {
+          dispatch(setContactCustomerId(contactData.customer_id));
+          dispatch(setOwnerTypeCodeId(-2));
+        }
       } else if (menu == "document" && !addOEditDocument.document.document_id) {
-      } else if (menu == "card " && !addOEditCard.card.card_id) {
+        dispatch(setDocumentId(Number(addNew1OId)));
+        dispatch(setDocumentCodeId(documentData.document_code_id));
+        if (documentData.owner_type == "บุคคล" && documentData.person_id) {
+          dispatch(setDocumentPersonId(documentData.person_id));
+          dispatch(setDocumentOwnerTypeCodeId(-1));
+        } else if (
+          documentData.owner_type == "ลูกค้า" &&
+          documentData.customer_id
+        ) {
+          dispatch(setDocumentCustomerId(documentData.customer_id));
+          dispatch(setDocumentOwnerTypeCodeId(-2));
+        } else if (
+          documentData.owner_type == "ที่อยู่" &&
+          documentData.address_id
+        ) {
+          dispatch(setDocumentAddressId(documentData.address_id));
+          dispatch(setDocumentOwnerTypeCodeId(-3));
+        } else if (
+          documentData.owner_type == "ยานพาหนะ" &&
+          documentData.vehicle_id
+        ) {
+          dispatch(setDocumentVehicleId(documentData.vehicle_id));
+          dispatch(setDocumentOwnerTypeCodeId(-4));
+        }
+      } else if (menu == "card" && !addOEditCard.card.card_id) {
+        dispatch(setCardId(Number(addNew1OId)));
+        dispatch(setCardCodeId(cardData.card_code_id));
+        dispatch(setCardValue(cardData.value));
+        if (cardData.owner_type == "บุคคล" && cardData.person_id) {
+          dispatch(setCardPersonId(cardData.person_id));
+          dispatch(setCardOwnerTypeCodeId(-1));
+        }
       } else if (menu == "device" && !addOEditDevice.device.device_id) {
-        dispatch(setDeviceId);
+        // device
+        dispatch(setDeviceId(Number(addNew1OId)));
+        dispatch(setVehId(deviceData.veh_id));
+        dispatch(setDeviceSerialId(deviceData.device_serial_id));
+        dispatch(setDeviceCreateDate(deviceData.create_date));
+        // deviceConfig
+        dispatch(setConfigName(deviceConfigData.config_name));
+        dispatch(setSoftwareVersion(deviceConfigData.software_version));
+        dispatch(setIpAddress(deviceConfigData.ip_address));
+        dispatch(setGatewayPort(deviceConfigData.gateway_port));
+        dispatch(setSmsServerNumber(deviceConfigData.sms_server_number));
+        dispatch(setSmsMessageCenter(deviceConfigData.sms_message_center));
+        dispatch(setSimSerial(deviceConfigData.sim_serial));
+        dispatch(setMobileNumber(deviceConfigData.mobile_number));
+        dispatch(setSimTypeCodeId(deviceConfigData.sim_type_code_id));
+        dispatch(setNetwork(deviceConfigData.network));
+        dispatch(setUsername(deviceConfigData.username));
+        dispatch(setPassword(deviceConfigData.password));
       } else if (
         menu == "device-serial" &&
         !addOEditDeviceSerial.deviceSerial.device_serial_id
       ) {
+        // device-serial
+        dispatch(setDeviceSerialId(Number(addNew1OId)));
+        dispatch(setSerialId(deviceSerialData.serial_id));
+        dispatch(setDeviceTypeCodeId(deviceSerialData.device_type_code_id));
+        dispatch(setDeviceSerialCreateDate(deviceSerialData.create_date));
+        dispatch(setImeiSerial(deviceSerialData.imei_serial));
+        // อุปกรณ์
+
+        dispatch(setDisplayDeviceFetch(deviceData));
+
+        // ประวัติติดตั้ง
+        dispatch(setDisplayInstallationFetch(installationData));
       }
     }
   }, [individualData]);
@@ -944,7 +1149,7 @@ export default function Main_AddNewNViewNEdit() {
 
       {/* เอกสาร */}
 
-      {menu == "customer" || menu == "person" ? (
+      {menu == "customer" || menu == "person" || menu == "vehicle" ? (
         <Fragment>
           <Divider title="ข้อมูลเอกสาร" />
           {addNew2OEdit || isNaN(Number(addNew1OId)) ? (
@@ -1075,7 +1280,7 @@ export default function Main_AddNewNViewNEdit() {
 
       {/* ฟลีต */}
 
-      {menu == "customer" ? (
+      {menu == "customer" || menu == "vehicle" ? (
         <Fragment>
           <Divider title="ข้อมูลฟลีต" />
           {addNew2OEdit || isNaN(Number(addNew1OId)) ? (
@@ -1200,6 +1405,135 @@ export default function Main_AddNewNViewNEdit() {
                     <Option
                       id={data.vehicle_id.toString()}
                       onDelete={(e) => handleDelete(e, "vehicle")}
+                    ></Option>
+                  )}
+                </Tr>
+              ))}
+            </Tbody>
+          </Fragment>
+        </Table>
+      ) : (
+        <></>
+      )}
+
+      {/* อุปกรณ์ */}
+
+      {menu == "device-serial" ? (
+        <Fragment>
+          <Divider title="ข้อมูลอุปกรณ์" />
+
+          {addNew2OEdit || isNaN(Number(addNew1OId)) ? (
+            <ButtonLeftFrame>
+              <Button name="เพิ่มใหม่" disabled />
+              <Button
+                name="เพิ่มที่มี"
+                type="address"
+                onClick={() => {
+                  dispatch(setPopUpAddExistVehicle());
+                }}
+                disabled
+              />
+            </ButtonLeftFrame>
+          ) : (
+            <></>
+          )}
+        </Fragment>
+      ) : (
+        <></>
+      )}
+
+      {displayData.device.length > 0 ? (
+        <Table>
+          <Fragment>
+            <Thead>
+              <Tr type="thead">
+                <Th
+                  type="device"
+                  addNew1OId={addNew1OId}
+                  addNew2OEdit={addNew2OEdit}
+                />
+              </Tr>
+            </Thead>
+            <Tbody>
+              {displayData.device.map((data, i) => (
+                <Tr type="tbody" key={data.device_id}>
+                  <Td>{i + 1}</Td>
+                  {/* <Td>{data.installation_id}</Td> */}
+                  <Td>{data.device_id}</Td>
+                  <Td>{data.serial_id}</Td>
+                  <Td>{data.box_type}</Td>
+                  <Td>{data.sim_type}</Td>
+                  {!addNew2OEdit && !isNaN(Number(addNew1OId)) ? (
+                    <></>
+                  ) : (
+                    <Option
+                      id={data.device_id.toString()}
+                      onDelete={(e) => handleDelete(e, "installation")}
+                    ></Option>
+                  )}
+                </Tr>
+              ))}
+            </Tbody>
+          </Fragment>
+        </Table>
+      ) : (
+        <></>
+      )}
+
+      {/* ประวัติการติดตั้ง */}
+
+      {menu == "vehicle" || menu == "device-serial" ? (
+        <Fragment>
+          <Divider title="ประวัติการติดตั้ง" />
+
+          {addNew2OEdit || isNaN(Number(addNew1OId)) ? (
+            <ButtonLeftFrame>
+              <Button name="เพิ่มใหม่" disabled />
+              <Button
+                name="เพิ่มที่มี"
+                type="address"
+                onClick={() => {
+                  dispatch(setPopUpAddExistVehicle());
+                }}
+                disabled
+              />
+            </ButtonLeftFrame>
+          ) : (
+            <></>
+          )}
+        </Fragment>
+      ) : (
+        <></>
+      )}
+
+      {displayData.installation.length > 0 ? (
+        <Table>
+          <Fragment>
+            <Thead>
+              <Tr type="thead">
+                <Th
+                  type="installation"
+                  addNew1OId={addNew1OId}
+                  addNew2OEdit={addNew2OEdit}
+                />
+              </Tr>
+            </Thead>
+            <Tbody>
+              {displayData.installation.map((data, i) => (
+                <Tr type="tbody" key={data.package_history_id}>
+                  <Td>{i + 1}</Td>
+                  {/* <Td>{data.installation_id}</Td> */}
+                  <Td>{data.device_id}</Td>
+                  <Td>{data.license_plate}</Td>
+                  <Td>{data.frame_no}</Td>
+                  <Td>{data.install_date}</Td>
+                  <Td>{data.uninstall_date}</Td>
+                  {!addNew2OEdit && !isNaN(Number(addNew1OId)) ? (
+                    <></>
+                  ) : (
+                    <Option
+                      id={data.installation_id.toString()}
+                      onDelete={(e) => handleDelete(e, "installation")}
                     ></Option>
                   )}
                 </Tr>

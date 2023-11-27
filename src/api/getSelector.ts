@@ -20,9 +20,13 @@ export async function getSelector(
           : menu == "vehicle"
           ? "category=vehicle&class=type&category=vehicle&class=registration_type&category=vehicle&class=registration_province&category=vehicle&class=driving_license"
           : menu == "document"
-          ? "category=document&class=customer&category=document&class=person"
+          ? "category=document&class=customer&category=document&class=person&category=document&class=address"
           : menu == "card"
           ? "category=card&class=null"
+          : menu == "device-serial"
+          ? "category=device&class=type"
+          : menu == "device"
+          ? ""
           : ""
       }`
     );

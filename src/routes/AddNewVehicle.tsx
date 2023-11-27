@@ -9,12 +9,28 @@ import { MasterCode } from "../interface/mastercodeType";
 import Selector from "../components/Input/Selector";
 import {
   addOEditVehicleState,
+  setDIW,
+  setDLT,
   setFrameNo,
+  setFuelStatus,
+  setIdleTime,
   setLicensePlate,
+  setMaxEmptyVoltage,
+  setMaxEmptyVoltage2,
+  setMaxEmptyVoltage3,
+  setMaxFuel,
+  setMaxFuel2,
+  setMaxFuel3,
+  setMaxFuelVoltage,
+  setMaxFuelVoltage2,
+  setMaxFuelVoltage3,
+  setMaxSpeed,
   setModelName,
   setNumberOfAxles,
   setNumberOfTires,
   setNumberOfWheels,
+  setSCGL,
+  setTLS,
   setVehicleId,
 } from "../features/addOEdit/addOEditVehicleSlice";
 import {
@@ -66,16 +82,18 @@ export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
       !addOEditVehicle.vehicle.model_name
     ) {
       getBrandSelector(setBrandSelector);
-    } else if (
-      addOEditVehicle.vehicle.brand_name &&
-      !addOEditVehicle.vehicle.model_name
+    }
+    if (
+      (addOEditVehicle.vehicle.brand_name &&
+        !addOEditVehicle.vehicle.model_name) ||
+      (addOEditVehicle.vehicle.brand_name && addOEditVehicle.vehicle.model_name)
     ) {
       getModelSelector(setModelSelector, addOEditVehicle);
     }
   }, [addOEditVehicle.vehicle.brand_name]);
 
   useEffect(() => {
-    dispatch(setModelName(""));
+    if (!addOEditVehicle.vehicle.brand_name) dispatch(setModelName(""));
   }, [addOEditVehicle.vehicle.brand_name]);
 
   useEffect(() => {
@@ -152,6 +170,7 @@ export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
             dispatch(setLicensePlate(e.currentTarget.value));
           }}
           required={errorPopUp.active && !addOEditVehicle.vehicle.license_plate}
+          defaultValue={addOEditVehicle.vehicle.license_plate}
         />
         <Selector
           label="หมวดจังหวัด*"
@@ -172,6 +191,7 @@ export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
             dispatch(setFrameNo(e.currentTarget.value));
           }}
           required={errorPopUp.active && !addOEditVehicle.vehicle.frame_no}
+          defaultValue={addOEditVehicle.vehicle.frame_no}
         />
         <Selector
           label="ยี่ห้อยานยนต์*"
@@ -215,7 +235,7 @@ export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
         <Input
           label="จำนวนเพลา*"
           placeholder="จำนวนเพลา"
-          type="regular"
+          type="number"
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setNumberOfAxles(Number(e.currentTarget.value)));
@@ -223,11 +243,12 @@ export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
           required={
             errorPopUp.active && !addOEditVehicle.vehicle.number_of_axles
           }
+          defaultValue={addOEditVehicle.vehicle.number_of_axles}
         />
         <Input
           label="จำนวนกงล้อ*"
           placeholder="จำนวนกงล้อ"
-          type="regular"
+          type="number"
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setNumberOfWheels(Number(e.currentTarget.value)));
@@ -235,11 +256,12 @@ export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
           required={
             errorPopUp.active && !addOEditVehicle.vehicle.number_of_wheels
           }
+          defaultValue={addOEditVehicle.vehicle.number_of_wheels}
         />
         <Input
           label="จำนวนยาง*"
           placeholder="จำนวนยาง"
-          type="regular"
+          type="number"
           disabled={!addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setNumberOfTires(Number(e.currentTarget.value)));
@@ -247,6 +269,7 @@ export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
           required={
             errorPopUp.active && !addOEditVehicle.vehicle.number_of_tires
           }
+          defaultValue={addOEditVehicle.vehicle.number_of_tires}
         />
       </InputFrame>
       {menu !== "vehicle" ? (
@@ -266,68 +289,219 @@ export default function AddNewVehicle({ addNew1OId, addNew2OEdit }: Props) {
             <Input
               label="ความเร็วสูงสุด*"
               placeholder="ความเร็วสูงสุด"
-              type="regular"
+              type="number"
               disabled={
                 !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
               }
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                dispatch();
+                dispatch(setMaxSpeed(Number(e.currentTarget.value)));
               }}
+              defaultValue={addOEditVehicle.vehicleConfig.max_speed}
             />
             <Input
-              label="เวลา idel (นาที)*"
-              placeholder="เวลา idel (นาที)"
-              type="regular"
+              label="เวลา idle (นาที)*"
+              placeholder="เวลา idle (นาที)"
+              type="number"
               disabled={
                 !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
               }
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                dispatch();
+                dispatch(setIdleTime(Number(e.currentTarget.value)));
               }}
+              defaultValue={addOEditVehicle.vehicleConfig.idle_time}
             />
-            <Input
+            {/* <Input
               label="fuel tank number*"
               placeholder="fuel tank number"
-              type="regular"
+              type="number"
               disabled={
                 !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
               }
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 dispatch();
               }}
-            />
-            <Input
+              defaultValue={addOEditVehicle.vehicleConfig.fuel}
+            /> */}
+            {/* <Input
               label="fuel tank capacity*"
               placeholder="fuel tank capacity"
-              type="regular"
+              type="number"
               disabled={
                 !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
               }
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 dispatch();
               }}
-            />
+            /> */}
             <Input
               label="max fuel voltage 1*"
               placeholder="max fuel voltage 1"
-              type="regular"
+              type="number"
               disabled={
                 !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
               }
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                dispatch();
+                dispatch(setMaxFuelVoltage(Number(e.currentTarget.value)));
               }}
+              defaultValue={addOEditVehicle.vehicleConfig.max_fuel_voltage}
             />
             <Input
               label="max fuel voltage 2*"
               placeholder="max fuel voltage 2"
-              type="regular"
+              type="number"
               disabled={
                 !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
               }
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                dispatch();
+                dispatch(setMaxFuelVoltage2(Number(e.currentTarget.value)));
               }}
+              defaultValue={addOEditVehicle.vehicleConfig.max_fuel_voltage_2}
+            />
+            <Input
+              label="max fuel voltage 3*"
+              placeholder="max fuel voltage 3"
+              type="number"
+              disabled={
+                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
+              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                dispatch(setMaxFuelVoltage3(Number(e.currentTarget.value)));
+              }}
+              defaultValue={addOEditVehicle.vehicleConfig.max_fuel_voltage_3}
+            />
+            <Input
+              label="max fuel*"
+              placeholder="max fuel"
+              type="number"
+              disabled={
+                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
+              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                dispatch(setMaxFuel(Number(e.currentTarget.value)));
+              }}
+              defaultValue={addOEditVehicle.vehicleConfig.max_fuel}
+            />
+            <Input
+              label="max fuel 2*"
+              placeholder="max fuel 2"
+              type="number"
+              disabled={
+                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
+              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                dispatch(setMaxFuel2(Number(e.currentTarget.value)));
+              }}
+              defaultValue={addOEditVehicle.vehicleConfig.max_fuel_2}
+            />
+            <Input
+              label="max fuel 3*"
+              placeholder="max fuel 3"
+              type="number"
+              disabled={
+                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
+              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                dispatch(setMaxFuel3(Number(e.currentTarget.value)));
+              }}
+              defaultValue={addOEditVehicle.vehicleConfig.max_fuel_3}
+            />
+            <Input
+              label="max empty voltage*"
+              placeholder="max empty voltage"
+              type="number"
+              disabled={
+                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
+              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                dispatch(setMaxEmptyVoltage(Number(e.currentTarget.value)));
+              }}
+              defaultValue={addOEditVehicle.vehicleConfig.max_empty_voltage}
+            />
+            <Input
+              label="max empty voltage 2*"
+              placeholder="max empty voltage 2"
+              type="number"
+              disabled={
+                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
+              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                dispatch(setMaxEmptyVoltage2(Number(e.currentTarget.value)));
+              }}
+              defaultValue={addOEditVehicle.vehicleConfig.max_empty_voltage_2}
+            />
+            <Input
+              label="max fuel voltage 3*"
+              placeholder="max fuel voltage 3"
+              type="number"
+              disabled={
+                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
+              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                dispatch(setMaxEmptyVoltage3(Number(e.currentTarget.value)));
+              }}
+              defaultValue={addOEditVehicle.vehicleConfig.max_empty_voltage_3}
+            />
+            <Input
+              label="fuel status*"
+              placeholder="fuel status"
+              type="checkbox-form"
+              disabled={
+                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
+              }
+              onChecked={(e: React.ChangeEvent<HTMLInputElement>) => {
+                dispatch(setFuelStatus(e.currentTarget.checked));
+              }}
+              defaultValue={addOEditVehicle.vehicleConfig.fuel_status}
+            />
+          </InputFrame>
+          <InputFrame>
+            <Input
+              label="DLT*"
+              placeholder="DLT"
+              type="checkbox-form"
+              disabled={
+                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
+              }
+              onChecked={(e: React.ChangeEvent<HTMLInputElement>) => {
+                dispatch(setDLT(e.currentTarget.checked));
+              }}
+              defaultValue={addOEditVehicle.vehiclePermit.dlt}
+            />
+            <Input
+              label="TLS*"
+              placeholder="TLS"
+              type="checkbox-form"
+              disabled={
+                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
+              }
+              onChecked={(e: React.ChangeEvent<HTMLInputElement>) => {
+                dispatch(setTLS(e.currentTarget.checked));
+              }}
+              defaultValue={addOEditVehicle.vehiclePermit.tls}
+            />
+            <Input
+              label="SCGL*"
+              placeholder="SCGL"
+              type="checkbox-form"
+              disabled={
+                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
+              }
+              onChecked={(e: React.ChangeEvent<HTMLInputElement>) => {
+                dispatch(setSCGL(e.currentTarget.checked));
+              }}
+              defaultValue={addOEditVehicle.vehiclePermit.scgl}
+            />
+            <Input
+              label="DIW*"
+              placeholder="DIW"
+              type="checkbox-form"
+              disabled={
+                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
+              }
+              onChecked={(e: React.ChangeEvent<HTMLInputElement>) => {
+                dispatch(setDIW(e.currentTarget.checked));
+              }}
+              defaultValue={addOEditVehicle.vehiclePermit.diw}
             />
           </InputFrame>
         </>

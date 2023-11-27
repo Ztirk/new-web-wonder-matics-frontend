@@ -34,6 +34,7 @@ export interface IndividualCard extends ApiStatus {
       card_type: string;
       owner_type: string;
       owner_name: string;
+      person_id: number;
     };
   };
 }

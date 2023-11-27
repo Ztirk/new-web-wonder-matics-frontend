@@ -41,6 +41,8 @@ export interface IndividualContact extends ApiStatus {
       contact_type: string;
       owner_name: string;
       owner_type: string;
+      person_id: number | null;
+      customer_id: number | null;
     };
   };
 }

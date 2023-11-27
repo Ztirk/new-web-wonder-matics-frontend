@@ -1,5 +1,9 @@
 import { ApiStatus } from "./apiStatus";
 
+export interface AddressSelector extends ApiStatus {
+  response: { addresses: { address_id: number; location: string }[] };
+}
+
 export interface ProvinceSelector extends ApiStatus {
   response: {
     provinces: { province_th: string }[];

@@ -21,10 +21,14 @@ import togglePropsPopUpSlice from "./togglePropsPopUpSlice";
 
 export default configureStore({
   reducer: {
+    errorPopUp: errorPopUpSlice,
+    togglePropsPopUp: togglePropsPopUpSlice,
     popUpAddExist: popUpAddExistSlice,
     actionBy: actionByState,
-    display: displaySlice,
     memo: memoSlice,
+    addNewOAddExist: addNewOAddExistSlice,
+    delete: deleteSlice,
+    files: fileSlice,
     addOEditCustomer: addOEditCustomerSlice,
     addOEditPerson: addOEditPersonSlice,
     addOEditAddress: addOEditAddressSlice,
@@ -33,12 +37,8 @@ export default configureStore({
     addOEditFleet: addOEditFleetSlice,
     addOEditDevice: addOEditDeviceSlice,
     addOEditDeviceSerial: addOEditDeviceSerialSlice,
-    addNewOAddExist: addNewOAddExistSlice,
-    delete: deleteSlice,
     addOEditCard: addOEditCardSlice,
     addOEditDocument: addOEditDocumentSlice,
-    files: fileSlice,
-    errorPopUp: errorPopUpSlice,
-    togglePropsPopUp: togglePropsPopUpSlice,
+    display: displaySlice,
   },
 });

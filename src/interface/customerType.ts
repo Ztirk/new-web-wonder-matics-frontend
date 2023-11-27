@@ -1,5 +1,9 @@
 import { ApiStatus } from "./apiStatus";
 
+export interface CustomerSelector extends ApiStatus {
+  response: { customers: { customer_id: number; customer_name: string }[] };
+}
+
 export interface SendCustomer {
   customer: {
     customer_id: number | string;

@@ -1,10 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DisplayData } from "../interface/reduxType";
+import {
+  DisplayData,
+  Installation,
+  installation,
+} from "../interface/reduxType";
 import { Person, PersonIterate } from "../interface/personType";
 import { Contact, ContactIterate } from "../interface/contactType";
 import { Address, AddressIterate } from "../interface/addressType";
 import { Customer, CustomerIterate } from "../interface/customerType";
-import { Fleet, FleetIterate } from "../interface/fleetType";
+import { ChildFleets, Fleet, FleetIterate } from "../interface/fleetType";
 import { Vehicle, VehicleIterate } from "../interface/vehicleType";
 import { Device, DeviceIterate } from "../interface/deviceType";
 import { Card } from "../interface/cardType";
@@ -21,6 +25,7 @@ const initialState: DisplayData = {
   deviceSerial: [],
   card: [],
   document: [],
+  installation: [],
   count_data: 0,
 };
 
@@ -201,6 +206,12 @@ const displaySlice = createSlice({
         (data) => data.document_id !== action.payload
       );
     },
+    setDisplayInstallationFetch(
+      state,
+      action: PayloadAction<Installation["installation"]>
+    ) {
+      state.installation = action.payload;
+    },
 
     setDisplayDefaultFetch(state) {
       state.address = [];
@@ -213,6 +224,7 @@ const displaySlice = createSlice({
       state.vehicle = [];
       state.card = [];
       state.document = [];
+      state.installation = [];
     },
   },
 });
@@ -246,6 +258,7 @@ export const {
   setDisplayDocumentDelete,
   setDisplayDocumentFetch,
   setDisplayDocumentIntereact,
+  setDisplayInstallationFetch,
 } = displaySlice.actions;
 
 export const displayState = (state) => state.display;

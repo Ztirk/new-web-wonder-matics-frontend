@@ -23,17 +23,28 @@ import { SendDocument } from "../interface/documentType";
 import { addNewFile, filesState } from "../features/fileSlice";
 import { setDocumentCodeNew } from "../features/addNewOAddExistSlice";
 import { setDisplayDocumentIntereact } from "../features/displaySlice";
-import { SendCustomer } from "../interface/customerType";
+import { CustomerSelector, SendCustomer } from "../interface/customerType";
 import { addOEditCustomerState } from "../features/addOEdit/addOEditCustomerSlice";
 import {
   errorPopUpState,
   setErrorPopUpState,
 } from "../features/errorPopUpSlice";
 import { ErrorPopUpType } from "../interface/componentType";
+import { PersonSelector } from "../interface/personType";
+import { AddressSelector } from "../interface/addressType";
+import { VehicleSelector } from "../interface/vehicleType";
+import getPersonSelector from "../api/getPersonSelector";
+import getCustomerSelector from "../api/getCustomerSelector";
+import getLocationSelector from "../api/getLocationSelector";
+import getLicensePlateSelector from "../api/getLicensePlateSelector";
 
 export default function AddNewDocument() {
   const [selectorData, setSelectorData] = useState<MasterCode>();
   const [file, setFile] = useState<FileList[0] | null>(null);
+  const [personSelector, setPersonSelector] = useState<PersonSelector>();
+  const [customerSelector, setCustomerSelector] = useState<CustomerSelector>();
+  const [addressSelector, setAddressSelector] = useState<AddressSelector>();
+  const [vehicleSelector, setVehicleSelector] = useState<VehicleSelector>();
 
   const location = useLocation();
   const segments = location.pathname.split("/").splice(1);
@@ -52,6 +63,13 @@ export default function AddNewDocument() {
   // useEffect
   useEffect(() => {
     getSelector(setSelectorData, "document");
+  }, []);
+
+  useEffect(() => {
+    getPersonSelector(setPersonSelector);
+    getCustomerSelector(setCustomerSelector);
+    getLocationSelector(setAddressSelector);
+    getLicensePlateSelector(setVehicleSelector);
   }, []);
 
   const handleClickSave = () => {
@@ -121,6 +139,81 @@ export default function AddNewDocument() {
   };
   return (
     <Fragment>
+      {menu == "document" ? (
+        <>
+          <Divider title="ข้อมูลเจ้าของ" />
+          <InputFrame>
+            <Selector
+              selectorData={[
+                {
+                  code_id: -1,
+                  category: "ownerType",
+                  class: null,
+                  value: "บุคคล",
+                },
+                {
+                  code_id: -2,
+                  category: "ownerType",
+                  class: null,
+                  value: "ลูกค้า",
+                },
+                {
+                  code_id: -3,
+                  category: "ownerType",
+                  class: null,
+                  value: "ที่อยู่",
+                },
+                {
+                  code_id: -4,
+                  category: "ownerType",
+                  class: null,
+                  value: "ยานพาหนะ",
+                },
+              ]}
+              label={"ประเภทเจ้าของ*"}
+              type="selector"
+              disabled={!isNaN(Number(addNew1OId)) ? true : false}
+              required={
+                errorPopUp.active &&
+                !addOEditDocument.document.owner_type_code_id
+              }
+            />
+            <Selector
+              personSelector={
+                addOEditDocument.document.owner_type_code_id == -1
+                  ? personSelector
+                  : undefined
+              }
+              customerSelector={
+                addOEditDocument.document.owner_type_code_id == -2
+                  ? customerSelector
+                  : undefined
+              }
+              addressSelector={
+                addOEditDocument.document.owner_type_code_id == -3
+                  ? addressSelector
+                  : undefined
+              }
+              vehicleSelector={
+                addOEditDocument.document.owner_type_code_id == -4
+                  ? vehicleSelector
+                  : undefined
+              }
+              label={"ชื่อเจ้าของ"}
+              type="selector"
+              disabled={
+                !isNaN(Number(addNew1OId)) ||
+                !addOEditDocument.document.owner_type_code_id
+                  ? true
+                  : false
+              }
+              required={errorPopUp.active}
+            />
+          </InputFrame>
+        </>
+      ) : (
+        <></>
+      )}
       <Divider title="ข้อมูลเอกสาร" />
       <InputFrame>
         <Selector
@@ -132,6 +225,18 @@ export default function AddNewDocument() {
               ? selectorData?.response[0]
               : menu == "person"
               ? selectorData?.response[1]
+              : menu == "document" &&
+                addOEditDocument.document.owner_type_code_id == -1
+              ? selectorData?.response[1]
+              : menu == "document" &&
+                addOEditDocument.document.owner_type_code_id == -2
+              ? selectorData?.response[0]
+              : menu == "document" &&
+                addOEditDocument.document.owner_type_code_id == -3
+              ? selectorData?.response[3]
+              : menu == "document" &&
+                addOEditDocument.document.owner_type_code_id == -4
+              ? selectorData?.response[2]
               : undefined
           }
           required={
@@ -156,61 +261,6 @@ export default function AddNewDocument() {
             <Button name="ยกเลิก" />
           </Link>
         </ButtonRightFrame>
-      ) : (
-        <></>
-      )}
-      {menu == "document" ? (
-        <>
-          <Divider title="ข้อมูลเจ้าของ" />
-          <InputFrame>
-            <Selector
-              selectorData={[
-                {
-                  code_id: -1,
-                  category: "personOcustomer",
-                  class: null,
-                  value: "บุคคล",
-                },
-                {
-                  code_id: -2,
-                  category: "personOcustomer",
-                  class: null,
-                  value: "ลูกค้า",
-                },
-                {
-                  code_id: -3,
-                  category: "personOcustomer",
-                  class: null,
-                  value: "ที่อยู่",
-                },
-                {
-                  code_id: -4,
-                  category: "personOcustomer",
-                  class: null,
-                  value: "ยานพาหนะ",
-                },
-              ]}
-              label={"ประเภทเจ้าของ*"}
-              type="selector"
-              disabled={
-                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
-              }
-              required={
-                errorPopUp.active &&
-                !addOEditDocument.document.owner_type_code_id
-              }
-            />
-            <Selector
-              selectorData={selectorData?.response[0]}
-              label={"ชื่อเจ้าของ"}
-              type="selector"
-              disabled={
-                !addNew2OEdit && !isNaN(Number(addNew1OId)) ? true : false
-              }
-              required={errorPopUp.active}
-            />
-          </InputFrame>
-        </>
       ) : (
         <></>
       )}

@@ -80,35 +80,39 @@ export default function AddNewAddress({ addNew1OId, addNew2OEdit }: Props) {
       !addOEditAddress.address.district
     ) {
       getProvinceSelector(setProvinceSelector);
-    } else if (
-      addOEditAddress.address.province &&
-      !addOEditAddress.address.district
+    }
+    if (
+      (addOEditAddress.address.province && !addOEditAddress.address.district) ||
+      (addOEditAddress.address.province &&
+        addOEditAddress.address.district &&
+        addOEditAddress.address.postal_code)
     ) {
       getDistrictSelector(setDistrictSelector, addOEditAddress);
-    } else if (
-      addOEditAddress.address.province &&
-      addOEditAddress.address.district
-    ) {
+    }
+    if (addOEditAddress.address.province && addOEditAddress.address.district) {
       getSubDistrictSelector(setSubDistrictSelector, addOEditAddress);
     }
   }, [addOEditAddress.address.province, addOEditAddress.address.district]);
 
   useEffect(() => {
-    dispatch(setDistrict(""));
-    dispatch(setSubDistrict(""));
-    dispatch(setPostalCode(""));
+    if (!addOEditAddress.address.province) {
+      dispatch(setDistrict(""));
+      dispatch(setSubDistrict(""));
+      dispatch(setPostalCode(""));
+    }
   }, [addOEditAddress.address.province]);
 
   useEffect(() => {
-    dispatch(setSubDistrict(""));
-    dispatch(setPostalCode(""));
+    if (!addOEditAddress.address.district) {
+      dispatch(setSubDistrict(""));
+      dispatch(setPostalCode(""));
+    }
   }, [addOEditAddress.address.district]);
 
   useEffect(() => {
-    dispatch(setPostalCode(""));
-  }, [addOEditAddress.address.sub_district]);
-
-  useEffect(() => {
+    if (!addOEditAddress.address.sub_district) {
+      dispatch(setPostalCode(""));
+    }
     if (subDistrictSelector) {
       for (const obj of subDistrictSelector.response.sub_districts) {
         if (obj.sub_district_th == addOEditAddress.address.sub_district) {
@@ -222,6 +226,7 @@ export default function AddNewAddress({ addNew1OId, addNew2OEdit }: Props) {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setName(e.currentTarget.value));
           }}
+          defaultValue={addOEditAddress.address.name}
         />
         <Input
           label="เลขที่"
@@ -231,6 +236,7 @@ export default function AddNewAddress({ addNew1OId, addNew2OEdit }: Props) {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setHouseNo(e.currentTarget.value));
           }}
+          defaultValue={addOEditAddress.address.house_no}
         />
         <Input
           label="หมู่ที่"
@@ -240,6 +246,7 @@ export default function AddNewAddress({ addNew1OId, addNew2OEdit }: Props) {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setVillageNo(e.currentTarget.value));
           }}
+          defaultValue={addOEditAddress.address.village_no}
         />
         <Input
           label="ซอย"
@@ -249,6 +256,7 @@ export default function AddNewAddress({ addNew1OId, addNew2OEdit }: Props) {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setAlley(e.currentTarget.value));
           }}
+          defaultValue={addOEditAddress.address.alley}
         />
         <Input
           label="ถนน"
@@ -258,6 +266,7 @@ export default function AddNewAddress({ addNew1OId, addNew2OEdit }: Props) {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setRoad(e.currentTarget.value));
           }}
+          defaultValue={addOEditAddress.address.road}
         />
         <Selector
           label="จังหวัด*"

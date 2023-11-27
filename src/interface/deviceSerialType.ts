@@ -7,6 +7,7 @@ export interface SendDeviceSerial {
     imei_serial: string;
     dvr_id: string;
     device_type_code_id: number | null;
+    create_date: string;
   };
 }
 
@@ -29,9 +30,11 @@ export interface IndividualDeviceSerial extends ApiStatus {
   response: {
     deviceSerial: {
       device_serial_id: number;
-      serial_id: number;
-      imei_serial: number;
+      serial_id: string;
+      imei_serial: string;
       box_type: string;
+      device_type_code_id: number;
+      device_type: string;
       create_date: string;
     };
   };

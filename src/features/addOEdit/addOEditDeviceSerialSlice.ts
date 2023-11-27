@@ -8,6 +8,7 @@ const initialState: SendDeviceSerial = {
     device_type_code_id: null,
     dvr_id: "",
     imei_serial: "",
+    create_date: "",
   },
 };
 
@@ -32,6 +33,12 @@ const addOEditDeviceSerialSlice = createSlice({
     setImeiSerial(state, action: PayloadAction<string>) {
       state.deviceSerial.imei_serial = action.payload;
     },
+    setDeviceSerialCreateDate(state, action: PayloadAction<string>) {
+      state.deviceSerial.create_date =
+        action.payload[action.payload.length - 1] == "Z"
+          ? action.payload.slice(0, -1)
+          : action.payload;
+    },
     setDefaultDeviceSerial(state) {
       state.deviceSerial = {
         device_serial_id: 0,
@@ -39,6 +46,7 @@ const addOEditDeviceSerialSlice = createSlice({
         device_type_code_id: null,
         dvr_id: "",
         imei_serial: "",
+        create_date: "",
       };
     },
   },
@@ -51,6 +59,7 @@ export const {
   setDvrId,
   setImeiSerial,
   setSerialId,
+  setDeviceSerialCreateDate,
 } = addOEditDeviceSerialSlice.actions;
 
 export const addOEditDeviceSerialState = (state) => state.addOEditDeviceSerial;

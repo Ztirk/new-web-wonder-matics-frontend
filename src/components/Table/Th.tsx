@@ -11,11 +11,12 @@ interface Props {
     | "device"
     | "deviceSerial"
     | "card"
-    | "document";
+    | "document"
+    | "installation";
   sub?: true;
   addNew2OEdit?: string;
   addNew1OId?: string;
-  noOption: true;
+  noOption?: true;
 }
 
 export default function Th({
@@ -84,7 +85,7 @@ export default function Th({
           ) : (
             <>
               <ThClass>veh_id (เก่า)</ThClass>
-              <ThClass>device_serial_id</ThClass>
+              <ThClass>serial_id</ThClass>
               <ThClass>ประเภทกล่อง</ThClass>
               <ThClass>ปนะเภทซิม</ThClass>
             </>
@@ -107,6 +108,14 @@ export default function Th({
           <ThClass>ประเภทเอกสาร</ThClass>
           <ThClass>ชื่อเอกสาร</ThClass>
           <ThClass>เจ้าของ</ThClass>
+        </>
+      ) : type == "installation" ? (
+        <>
+          <ThClass>device_id (veh_id)</ThClass>
+          <ThClass>ทะเบียน</ThClass>
+          <ThClass>เลขตัวถัง</ThClass>
+          <ThClass>วันที่ติดตั้ง</ThClass>
+          <ThClass>วันที่ถอด</ThClass>
         </>
       ) : (
         <></>

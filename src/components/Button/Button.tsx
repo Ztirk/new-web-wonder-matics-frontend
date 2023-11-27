@@ -9,10 +9,9 @@ interface Props {
     | "เพิ่มใหม่";
   disabled?: boolean;
   onClick?: () => void | React.Dispatch<React.SetStateAction<string>>;
-  type: string;
 }
 
-export default function Button({ name, disabled, onClick, type }: Props) {
+export default function Button({ name, disabled, onClick }: Props) {
   return (
     <div>
       <button

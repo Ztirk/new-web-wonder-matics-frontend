@@ -1,5 +1,11 @@
 import { ApiStatus } from "./apiStatus";
 
+export interface PersonSelector extends ApiStatus {
+  response: {
+    persons: { person_id: number; fullname: string }[];
+  };
+}
+
 export interface SendPerson {
   person: {
     person_id: number | string;
